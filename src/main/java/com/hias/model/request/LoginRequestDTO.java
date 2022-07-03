@@ -9,9 +9,9 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class LoginRequestDTO {
 
-    @NotBlank(message = "username must not be null")
+    @NotBlank(message = "{AUTH_001}")
     private String username;
 
-    @NotBlank(message = "password must not be null")
+    @NotBlank(message = "{AUTH_002}")
     private String password;
 }

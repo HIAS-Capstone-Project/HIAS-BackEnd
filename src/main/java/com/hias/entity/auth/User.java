@@ -1,6 +1,6 @@
-package com.hias.entity.sso;
+package com.hias.entity.auth;
 
-import com.hias.entity.BaseEntity;
+import com.hias.entity.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

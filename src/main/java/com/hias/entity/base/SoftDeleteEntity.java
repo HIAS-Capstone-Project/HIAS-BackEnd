@@ -1,4 +1,4 @@
-package com.hias.entity;
+package com.hias.entity.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +16,5 @@ import javax.persistence.MappedSuperclass;
 public class SoftDeleteEntity extends Audit {
 
     @Column(name = "IS_DELETED")
-    private boolean isDeleted;
+    private boolean isDeleted = Boolean.FALSE;
 }

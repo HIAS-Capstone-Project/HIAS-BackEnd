@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 public enum RoleEnum {
     SYSTEM_ADMIN("SYSTEM_ADMIN"),
     MEMBER("MEMBER"),
-    COMPANY("COMPANY"),
-    EMPLOYEE("EMPLOYEE");
+    CLIENT("CLIENT"),
+    EMPLOYEE("EMPLOYEE"),
+    SERVICE_PROVIDER("SERVICE_PROVIDER"),
+    CLAIM_PROCESSOR("CLAIM_PROCESSOR");
 
     private String name;
 }

@@ -1,6 +1,5 @@
 package com.hias.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hias.constant.SecurityConstant;
 import com.hias.model.response.TokenResponseDTO;
 import com.hias.security.dto.UserDetail;
@@ -9,9 +8,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
@@ -22,11 +23,11 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final ObjectMapper objectMapper;
+    @Value("${hias.app.jwtSecret}")
+    private String jwtSecret;
 
-    private String jwtSecret = "hiasSecretKey";
-
-    private int accessTokenExpiration = 300000;
+    @Value("${hias.app.accessTokenExpiration}")
+    private int accessTokenExpiration;
 
     private String generateAccessToken(UserDetail userDetail) {
 
@@ -77,5 +78,10 @@ public class JwtTokenProvider {
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    @PostConstruct
+    private void k() {
+        log.info(jwtSecret + " " + accessTokenExpiration);
     }
 }

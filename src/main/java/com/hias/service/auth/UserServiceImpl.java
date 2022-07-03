@@ -1,7 +1,7 @@
-package com.hias.sso.security;
+package com.hias.service.auth;
 
-import com.hias.entity.sso.User;
-import com.hias.repository.sso.UserRepository;
+import com.hias.entity.auth.User;
+import com.hias.repository.auth.UserRepository;
 import com.hias.security.dto.UserDetail;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

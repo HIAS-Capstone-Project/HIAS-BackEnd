@@ -1,6 +1,6 @@
-package com.hias.entity.sso;
+package com.hias.entity.auth;
 
-import com.hias.entity.SoftDeleteEntity;
+import com.hias.entity.base.SoftDeleteEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

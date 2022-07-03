@@ -1,7 +1,7 @@
 package com.hias.security;
 
 
-import com.hias.sso.security.UserServiceImpl;
+import com.hias.service.auth.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

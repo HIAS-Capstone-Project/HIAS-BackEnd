@@ -1,6 +1,6 @@
-package com.hias.repository.sso;
+package com.hias.repository.auth;
 
-import com.hias.entity.sso.UserRole;
+import com.hias.entity.auth.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,4 +22,7 @@ public class TokenResponseDTO implements Serializable {
 
     @JsonProperty("have_not_permission")
     private boolean haveNotPermission;
+
+    @JsonProperty("expiry_date")
+    private Date expiryDate;
 }

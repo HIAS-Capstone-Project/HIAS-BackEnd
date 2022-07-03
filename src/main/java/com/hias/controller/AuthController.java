@@ -1,14 +1,14 @@
 package com.hias.controller;
 
-import com.hias.entity.sso.Role;
-import com.hias.entity.sso.User;
-import com.hias.entity.sso.UserRole;
+import com.hias.entity.auth.Role;
+import com.hias.entity.auth.User;
+import com.hias.entity.auth.UserRole;
 import com.hias.model.request.LoginRequestDTO;
 import com.hias.model.request.UserRequestDTO;
 import com.hias.model.response.TokenResponseDTO;
-import com.hias.repository.sso.RoleRepository;
-import com.hias.repository.sso.UserRepository;
-import com.hias.repository.sso.UserRoleRepository;
+import com.hias.repository.auth.RoleRepository;
+import com.hias.repository.auth.UserRepository;
+import com.hias.repository.auth.UserRoleRepository;
 import com.hias.security.JwtTokenProvider;
 import com.hias.security.dto.UserDetail;
 import lombok.AllArgsConstructor;
