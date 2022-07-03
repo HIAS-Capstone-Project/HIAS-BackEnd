@@ -44,20 +44,19 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<TokenResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-        Authentication authentication = null;
+        Authentication authentication;
+        TokenResponseDTO tokenResponseDTO = new TokenResponseDTO();
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword()));
         } catch (Exception exception) {
             log.error("Username or password is incorrect");
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(tokenResponseDTO, HttpStatus.FORBIDDEN);
         }
-
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-        jwtTokenProvider.getTokenResponseDTO(userDetail);
-        TokenResponseDTO tokenResponseDTO = jwtTokenProvider.getTokenResponseDTO(userDetail);
+        tokenResponseDTO = jwtTokenProvider.getTokenResponseDTO(userDetail);
         return new ResponseEntity<>(tokenResponseDTO, HttpStatus.ACCEPTED);
     }
 

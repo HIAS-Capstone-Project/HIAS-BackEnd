@@ -24,7 +24,7 @@ public class Swagger2Config {
     private static final String API_PATH_PATTERN = ".*";
     private static final String SWAGGER_TITLE = "HIAS API Documents";
     private static final String SWAGGER_DESCRIPTION = "Documents with Swagger 2";
-    private static final String SWAGGER_LICENSE = "hias";
+    private static final String SWAGGER_LICENSE = "HIAS";
     private static final String SWAGGER_VERSION = "2.0";
 
     @Bean

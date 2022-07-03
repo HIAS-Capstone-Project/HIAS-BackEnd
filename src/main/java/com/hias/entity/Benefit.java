@@ -1,5 +1,6 @@
 package com.hias.entity;
 
+import com.hias.entity.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,6 @@ import javax.persistence.Table;
 //@AllArgsConstructor
 //@NoArgsConstructor
 //@Entity
-//@Table(name = "MEMBER", schema = "HIAS")
-public class Member {
+//@Table(name = "BENEFIT", schema = "HIAS")
+public class Benefit extends BaseEntity {
 }
