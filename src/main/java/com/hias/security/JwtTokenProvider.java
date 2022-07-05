@@ -9,15 +9,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @Component
 @Getter
@@ -82,10 +78,5 @@ public class JwtTokenProvider {
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    @PostConstruct
-    private void k() {
-        log.info(jwtSecret + " " + accessTokenExpiration);
     }
 }

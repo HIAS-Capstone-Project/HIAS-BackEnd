@@ -1,6 +1,5 @@
 package com.hias.configuration;
 
-import com.hias.constant.SecurityConstant;
 import com.hias.security.dto.UserDetail;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -39,7 +39,6 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final BCryptPasswordEncoder encoder;
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("login")
