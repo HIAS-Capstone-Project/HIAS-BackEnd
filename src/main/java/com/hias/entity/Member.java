@@ -1,19 +1,17 @@
 package com.hias.entity;
 
 import com.hias.entity.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "MEMBER", schema = "HIAS")
+@Getter
+@Setter
 public class Member extends BaseEntity {
 
     @Id

@@ -1,22 +1,20 @@
 package com.hias.entity;
 
 import com.hias.entity.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "CLIENT", schema = "HIAS")
+@Getter
+@Setter
 public class Client extends BaseEntity {
 
     @Id
@@ -25,7 +23,7 @@ public class Client extends BaseEntity {
     private Long clientNo;
 
     @Column(name = "CORPORATE_ID", unique = true)
-    private Long corporateID;
+    private String corporateID;
 
     @Column(name = "CLIENT_NAME")
     private String name;

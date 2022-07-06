@@ -1,20 +1,18 @@
 package com.hias.entity;
 
 import com.hias.entity.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "POLICY_COVERAGE", schema = "HIAS")
+@Getter
+@Setter
 public class PolicyCoverage extends BaseEntity {
 
     @Id

@@ -1,22 +1,20 @@
 package com.hias.entity;
 
 import com.hias.entity.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "BENEFIT", schema = "HIAS")
+@Getter
+@Setter
 public class Benefit extends BaseEntity {
 
     @Id
