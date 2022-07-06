@@ -1,5 +1,6 @@
 package com.hias.configuration;
 
+import com.hias.constant.SecurityConstant;
 import com.hias.security.dto.UserDetail;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ class SpringSecurityAuditAwareImpl implements AuditorAware<String> {
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
-            return Optional.empty();
+            return Optional.of(SecurityConstant.SYSTEM);
         }
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
         return Optional.of(userDetail.getUsername());
