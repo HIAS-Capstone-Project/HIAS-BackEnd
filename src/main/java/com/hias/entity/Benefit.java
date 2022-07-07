@@ -39,4 +39,7 @@ public class Benefit extends BaseEntity {
 
     @OneToMany(mappedBy = "benefit", fetch = FetchType.EAGER)
     private List<PolicyCoverage> policyCoverageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "benefit")
+    private List<Claim> claimList = new ArrayList<>();
 }

@@ -22,7 +22,7 @@ public class Client extends BaseEntity {
     @Column(name = "CLIENT_NO")
     private Long clientNo;
 
-    @Column(name = "CORPORATE_ID", unique = true)
+    @Column(name = "CORPORATE_ID")
     private String corporateID;
 
     @Column(name = "CLIENT_NAME")
@@ -39,4 +39,7 @@ public class Client extends BaseEntity {
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<Member> memberList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client")
+    private List<EmployeeClient> employeeClients = new ArrayList<>();
 }

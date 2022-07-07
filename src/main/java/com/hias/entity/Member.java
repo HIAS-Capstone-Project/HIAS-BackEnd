@@ -4,6 +4,8 @@ import com.hias.entity.base.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -25,14 +27,14 @@ public class Member extends BaseEntity {
     @Column(name = "STAFF_ID")
     private String staffID;
 
-    @Column(name = "PHONE_NUMBER", unique = true)
+    @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
-    @Column(name = "EMAIL", unique = true)
+    @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "REMARK")
-    private String remark;
+    @Column(name = "BANK_ACCOUNT_NO")
+    private String bankAccountNo;
 
     @Column(name = "CLIENT_NO", insertable = false, updatable = false)
     private Long clientNo;
@@ -47,4 +49,14 @@ public class Member extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "POLICY_NO", nullable = false)
     private Policy policy;
+
+    @Column(name = "BANK_NO", insertable = false, updatable = false)
+    private Long bankNo;
+
+    @ManyToOne
+    @JoinColumn(name = "BANK_NO", nullable = false)
+    private Bank bank;
+
+    @OneToMany(mappedBy = "member")
+    private List<Claim> claimList = new ArrayList<>();
 }
