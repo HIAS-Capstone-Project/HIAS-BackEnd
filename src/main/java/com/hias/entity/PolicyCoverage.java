@@ -1,6 +1,6 @@
 package com.hias.entity;
 
-import com.hias.entity.base.BaseEntity;
+import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Table(name = "POLICY_COVERAGE", schema = "HIAS")
 @Getter
 @Setter
-public class PolicyCoverage extends BaseEntity {
+public class PolicyCoverage extends SoftDeleteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
