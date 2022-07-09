@@ -33,17 +33,17 @@ public class PolicyController {
     }
 
     @PostMapping("create-policy")
-    public ResponseEntity<PolicyResponseDTO> createClient(@RequestBody PolicyRequestDTO policyRequestDTO) {
+    public ResponseEntity<PolicyResponseDTO> createPolicy(@RequestBody PolicyRequestDTO policyRequestDTO) {
         return new ResponseEntity<>(policyService.createPolicy(policyRequestDTO), HttpStatus.OK);
     }
 
     @PatchMapping("update-policy")
-    public ResponseEntity<PolicyResponseDTO> updateClient(@RequestBody PolicyRequestDTO policyRequestDTODTO) {
+    public ResponseEntity<PolicyResponseDTO> updatePolicy(@RequestBody PolicyRequestDTO policyRequestDTODTO) {
         return new ResponseEntity<>(policyService.updatePolicy(policyRequestDTODTO), HttpStatus.OK);
     }
 
     @DeleteMapping("detele-policy")
-    public ResponseEntity<PolicyResponseDTO> deleteClient(@RequestParam Long policyNo) {
+    public ResponseEntity<PolicyResponseDTO> deletePolicy(@RequestParam Long policyNo) {
         return new ResponseEntity<>(policyService.deletePolicy(policyNo), HttpStatus.OK);
     }
 }
