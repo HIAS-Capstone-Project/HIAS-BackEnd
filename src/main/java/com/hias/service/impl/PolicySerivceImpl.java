@@ -10,10 +10,12 @@ import com.hias.service.PolicyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -39,42 +41,45 @@ public class PolicySerivceImpl implements PolicyService {
     @Override
     public PolicyResponseDTO getDetail(Long policyNo) {
         log.info("[getDetail] get policy detail");
-        Policy policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyNo);
+        Optional<Policy> policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyNo);
         PolicyResponseDTO policyResponseDTO = new PolicyResponseDTO();
-        if (policy != null) {
-            policyResponseDTO = policyResponseDTOMapper.toDto(policy);
+        if (policy.isPresent()) {
+            policyResponseDTO = policyResponseDTOMapper.toDto(policy.get());
         }
         return policyResponseDTO;
     }
 
     @Override
+    @Transactional
     public PolicyResponseDTO createPolicy(PolicyRequestDTO policyRequestDTO) {
-        log.info("[createPolicy] get create policy ");
+        log.info("[createPolicy]  create policy ");
         Policy policy = policyRepository.save(policyRequestDTOMapper.toEntity(policyRequestDTO));
         return policyResponseDTOMapper.toDto(policy);
     }
 
     @Override
+    @Transactional
     public PolicyResponseDTO updatePolicy(PolicyRequestDTO policyRequestDTO) {
-        Policy policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyRequestDTO.getPolicyNo());
+        Optional<Policy> policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyRequestDTO.getPolicyNo());
         PolicyResponseDTO policyResponseDTO = new PolicyResponseDTO();
-        if (policy != null) {
-            policy.setPolicyCode(policyRequestDTO.getPolicyCode());
-            policy.setPolicyName(policyRequestDTO.getPolicyName());
-            policy.setClientNo(policyRequestDTO.getClientNo());
-            policy.setRemark(policyRequestDTO.getRemark());
-            policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(policy));
+        if (policy.isPresent()) {
+            Policy updatedPolicy = new Policy();
+            updatedPolicy = policyRequestDTOMapper.toEntity(policyRequestDTO);
+            policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(updatedPolicy));
         }
         return policyResponseDTO;
     }
 
     @Override
+    @Transactional
     public PolicyResponseDTO deletePolicy(Long policyNo) {
-        Policy policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyNo);
+        Optional<Policy> optionalPolicy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyNo);
         PolicyResponseDTO policyResponseDTO = new PolicyResponseDTO();
-        if (policy != null) {
+        if (optionalPolicy.isPresent()) {
+            Policy policy = optionalPolicy.get();
             policy.setDeleted(true);
             policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(policy));
+
         }
         return policyResponseDTO;
     }
