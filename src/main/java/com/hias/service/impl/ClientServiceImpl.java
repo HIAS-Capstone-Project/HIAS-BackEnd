@@ -28,7 +28,7 @@ public class ClientServiceImpl implements ClientService {
         log.info("[getAll] Start get all clients.");
         List<ClientResponeDTO> clientResponeDTOList = new ArrayList<>();
 
-        List<Client> clients = clientRepository.findByIsDeletedIsFalse();
+        List<Client> clients = clientRepository.findAll();
 
         if (!CollectionUtils.isEmpty(clients)) {
             log.info("[getAll] Size of clients : {}.", clients.size());
