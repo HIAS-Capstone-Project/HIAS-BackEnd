@@ -30,17 +30,17 @@ public class ClientController {
     }
 
     @PostMapping("create-client")
-    public ResponseEntity<ClientResponeDTO> createPolicy(@RequestBody ClientRequestDTO clientRequestDTODTO) {
+    public ResponseEntity<ClientResponeDTO> createClient(@RequestBody ClientRequestDTO clientRequestDTODTO) {
         return new ResponseEntity<>(clientService.createClient(clientRequestDTODTO), HttpStatus.OK);
     }
 
     @PatchMapping("update-client")
-    public ResponseEntity<ClientResponeDTO> updatePolicy(@RequestBody ClientRequestDTO clientRequestDTODTO) {
+    public ResponseEntity<ClientResponeDTO> updateClient(@RequestBody ClientRequestDTO clientRequestDTODTO) {
         return new ResponseEntity<>(clientService.updateClient(clientRequestDTODTO), HttpStatus.OK);
     }
 
     @DeleteMapping("detele-client")
-    public ResponseEntity<ClientResponeDTO> deletePolicy(@RequestParam Long clientNo) {
+    public ResponseEntity<ClientResponeDTO> deleteClient(@RequestParam Long clientNo) {
         return new ResponseEntity<>(clientService.deleteClient(clientNo), HttpStatus.OK);
     }
 
