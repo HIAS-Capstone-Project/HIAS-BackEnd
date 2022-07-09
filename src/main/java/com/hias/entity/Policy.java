@@ -44,9 +44,9 @@ public class Policy extends BaseEntity {
     @JoinColumn(name = "CLIENT_NO", nullable = false)
     private Client client;
 
-    @OneToMany(mappedBy = "policy", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "policy", fetch = FetchType.LAZY)
     private List<Member> memberList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "policy", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "policy", fetch = FetchType.LAZY)
     private List<PolicyCoverage> policyCoverageList = new ArrayList<>();
 }

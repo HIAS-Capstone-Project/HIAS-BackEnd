@@ -14,7 +14,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,7 +28,7 @@ public class ClientServiceImpl implements ClientService {
         log.info("[getAll] Start get all clients.");
         List<ClientResponeDTO> clientResponeDTOList = new ArrayList<>();
 
-        List<Client> clients = clientRepository.findAll();
+        List<Client> clients = clientRepository.findByIsDeletedIsFalse();
 
         if (!CollectionUtils.isEmpty(clients)) {
             log.info("[getAll] Size of clients : {}.", clients.size());
@@ -42,10 +41,9 @@ public class ClientServiceImpl implements ClientService {
     public ClientResponeDTO getDetail(Long clientNo) {
         log.info("[getDetail] start get detail client");
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
-        Optional<Client> client = clientRepository.findById(clientNo);
-        if (client.isPresent()) {
-            clientResponeDTO = clientResponeDTOMapper.toDto(client.get());
-
+        Client client = clientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
+        if (client != null) {
+            clientResponeDTO = clientResponeDTOMapper.toDto(client);
         }
         return clientResponeDTO;
     }
@@ -61,11 +59,9 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientResponeDTO updateClient(ClientRequestDTO clientRequestDTO) {
         log.info("[updateClient] update client");
-        Optional<Client> optionalClient = clientRepository.findById(clientRequestDTO.getClientNo());
-        Client client;
+        Client client = clientRepository.findByClientNoAndIsDeletedIsFalse(clientRequestDTO.getClientNo());
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
-        if (optionalClient.isPresent()) {
-            client = optionalClient.get();
+        if (client != null) {
             client.setCorporateID(clientRequestDTO.getCorporateID());
             client.setName(clientRequestDTO.getName());
             clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(client));
@@ -76,11 +72,9 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientResponeDTO deleteClient(Long clientNo) {
         log.info("[deleteClient] start delete client {}", clientNo);
-        Optional<Client> optionalClient = clientRepository.findById(clientNo);
-        Client client;
+        Client client = clientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
-        if (optionalClient.isPresent()) {
-            client = optionalClient.get();
+        if (client != null) {
             if (!client.isDeleted()) {
                 client.setDeleted(true);
                 clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(client));
