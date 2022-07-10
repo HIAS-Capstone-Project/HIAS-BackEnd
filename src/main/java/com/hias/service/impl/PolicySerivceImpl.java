@@ -52,7 +52,7 @@ public class PolicySerivceImpl implements PolicyService {
     @Override
     @Transactional
     public PolicyResponseDTO createPolicy(PolicyRequestDTO policyRequestDTO) {
-        log.info("[createPolicy]  create policy ");
+        log.info("[createPolicy] create policy ");
         Policy policy = policyRepository.save(policyRequestDTOMapper.toEntity(policyRequestDTO));
         return policyResponseDTOMapper.toDto(policy);
     }
@@ -63,8 +63,7 @@ public class PolicySerivceImpl implements PolicyService {
         Optional<Policy> policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyRequestDTO.getPolicyNo());
         PolicyResponseDTO policyResponseDTO = new PolicyResponseDTO();
         if (policy.isPresent()) {
-            Policy updatedPolicy = new Policy();
-            updatedPolicy = policyRequestDTOMapper.toEntity(policyRequestDTO);
+            Policy updatedPolicy = policyRequestDTOMapper.toEntity(policyRequestDTO);
             policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(updatedPolicy));
         }
         return policyResponseDTO;
@@ -79,7 +78,6 @@ public class PolicySerivceImpl implements PolicyService {
             Policy policy = optionalPolicy.get();
             policy.setDeleted(true);
             policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(policy));
-
         }
         return policyResponseDTO;
     }
