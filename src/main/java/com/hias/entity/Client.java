@@ -37,7 +37,7 @@ public class Client extends BaseEntity {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<Policy> policyList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Member> memberList = new ArrayList<>();
 
     @OneToMany(mappedBy = "client")
