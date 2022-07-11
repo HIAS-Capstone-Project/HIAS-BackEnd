@@ -9,7 +9,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "EMPLOYEE_NO", schema = "HIAS")
+@Table(name = "EMPLOYEE", schema = "HIAS")
 @Getter
 @Setter
 public class Employee extends BaseEntity {
