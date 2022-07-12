@@ -7,7 +7,7 @@ import com.hias.model.response.MemberResponseDTO;
 import java.util.List;
 
 public interface MemberService {
-    List<MemberResponseDTO> findMember(String key, Integer pageIndex, Integer pageSize);
+    List<MemberResponseDTO> findMember(String key, Integer pageIndex, Integer pageSize, String[] sort);
 
     void deleteMemberByMemberNo(Long memberNo) throws Exception;
 

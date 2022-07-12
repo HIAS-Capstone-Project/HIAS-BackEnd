@@ -21,9 +21,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("list")
-    public ResponseEntity<List<MemberResponseDTO>> findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize,
-                                                              @RequestParam(required = false) Integer pageIndex){
-        return new ResponseEntity<>(memberService.findMember(key, pageIndex, pageSize), HttpStatus.OK);
+    public ResponseEntity<List<MemberResponseDTO>> findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
+        return new ResponseEntity<>(memberService.findMember(key, pageIndex, pageSize, sort), HttpStatus.OK);
     }
 
     @DeleteMapping("delete")
@@ -33,12 +32,12 @@ public class MemberController {
     }
 
     @GetMapping("find-detail")
-    public ResponseEntity<MemberResponseDTO> findMemberById(@RequestParam Long memberNo){
+    public ResponseEntity<MemberResponseDTO> findMemberById(@RequestParam Long memberNo) {
         return new ResponseEntity<>(memberService.findMemberByMemberNo(memberNo), HttpStatus.OK);
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO){
+    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) {
         log.info(memberRequestDTO.toString());
         memberService.saveMember(memberRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);
