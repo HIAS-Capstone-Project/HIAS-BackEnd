@@ -1,8 +1,8 @@
 package com.hias.service.impl;
 
 import com.hias.entity.Policy;
-import com.hias.mapper.PolicyRequestDTOMapper;
-import com.hias.mapper.PolicyResponseDTOMapper;
+import com.hias.mapper.request.PolicyRequestDTOMapper;
+import com.hias.mapper.response.PolicyResponseDTOMapper;
 import com.hias.model.request.PolicyRequestDTO;
 import com.hias.model.response.PolicyResponseDTO;
 import com.hias.repository.PolicyRepository;

@@ -1,5 +1,6 @@
 package com.hias.controller;
 
+import com.hias.constant.ErrorMessageCode;
 import com.hias.entity.auth.Role;
 import com.hias.entity.auth.User;
 import com.hias.entity.auth.UserRole;
@@ -11,6 +12,7 @@ import com.hias.repository.auth.UserRepository;
 import com.hias.repository.auth.UserRoleRepository;
 import com.hias.security.JwtTokenProvider;
 import com.hias.security.dto.UserDetail;
+import com.hias.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,20 +44,20 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("login")
-    public ResponseEntity<TokenResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         Authentication authentication;
-        TokenResponseDTO tokenResponseDTO = new TokenResponseDTO();
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword()));
         } catch (Exception exception) {
             log.error("Username or password is incorrect");
-            return new ResponseEntity<>(tokenResponseDTO, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(MessageUtils.get().getMessage(ErrorMessageCode.USERNAME_OR_PASSWORD_INCORRECT),
+                    HttpStatus.FORBIDDEN);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-        tokenResponseDTO = jwtTokenProvider.getTokenResponseDTO(userDetail);
+        TokenResponseDTO tokenResponseDTO = jwtTokenProvider.getTokenResponseDTO(userDetail);
         return new ResponseEntity<>(tokenResponseDTO, HttpStatus.ACCEPTED);
     }
 
