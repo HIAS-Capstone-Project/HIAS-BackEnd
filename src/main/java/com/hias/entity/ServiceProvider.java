@@ -31,4 +31,10 @@ public class ServiceProvider extends BaseEntity {
 
     @Column(name = "END_DATE")
     private LocalDateTime endDate;
+
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Column(name = "ADDRESS")
+    private String address;
 }
