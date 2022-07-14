@@ -33,8 +33,14 @@ public class Member extends BaseEntity {
     @Column(name = "EMAIL")
     private String email;
 
+    @Column(name = "ADDRESS")
+    private String address;
+
     @Column(name = "BANK_ACCOUNT_NO")
     private String bankAccountNo;
+
+    @Column(name = "HEALTH_CARD_NO")
+    private String healthCardNo;
 
     @Column(name = "CLIENT_NO", insertable = false, updatable = false)
     private Long clientNo;

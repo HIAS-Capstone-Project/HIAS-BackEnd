@@ -1,17 +1,17 @@
 package com.hias.service;
 
 import com.hias.entity.Member;
+import com.hias.exception.HIASException;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
-
-import java.util.List;
+import com.hias.model.response.PagingResponse;
 
 public interface MemberService {
-    List<MemberResponseDTO> findMember(String key, Integer pageIndex, Integer pageSize, String[] sort);
+    PagingResponse findMember(String key, Integer pageIndex, Integer pageSize, String[] sort);
 
     void deleteMemberByMemberNo(Long memberNo) throws Exception;
 
-    Member saveMember(MemberRequestDTO member);
+    Member saveMember(MemberRequestDTO member) throws HIASException;
 
     MemberResponseDTO findMemberByMemberNo(Long memberNo);
 }
