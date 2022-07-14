@@ -14,6 +14,7 @@ import com.hias.service.MemberService;
 import com.hias.utilities.DirectionUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @AllArgsConstructor
+@PropertySource("classpath:message.properties")
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
@@ -68,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
             log.info("Update member");
         } else {
             if (memberRepository.findMemberByClientNo(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))){
-                throw new DuplicateFormatFlagsException("staffID can not be duplicate in the same client");
+                throw new DuplicateFormatFlagsException("{MEMBER_001}");
             }
             saveMem.setHealthCardNo(UUID.randomUUID().toString());
             log.info("Create member");
