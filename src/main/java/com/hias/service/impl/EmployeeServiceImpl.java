@@ -3,7 +3,7 @@ package com.hias.service.impl;
 
 import com.hias.entity.*;
 import com.hias.exception.HIASException;
-import com.hias.mapper.EmployeeRequestDTOMapper;
+import com.hias.mapper.request.EmployeeRequestDTOMapper;
 import com.hias.mapper.EmployeeResponseDTOMapper;
 import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
@@ -11,13 +11,16 @@ import com.hias.model.response.PagingResponse;
 import com.hias.repository.EmployeeRepository;
 import com.hias.service.EmployeeService;
 import com.hias.utilities.DirectionUtils;
+import com.hias.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,24 +56,27 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public void deleteEmployeeByEmployeeNo(Long employeeNo) throws HIASException {
         Optional<Employee> employee = employeeRepository.findById(employeeNo);
         if (employee.isPresent()) {
             Employee employee1 = employee.get();
-            employee1.setDeleted(true);
+            employee1.setDeleted(Boolean.TRUE);
             employeeRepository.save(employee1);
+            log.info("[delete] Delete employee with employeeNo: {}", employeeNo);
         } else {
-            throw new HIASException("Employee not found");
+            throw HIASException.buildHIASException("Employee not found", HttpStatus.NOT_FOUND);
         }
     }
 
     @Override
+    @Transactional
     public Employee saveEmployee(EmployeeRequestDTO employeeRequestDTO) {
         Employee saveEmp = employeeRequestDTOMapper.toEntity(employeeRequestDTO);
         if (employeeRequestDTO.getEmployeeNo() != null) {
-            log.info("Update employee");
+            log.info("[update] Update employee with employeeNo: {}", employeeRequestDTO.getEmployeeNo());
         } else {
-            log.info("Create employee");
+            log.info("[create] Create employee");
         }
         return employeeRepository.save(saveEmp);
     }

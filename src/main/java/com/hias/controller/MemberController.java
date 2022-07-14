@@ -1,6 +1,7 @@
 package com.hias.controller;
 
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.service.MemberService;
@@ -9,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.DuplicateFormatFlagsException;
 
 @RestController
 @RequestMapping("api/member/")
@@ -37,7 +36,7 @@ public class MemberController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) throws DuplicateFormatFlagsException {
+    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) throws HIASException {
         log.info(memberRequestDTO.toString());
         memberService.saveMember(memberRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);

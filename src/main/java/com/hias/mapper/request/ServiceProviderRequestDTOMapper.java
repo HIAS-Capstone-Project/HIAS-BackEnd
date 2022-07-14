@@ -1,6 +1,7 @@
-package com.hias.mapper;
+package com.hias.mapper.request;
 
 import com.hias.entity.ServiceProvider;
+import com.hias.mapper.EntityMapper;
 import com.hias.model.request.ServiceProviderRequestDTO;
 import org.mapstruct.Mapper;
 

@@ -1,6 +1,6 @@
 package com.hias.controller;
 
-import com.hias.exception.DuplicationValueException;
+import com.hias.exception.HIASException;
 import com.hias.model.request.ServiceProviderRequestDTO;
 import com.hias.model.response.ServiceProviderResponseDTO;
 import com.hias.service.ServiceProviderService;
@@ -34,7 +34,7 @@ public class ServiceProviderController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveServiceProvider(@RequestBody ServiceProviderRequestDTO serviceProviderRequestDTO) throws DuplicationValueException {
+    public ResponseEntity<String> saveServiceProvider(@RequestBody ServiceProviderRequestDTO serviceProviderRequestDTO) throws HIASException {
         log.info(serviceProviderRequestDTO.toString());
         serviceProviderService.saveServiceProvider(serviceProviderRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);

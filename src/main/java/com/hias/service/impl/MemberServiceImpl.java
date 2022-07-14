@@ -3,8 +3,10 @@ package com.hias.service.impl;
 
 import java.util.*;
 
+import com.hias.constant.ErrorMessageCode;
 import com.hias.entity.Member;
-import com.hias.mapper.MemberRequestDTOMapper;
+import com.hias.exception.HIASException;
+import com.hias.mapper.request.MemberRequestDTOMapper;
 import com.hias.mapper.MemberResponseDTOMapper;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
@@ -12,6 +14,7 @@ import com.hias.model.response.PagingResponse;
 import com.hias.repository.MemberRepository;
 import com.hias.service.MemberService;
 import com.hias.utilities.DirectionUtils;
+import com.hias.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
@@ -19,17 +22,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @AllArgsConstructor
-@PropertySource("classpath:message.properties")
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberResponseDTOMapper memberResponseDTOMapper;
     private final MemberRequestDTOMapper memberRequestDTOMapper;
+    private final MessageUtils messageUtils;
 
     @Override
     public PagingResponse findMember(String key, Integer pageIndex, Integer pageSize, String[] sort) {
@@ -52,28 +57,31 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public void deleteMemberByMemberNo(Long memberNo) throws Exception {
         Optional<Member> member = memberRepository.findById(memberNo);
         if (member.isPresent()) {
             Member member1 = member.get();
-            member1.setDeleted(true);
+            member1.setDeleted(Boolean.TRUE);
             memberRepository.save(member1);
+            log.info("[delete] Delete member with memberNo: {}", memberNo);
         } else {
             throw new Exception("Member not found");
         }
     }
 
     @Override
-    public Member saveMember(MemberRequestDTO memberRequestDTO) throws DuplicateFormatFlagsException {
+    @Transactional
+    public Member saveMember(MemberRequestDTO memberRequestDTO) throws DuplicateFormatFlagsException, HIASException {
         Member saveMem = memberRequestDTOMapper.toEntity(memberRequestDTO);
         if (memberRequestDTO.getMemberNo() != null) {
-            log.info("Update member");
+            log.info("[update] Update member with memberNo: {}", memberRequestDTO.getMemberNo());
         } else {
             if (memberRepository.findMemberByClientNo(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))){
-                throw new DuplicateFormatFlagsException("{MEMBER_001}");
+                throw HIASException.buildHIASException(messageUtils.getMessage(ErrorMessageCode.STAFF_ID_EXISTENCE), HttpStatus.NOT_ACCEPTABLE);
             }
             saveMem.setHealthCardNo(UUID.randomUUID().toString());
-            log.info("Create member");
+            log.info("[create] Create member");
         }
         return memberRepository.save(saveMem);
     }
