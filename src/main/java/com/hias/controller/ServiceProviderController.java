@@ -1,5 +1,6 @@
 package com.hias.controller;
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.ServiceProviderRequestDTO;
 import com.hias.model.response.ServiceProviderResponseDTO;
 import com.hias.service.ServiceProviderService;
@@ -9,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/service-provider/")
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class ServiceProviderController {
     private final ServiceProviderService serviceProviderService;
 
     @GetMapping("list")
-    public ResponseEntity<List<ServiceProviderResponseDTO>> findServiceProvider(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "serviceProviderName,asc") String[] sort) {
+    public ResponseEntity findServiceProvider(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "serviceProviderName,asc") String[] sort) {
         return new ResponseEntity<>(serviceProviderService.findServiceProvider(key, pageIndex, pageSize, sort), HttpStatus.OK);
     }
 
@@ -35,7 +34,7 @@ public class ServiceProviderController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveServiceProvider(@RequestBody ServiceProviderRequestDTO serviceProviderRequestDTO) {
+    public ResponseEntity<String> saveServiceProvider(@RequestBody ServiceProviderRequestDTO serviceProviderRequestDTO) throws HIASException {
         log.info(serviceProviderRequestDTO.toString());
         serviceProviderService.saveServiceProvider(serviceProviderRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);

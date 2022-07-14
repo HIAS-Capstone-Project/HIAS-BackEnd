@@ -1,6 +1,7 @@
 package com.hias.controller;
 
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.service.MemberService;
@@ -9,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/member/")
@@ -21,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("list")
-    public ResponseEntity<List<MemberResponseDTO>> findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
+    public ResponseEntity findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
         return new ResponseEntity<>(memberService.findMember(key, pageIndex, pageSize, sort), HttpStatus.OK);
     }
 
@@ -37,7 +36,7 @@ public class MemberController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) {
+    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) throws HIASException {
         log.info(memberRequestDTO.toString());
         memberService.saveMember(memberRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);

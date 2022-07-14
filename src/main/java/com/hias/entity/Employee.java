@@ -31,6 +31,9 @@ public class Employee extends BaseEntity {
     @Column(name = "EMAIL")
     private String email;
 
+    @Column(name = "ADDRESS")
+    private String address;
+
     @Column(name = "DEPARTMENT_NO", insertable = false, updatable = false)
     private Long departmentNo;
 
