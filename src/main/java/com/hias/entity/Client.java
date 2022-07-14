@@ -34,7 +34,7 @@ public class Client extends BaseEntity {
     @Column(name = "END_DATE")
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Policy> policyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)

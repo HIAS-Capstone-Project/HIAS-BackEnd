@@ -37,9 +37,9 @@ public class Benefit extends BaseEntity {
     @Column(name = "END_DATE")
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "benefit", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "benefit", fetch = FetchType.LAZY)
     private List<PolicyCoverage> policyCoverageList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "benefit")
+    @OneToMany(mappedBy = "benefit", fetch = FetchType.LAZY)
     private List<Claim> claimList = new ArrayList<>();
 }
