@@ -20,5 +20,7 @@ public class EmployeeResponseDTO implements Serializable {
 
     private String email;
 
+    private String address;
+
     private Long departmentNo;
 }

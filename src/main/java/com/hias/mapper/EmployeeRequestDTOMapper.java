@@ -8,11 +8,12 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface EmployeeRequestDTOMapper extends EntityMapper<EmployeeRequestDTO, Employee>{
-    @Mapping(source = "employeeRequestDTO.employeeID", target = "employeeID")
-    @Mapping(source = "employeeRequestDTO.employeeName", target = "employeeName")
-    @Mapping(source = "employeeRequestDTO.phoneNumber", target = "phoneNumber")
-    @Mapping(source = "employeeRequestDTO.email", target = "email")
-    @Mapping(source = "employeeRequestDTO.departmentNo", target = "departmentNo")
-    @Mapping(source = "department", target = "department")
-    Employee convert(EmployeeRequestDTO employeeRequestDTO, Department department);
+    @Override
+    @Mapping(source = "employeeID", target = "employeeID")
+    @Mapping(source = "employeeName", target = "employeeName")
+    @Mapping(source = "phoneNumber", target = "phoneNumber")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "address", target = "address")
+    @Mapping(source = "departmentNo", target = "department.departmentNo")
+    Employee toEntity(EmployeeRequestDTO employeeRequestDTO);
 }

@@ -1,15 +1,18 @@
 package com.hias.service.impl;
 
 import com.hias.entity.*;
+import com.hias.exception.DuplicationValueException;
 import com.hias.mapper.ServiceProviderRequestDTOMapper;
 import com.hias.mapper.ServiceProviderResponseDTOMapper;
 import com.hias.model.request.ServiceProviderRequestDTO;
+import com.hias.model.response.PagingResponse;
 import com.hias.model.response.ServiceProviderResponseDTO;
 import com.hias.repository.ServiceProviderRepository;
 import com.hias.service.ServiceProviderService;
 import com.hias.utilities.DirectionUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,7 +31,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
     private final ServiceProviderRequestDTOMapper serviceProviderRequestDTOMapper;
 
     @Override
-    public List<ServiceProviderResponseDTO> findServiceProvider(String key, Integer pageIndex, Integer pageSize, String[] sort) {
+    public PagingResponse findServiceProvider(String key, Integer pageIndex, Integer pageSize, String[] sort) {
         pageIndex = pageIndex == null ? 1 : pageIndex;
         pageSize = pageSize == null ? 5 : pageSize;
         key = key == null ? "" : key;
@@ -43,7 +46,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             orders.add(new Sort.Order(DirectionUtils.getDirection(sort[1]), sort[0]));
         }
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(orders));
-        return serviceProviderResponseDTOMapper.toDtoList(serviceProviderRepository.findServiceProvider(key, pageable).toList());
+        Page<ServiceProvider> page = serviceProviderRepository.findServiceProvider(key, pageable);
+        return new PagingResponse(serviceProviderResponseDTOMapper.toDtoList(page.toList()), pageIndex, page.getTotalPages(), page.getTotalElements());
     }
 
     @Override
@@ -59,11 +63,14 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
     }
 
     @Override
-    public ServiceProvider saveServiceProvider(ServiceProviderRequestDTO serviceProviderRequestDTO) {
+    public ServiceProvider saveServiceProvider(ServiceProviderRequestDTO serviceProviderRequestDTO) throws DuplicationValueException {
         ServiceProvider saveServiceProvider = serviceProviderRequestDTOMapper.toEntity(serviceProviderRequestDTO);
         if (serviceProviderRequestDTO.getServiceProviderNo() != null) {
             log.info("Update service provider");
         } else {
+            if (serviceProviderRepository.findAll().stream().anyMatch(o -> o.getServiceProviderID().equals(saveServiceProvider.getServiceProviderID()))){
+                throw new DuplicationValueException("serviceProviderID exiting");
+            }
             log.info("Create service provider");
         }
         return serviceProviderRepository.save(saveServiceProvider);

@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.DuplicateFormatFlagsException;
 
 @RestController
 @RequestMapping("api/member/")
@@ -21,7 +21,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("list")
-    public ResponseEntity<List<MemberResponseDTO>> findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
+    public ResponseEntity findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
         return new ResponseEntity<>(memberService.findMember(key, pageIndex, pageSize, sort), HttpStatus.OK);
     }
 
@@ -37,7 +37,7 @@ public class MemberController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) {
+    public ResponseEntity<String> saveMember(@RequestBody MemberRequestDTO memberRequestDTO) throws DuplicateFormatFlagsException {
         log.info(memberRequestDTO.toString());
         memberService.saveMember(memberRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);

@@ -19,6 +19,10 @@ public class MemberResponseDTO implements Serializable {
 
     private String email;
 
+    private String address;
+
+    private String healthCardNo;
+
     private String bankAccountNo;
 
     private Long clientNo;

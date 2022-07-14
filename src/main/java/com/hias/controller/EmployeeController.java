@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/employee/")
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping("list")
-    public ResponseEntity<List<EmployeeResponseDTO>> findEmployee(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "employeeName,asc") String[] sort) {
+    public ResponseEntity findEmployee(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "employeeName,asc") String[] sort) {
         return new ResponseEntity<>(employeeService.findEmployee(key, pageIndex, pageSize, sort), HttpStatus.OK);
     }
 

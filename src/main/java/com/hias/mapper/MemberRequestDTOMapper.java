@@ -1,27 +1,24 @@
 package com.hias.mapper;
 
 
-import com.hias.entity.Bank;
-import com.hias.entity.Client;
 import com.hias.entity.Member;
-import com.hias.entity.Policy;
 import com.hias.model.request.MemberRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface MemberRequestDTOMapper extends EntityMapper<MemberRequestDTO, Member>{
-    @Mapping(source = "memberRequestDTO.memberNo", target = "memberNo")
-    @Mapping(source = "memberRequestDTO.memberName", target = "memberName")
-    @Mapping(source = "memberRequestDTO.staffID", target = "staffID")
-    @Mapping(source = "memberRequestDTO.phoneNumber", target = "phoneNumber")
-    @Mapping(source = "memberRequestDTO.email", target = "email")
-    @Mapping(source = "memberRequestDTO.bankAccountNo", target = "bankAccountNo")
-    @Mapping(source = "memberRequestDTO.clientNo", target = "clientNo")
-    @Mapping(source = "memberRequestDTO.policyNo", target = "policyNo")
-    @Mapping(source = "memberRequestDTO.bankNo", target = "bankNo")
-    @Mapping(source = "bank", target = "bank")
-    @Mapping(source = "policy", target = "policy")
-    @Mapping(source = "client", target = "client")
-    Member convert(MemberRequestDTO memberRequestDTO, Bank bank, Policy policy, Client client);
+    @Override
+    @Mapping(source = "memberNo", target = "memberNo")
+    @Mapping(source = "memberName", target = "memberName")
+    @Mapping(source = "staffID", target = "staffID")
+    @Mapping(source = "phoneNumber", target = "phoneNumber")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "healthCardNo", target = "healthCardNo")
+    @Mapping(source = "address", target = "address")
+    @Mapping(source = "bankAccountNo", target = "bankAccountNo")
+    @Mapping(source = "clientNo", target = "client.clientNo")
+    @Mapping(source = "policyNo", target = "policy.policyNo")
+    @Mapping(source = "bankNo", target = "bank.bankNo")
+    Member toEntity(MemberRequestDTO memberRequestDTO);
 }

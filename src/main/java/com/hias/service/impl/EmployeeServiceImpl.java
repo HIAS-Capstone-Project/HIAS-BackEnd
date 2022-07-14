@@ -6,11 +6,13 @@ import com.hias.mapper.EmployeeRequestDTOMapper;
 import com.hias.mapper.EmployeeResponseDTOMapper;
 import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
+import com.hias.model.response.PagingResponse;
 import com.hias.repository.EmployeeRepository;
 import com.hias.service.EmployeeService;
 import com.hias.utilities.DirectionUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRequestDTOMapper employeeRequestDTOMapper;
 
     @Override
-    public List<EmployeeResponseDTO> findEmployee(String key, Integer pageIndex, Integer pageSize, String[] sort) {
+    public PagingResponse findEmployee(String key, Integer pageIndex, Integer pageSize, String[] sort) {
         pageIndex = pageIndex == null ? 1 : pageIndex;
         pageSize = pageSize == null ? 5 : pageSize;
         key = key == null ? "" : key;
@@ -45,7 +47,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             orders.add(new Sort.Order(DirectionUtils.getDirection(sort[1]), sort[0]));
         }
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(orders));
-        return employeeResponseDTOMapper.toDtoList(employeeRepository.findEmployee(key, pageable).toList());
+        Page<Employee> page = employeeRepository.findEmployee(key, pageable);
+        return new PagingResponse(employeeResponseDTOMapper.toDtoList(page.toList()), pageIndex, page.getTotalPages(), page.getTotalElements());
     }
 
     @Override
@@ -62,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee saveEmployee(EmployeeRequestDTO employeeRequestDTO) {
-        Employee saveEmp = employeeRequestDTOMapper.convert(employeeRequestDTO, Department.builder().departmentNo(employeeRequestDTO.getDepartmentNo()).build());
+        Employee saveEmp = employeeRequestDTOMapper.toEntity(employeeRequestDTO);
         if (employeeRequestDTO.getEmployeeNo() != null) {
             log.info("Update employee");
         } else {
