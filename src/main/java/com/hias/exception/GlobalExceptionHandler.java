@@ -18,5 +18,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(errorResponse.getError(),errorResponse.getStatus());
     }
 
+    @ExceptionHandler(HIASException.class)
+    public ResponseEntity HandleHIASException(Exception ex){
+        ErrorResponse errorResponse = new ErrorResponse(new Error(ex.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(errorResponse.getError(),errorResponse.getStatus());
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.hias.controller;
 
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
 import com.hias.service.EmployeeService;
@@ -24,7 +25,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<String> deleteEmployee(@RequestParam Long employeeNo) throws Exception {
+    public ResponseEntity<String> deleteEmployee(@RequestParam Long employeeNo) throws HIASException {
         employeeService.deleteEmployeeByEmployeeNo(employeeNo);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }

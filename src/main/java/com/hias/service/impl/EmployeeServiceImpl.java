@@ -2,6 +2,7 @@ package com.hias.service.impl;
 
 
 import com.hias.entity.*;
+import com.hias.exception.HIASException;
 import com.hias.mapper.EmployeeRequestDTOMapper;
 import com.hias.mapper.EmployeeResponseDTOMapper;
 import com.hias.model.request.EmployeeRequestDTO;
@@ -52,14 +53,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteEmployeeByEmployeeNo(Long employeeNo) throws Exception {
+    public void deleteEmployeeByEmployeeNo(Long employeeNo) throws HIASException {
         Optional<Employee> employee = employeeRepository.findById(employeeNo);
         if (employee.isPresent()) {
             Employee employee1 = employee.get();
             employee1.setDeleted(true);
             employeeRepository.save(employee1);
         } else {
-            throw new Exception("Employee not found");
+            throw new HIASException("Employee not found");
         }
     }
 

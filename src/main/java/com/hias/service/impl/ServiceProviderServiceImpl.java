@@ -12,6 +12,8 @@ import com.hias.service.ServiceProviderService;
 import com.hias.utilities.DirectionUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,10 +27,14 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Slf4j
+@PropertySource("classpath:message.properties")
 public class ServiceProviderServiceImpl implements ServiceProviderService {
     private final ServiceProviderRepository serviceProviderRepository;
     private final ServiceProviderResponseDTOMapper serviceProviderResponseDTOMapper;
     private final ServiceProviderRequestDTOMapper serviceProviderRequestDTOMapper;
+
+    @Value("${SERVICE_PROVIDER_001}")
+    private String dubSerProID;
 
     @Override
     public PagingResponse findServiceProvider(String key, Integer pageIndex, Integer pageSize, String[] sort) {
@@ -69,7 +75,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             log.info("Update service provider");
         } else {
             if (serviceProviderRepository.findAll().stream().anyMatch(o -> o.getServiceProviderID().equals(saveServiceProvider.getServiceProviderID()))){
-                throw new DuplicationValueException("serviceProviderID exiting");
+                throw new DuplicationValueException(dubSerProID);
             }
             log.info("Create service provider");
         }
