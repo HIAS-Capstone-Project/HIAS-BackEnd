@@ -1,8 +1,8 @@
 package com.hias.service.impl;
 
 import com.hias.entity.Client;
-import com.hias.mapper.ClientRequestDTOMapper;
-import com.hias.mapper.ClientResponeDTOMapper;
+import com.hias.mapper.request.ClientRequestDTOMapper;
+import com.hias.mapper.response.ClientResponeDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.repository.ClientRepository;
@@ -66,7 +66,7 @@ public class ClientServiceImpl implements ClientService {
         Optional<Client> optionalClient = clientRepository.findByClientNoAndIsDeletedIsFalse(clientRequestDTO.getClientNo());
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
         if (optionalClient.isPresent()) {
-            Client updatedClient =clientRequestDTOMapper.toEntity(clientRequestDTO); ;
+            Client updatedClient = clientRequestDTOMapper.toEntity(clientRequestDTO);
             clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(updatedClient));
         }
         return clientResponeDTO;

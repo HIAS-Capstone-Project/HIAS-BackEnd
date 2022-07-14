@@ -5,9 +5,15 @@ import com.hias.constant.CommonConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.service.BenefitService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +36,15 @@ public class BenefitController {
     @GetMapping("find-all")
     public ResponseEntity<List<BenefitResponseDTO>> findAll() {
         return new ResponseEntity<>(benefitService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<PagingResponseModel<BenefitResponseDTO>> search(@RequestParam(required = false) String searchValue,
+                                                                          @PageableDefault(page = 0, size = 10)
+                                                                          @SortDefault.SortDefaults({
+                                                                                  @SortDefault(sort = "modifiedOn", direction = Sort.Direction.ASC)
+                                                                          }) Pageable pageable) {
+        return new ResponseEntity<>(benefitService.search(searchValue, pageable), HttpStatus.OK);
     }
 
     @PostMapping("create")

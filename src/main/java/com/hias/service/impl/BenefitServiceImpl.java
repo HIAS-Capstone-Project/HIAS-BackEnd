@@ -7,6 +7,7 @@ import com.hias.mapper.request.BenefitRequestDTOMapper;
 import com.hias.mapper.response.BenefitResponseDTOMapper;
 import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.BenefitRepository;
 import com.hias.service.BenefitService;
 import com.hias.utils.MessageUtils;
@@ -14,6 +15,10 @@ import com.hias.utils.validator.BenefitValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +59,34 @@ public class BenefitServiceImpl implements BenefitService {
             benefitResponseDTOS = benefitResponseDTOMapper.toDtoList(benefits);
         }
         return benefitResponseDTOS;
+    }
+
+    @Override
+    public PagingResponseModel<BenefitResponseDTO> search(String searchValue, Pageable pageable) {
+
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Benefit> benefitPage = benefitRepository.findAllBySearchValue(searchValue, pageable);
+
+        if (!benefitPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Benefit> benefits = benefitPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", benefits.size());
+
+        List<BenefitResponseDTO> benefitResponseDTOS = benefitResponseDTOMapper.toDtoList(benefits);
+
+        log.info("k" + benefitPage.getTotalPages());
+        return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
+                pageable,
+                benefitPage.getTotalElements()));
     }
 
     @Override
