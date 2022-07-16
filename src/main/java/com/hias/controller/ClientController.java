@@ -1,5 +1,6 @@
 package com.hias.controller;
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.service.ClientService;
@@ -29,19 +30,19 @@ public class ClientController {
         return new ResponseEntity<>(clientService.getDetail(clientNo), HttpStatus.OK);
     }
 
-    @PostMapping("create-client")
-    public ResponseEntity<ClientResponeDTO> createClient(@RequestBody ClientRequestDTO clientRequestDTODTO) {
-        return new ResponseEntity<>(clientService.createClient(clientRequestDTODTO), HttpStatus.OK);
+    @PostMapping("create")
+    public ResponseEntity<ClientResponeDTO> create(@RequestBody ClientRequestDTO clientRequestDTODTO) throws HIASException {
+        return new ResponseEntity<>(clientService.create(clientRequestDTODTO), HttpStatus.CREATED);
     }
 
-    @PatchMapping("update-client")
-    public ResponseEntity<ClientResponeDTO> updateClient(@RequestBody ClientRequestDTO clientRequestDTODTO) {
-        return new ResponseEntity<>(clientService.updateClient(clientRequestDTODTO), HttpStatus.OK);
+    @PutMapping("update")
+    public ResponseEntity<ClientResponeDTO> update(@RequestBody ClientRequestDTO clientRequestDTODTO) {
+        return new ResponseEntity<>(clientService.update(clientRequestDTODTO), HttpStatus.OK);
     }
 
-    @DeleteMapping("detele-client")
-    public ResponseEntity<ClientResponeDTO> deleteClient(@RequestParam Long clientNo) {
-        return new ResponseEntity<>(clientService.deleteClient(clientNo), HttpStatus.OK);
+    @DeleteMapping("delete")
+    public ResponseEntity<ClientResponeDTO> delete(@RequestParam Long clientNo) {
+        return new ResponseEntity<>(clientService.delete(clientNo), HttpStatus.OK);
     }
 
 

@@ -1,5 +1,6 @@
 package com.hias.service;
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 
@@ -11,9 +12,9 @@ public interface ClientService {
 
     ClientResponeDTO getDetail(Long clientNo);
 
-    ClientResponeDTO createClient(ClientRequestDTO clientRequestDTO);
+    ClientResponeDTO create(ClientRequestDTO clientRequestDTO) throws HIASException;
 
-    ClientResponeDTO updateClient(ClientRequestDTO clientRequestDTO);
+    ClientResponeDTO update(ClientRequestDTO clientRequestDTO);
 
-    ClientResponeDTO deleteClient(Long clienNo);
+    ClientResponeDTO delete(Long clienNo);
 }

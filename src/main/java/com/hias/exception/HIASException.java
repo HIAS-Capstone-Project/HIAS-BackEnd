@@ -20,4 +20,14 @@ public class HIASException extends Exception {
                         .httpStatus(httpStatus)
                         .build()).build();
     }
+
+    public static final HIASException buildHIASException(String fieldName, String errorMessage, HttpStatus httpStatus) {
+        return HIASException.builder()
+                .httpStatus(httpStatus)
+                .apiError(ApiError.builder()
+                        .fieldName(fieldName)
+                        .errorMessage(errorMessage)
+                        .httpStatus(httpStatus)
+                        .build()).build();
+    }
 }

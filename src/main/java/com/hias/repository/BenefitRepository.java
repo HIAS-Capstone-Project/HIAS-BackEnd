@@ -22,7 +22,7 @@ public interface BenefitRepository extends JpaRepository<Benefit, Long> {
     @Query("select b from Benefit b " +
             "where b.isDeleted = false " +
             "and (:searchValue is null " +
-            "or lower(b.benefitCode) like concat('%',lower(:searchValue),'%') " +
-            "or lower(b.benefitName) like concat('%',lower(:searchValue),'%'))")
+            "or lower(b.benefitCode) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(b.benefitName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Benefit> findAllBySearchValue(String searchValue, Pageable pageable);
 }

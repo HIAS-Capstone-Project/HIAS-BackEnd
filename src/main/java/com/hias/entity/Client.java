@@ -28,6 +28,15 @@ public class Client extends BaseEntity {
     @Column(name = "CLIENT_NAME")
     private String name;
 
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
+
+    @Column(name = "ADDRESS")
+    private String address;
+
     @Column(name = "START_DATE")
     private LocalDateTime startDate;
 
@@ -40,6 +49,6 @@ public class Client extends BaseEntity {
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Member> memberList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<EmployeeClient> employeeClients = new ArrayList<>();
 }

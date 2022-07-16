@@ -14,5 +14,7 @@ public class ApiError implements Serializable {
 
     private String errorMessage;
 
+    private String fieldName;
+
     private HttpStatus httpStatus;
 }

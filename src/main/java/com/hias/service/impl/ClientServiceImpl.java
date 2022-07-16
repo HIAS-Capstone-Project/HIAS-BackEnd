@@ -1,14 +1,20 @@
 package com.hias.service.impl;
 
+import com.hias.constant.ErrorMessageCode;
+import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Client;
+import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.repository.ClientRepository;
 import com.hias.service.ClientService;
+import com.hias.utils.MessageUtils;
+import com.hias.utils.validator.ClientValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +30,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final ClientResponeDTOMapper clientResponeDTOMapper;
     private final ClientRequestDTOMapper clientRequestDTOMapper;
+    private final ClientValidator clientValidator;
 
     @Override
     public List<ClientResponeDTO> getAll() {
@@ -52,7 +59,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientResponeDTO createClient(ClientRequestDTO clientRequestDTO) {
+    public ClientResponeDTO create(ClientRequestDTO clientRequestDTO) throws HIASException {
+        String corporateID = clientRequestDTO.getCorporateID();
+        if (clientValidator.isCorporateIDExistance(corporateID)) {
+            throw HIASException.buildHIASException(FieldNameConstant.CORPORATE_ID,
+                    MessageUtils.get().getMessage(ErrorMessageCode.CORPORATE_ID_EXISTENCE),
+                    HttpStatus.NOT_ACCEPTABLE);
+        }
+
         log.info("[createClient] start get detail client");
         Client client = clientRepository.save(clientRequestDTOMapper.toEntity(clientRequestDTO));
         log.info("create client successfully");
@@ -61,7 +75,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientResponeDTO updateClient(ClientRequestDTO clientRequestDTO) {
+    public ClientResponeDTO update(ClientRequestDTO clientRequestDTO) {
         log.info("[updateClient] update client");
         Optional<Client> optionalClient = clientRepository.findByClientNoAndIsDeletedIsFalse(clientRequestDTO.getClientNo());
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
@@ -74,7 +88,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientResponeDTO deleteClient(Long clientNo) {
+    public ClientResponeDTO delete(Long clientNo) {
         log.info("[deleteClient] start delete client {}", clientNo);
         Optional<Client> optionalClient = clientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();

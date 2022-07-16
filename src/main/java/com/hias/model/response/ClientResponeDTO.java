@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
 public class ClientResponeDTO implements Serializable {
 
     private Long clientNo;
-
     private String corporateID;
-
     private String name;
+    private String email;
+    private String phoneNumber;
+    private String address;
 
     private LocalDateTime startDate;
 
