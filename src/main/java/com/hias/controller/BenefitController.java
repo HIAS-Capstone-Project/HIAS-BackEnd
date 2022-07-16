@@ -2,6 +2,7 @@ package com.hias.controller;
 
 
 import com.hias.constant.CommonConstant;
+import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitResponseDTO;
@@ -41,7 +42,8 @@ public class BenefitController {
     public ResponseEntity<PagingResponseModel<BenefitResponseDTO>> search(@RequestParam(required = false) String searchValue,
                                                                           @PageableDefault(page = 0, size = 10)
                                                                           @SortDefault.SortDefaults({
-                                                                                  @SortDefault(sort = "modifiedOn", direction = Sort.Direction.ASC)
+                                                                                  @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                          direction = Sort.Direction.DESC)
                                                                           }) Pageable pageable) {
         return new ResponseEntity<>(benefitService.search(searchValue, pageable), HttpStatus.OK);
     }

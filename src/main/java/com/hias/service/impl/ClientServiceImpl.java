@@ -2,18 +2,24 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.entity.Benefit;
 import com.hias.entity.Client;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
+import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.ClientResponeDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.ClientRepository;
 import com.hias.service.ClientService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.ClientValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +61,32 @@ public class ClientServiceImpl implements ClientService {
             clientResponeDTO = clientResponeDTOMapper.toDto(optionalClient.get());
         }
         return clientResponeDTO;
+    }
+
+    @Override
+    public PagingResponseModel<ClientResponeDTO> search(String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Client> clientPage = clientRepository.findAllBySearchValue(searchValue, pageable);
+
+        if (!clientPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Client> clients = clientPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", clients.size());
+
+        List<ClientResponeDTO> clientResponeDTOS = clientResponeDTOMapper.toDtoList(clients);
+
+        return new PagingResponseModel<>(new PageImpl<>(clientResponeDTOS,
+                pageable,
+                clientPage.getTotalElements()));
     }
 
     @Override
