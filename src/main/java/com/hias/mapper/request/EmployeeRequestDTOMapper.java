@@ -2,7 +2,7 @@ package com.hias.mapper.request;
 
 
 import com.hias.constant.CommonConstant;
-import com.hias.entity.*;
+import com.hias.entity.Employee;
 import com.hias.mapper.EntityMapper;
 import com.hias.model.request.EmployeeRequestDTO;
 import org.mapstruct.Mapper;

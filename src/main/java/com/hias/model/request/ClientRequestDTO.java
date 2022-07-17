@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class ClientRequestDTO implements Serializable {
     private Long clientNo;
     private String corporateID;
-    private String name;
+    private String clientName;
     private String email;
     private String phoneNumber;
     private String address;

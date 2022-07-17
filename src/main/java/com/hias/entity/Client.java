@@ -26,7 +26,7 @@ public class Client extends BaseEntity {
     private String corporateID;
 
     @Column(name = "CLIENT_NAME")
-    private String name;
+    private String clientName;
 
     @Column(name = "EMAIL")
     private String email;

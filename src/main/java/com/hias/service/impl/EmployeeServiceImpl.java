@@ -1,7 +1,7 @@
 package com.hias.service.impl;
 
 
-import com.hias.entity.*;
+import com.hias.entity.Employee;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.EmployeeRequestDTOMapper;
 import com.hias.mapper.response.EmployeeResponseDTOMapper;

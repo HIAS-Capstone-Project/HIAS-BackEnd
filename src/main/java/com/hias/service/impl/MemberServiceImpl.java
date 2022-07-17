@@ -1,8 +1,6 @@
 package com.hias.service.impl;
 
 
-import java.util.*;
-
 import com.hias.constant.ErrorMessageCode;
 import com.hias.entity.Member;
 import com.hias.exception.HIASException;
@@ -24,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Slf4j
 @Service
@@ -76,7 +76,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRequestDTO.getMemberNo() != null) {
             log.info("[update] Update member with memberNo: {}", memberRequestDTO.getMemberNo());
         } else {
-            if (memberRepository.findMemberByClientNo(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))){
+            if (memberRepository.findMemberByClientNo(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))) {
                 throw HIASException.buildHIASException(messageUtils.getMessage(ErrorMessageCode.STAFF_ID_EXISTENCE), HttpStatus.NOT_ACCEPTABLE);
             }
             saveMem.setHealthCardNo(UUID.randomUUID().toString());

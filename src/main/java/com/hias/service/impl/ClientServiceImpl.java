@@ -2,13 +2,11 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
-import com.hias.entity.Benefit;
 import com.hias.entity.Client;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
-import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.ClientRepository;

@@ -11,16 +11,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ServiceProviderRequestDTO {
+
     private Long serviceProviderNo;
 
     private String serviceProviderID;
 
     private String serviceProviderName;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime startDate;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime endDate;
 
     private String email;
