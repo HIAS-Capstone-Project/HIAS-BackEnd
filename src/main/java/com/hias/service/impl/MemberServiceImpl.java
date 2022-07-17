@@ -77,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
             log.info("[update] Update member with memberNo: {}", memberRequestDTO.getMemberNo());
         } else {
             if (memberRepository.findMemberByClientNo(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))){
-                throw HIASException.buildHIASException(messageUtils.getMessage(ErrorMessageCode.STAFF_ID_EXISTENCE), HttpStatus.NOT_ACCEPTABLE);
+                throw HIASException.buildHIASException("staffID", messageUtils.getMessage(ErrorMessageCode.STAFF_ID_EXISTENCE), HttpStatus.NOT_ACCEPTABLE);
             }
             saveMem.setHealthCardNo(UUID.randomUUID().toString());
             log.info("[create] Create member");
