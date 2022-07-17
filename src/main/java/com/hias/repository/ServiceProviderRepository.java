@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServiceProviderRepository extends JpaRepository<ServiceProvider, Long> {
-    @Query("SELECT s FROM ServiceProvider s WHERE s.isDeleted = false AND (s.serviceProviderName LIKE %?1% OR s.address LIKE %?1%)")
+    @Query("SELECT s FROM ServiceProvider s WHERE s.isDeleted = false AND (s.serviceProviderID LIKE %?1% OR s.serviceProviderName LIKE %?1% OR s.address LIKE %?1%)")
     Page<ServiceProvider> findServiceProvider(String keyOne, Pageable pageable);
 }
