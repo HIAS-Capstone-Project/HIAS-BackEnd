@@ -37,4 +37,7 @@ public class ServiceProvider extends BaseEntity {
 
     @Column(name = "ADDRESS")
     private String address;
+
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
 }

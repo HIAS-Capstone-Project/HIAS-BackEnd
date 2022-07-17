@@ -1,6 +1,7 @@
 package com.hias.model.response;
 
 import lombok.*;
+
 import java.io.Serializable;
 
 @NoArgsConstructor
