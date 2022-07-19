@@ -43,7 +43,7 @@ public class JwtTokenProvider {
         String accessToken = generateAccessToken(userDetail);
         return TokenResponseDTO.builder()
                 .accessToken(accessToken)
-                .roles(userDetail.getRoles())
+                .role(userDetail.getRoles().get(0))
                 .tokenType(StringUtils.trimAllWhitespace(SecurityConstant.BEARER_TOKEN))
                 .build();
     }

@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,12 +20,15 @@ public class TokenResponseDTO implements Serializable {
     @JsonProperty("token_type")
     private String tokenType;
 
-    @JsonProperty("roles")
-    private List<String> roles;
+    @JsonProperty("role")
+    private String role;
 
     @JsonProperty("have_not_permission")
     private boolean haveNotPermission;
 
     @JsonProperty("expiry_date")
     private Date expiryDate;
+
+    @JsonProperty("primary_key")
+    private Long primaryKey;
 }

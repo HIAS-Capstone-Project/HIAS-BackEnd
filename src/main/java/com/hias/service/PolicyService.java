@@ -1,5 +1,6 @@
 package com.hias.service;
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.PolicyRequestDTO;
 import com.hias.model.response.PolicyResponseDTO;
 
@@ -10,9 +11,9 @@ public interface PolicyService {
 
     PolicyResponseDTO getDetail(Long policyNo);
 
-    PolicyResponseDTO createPolicy(PolicyRequestDTO policyRequestDTO);
+    PolicyResponseDTO create(PolicyRequestDTO policyRequestDTO) throws HIASException;
 
-    PolicyResponseDTO updatePolicy(PolicyRequestDTO policyRequestDTO);
+    PolicyResponseDTO update(PolicyRequestDTO policyRequestDTO);
 
-    PolicyResponseDTO deletePolicy(Long policyNo);
+    PolicyResponseDTO delete(Long policyNo);
 }

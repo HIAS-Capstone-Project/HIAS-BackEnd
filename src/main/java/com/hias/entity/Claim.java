@@ -61,9 +61,9 @@ public class Claim extends BaseEntity {
     @JoinColumn(name = "BENEFIT_NO", nullable = false)
     private Benefit benefit;
 
-    @OneToMany(mappedBy = "claim")
+    @OneToMany(mappedBy = "claim", fetch = FetchType.LAZY)
     private List<ClaimRequestHistory> claimRequestHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "claim")
+    @OneToMany(mappedBy = "claim", fetch = FetchType.LAZY)
     private List<ClaimPayment> claimPaymentList = new ArrayList<>();
 }

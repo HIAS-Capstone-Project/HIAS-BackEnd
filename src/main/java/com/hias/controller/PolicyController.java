@@ -1,5 +1,6 @@
 package com.hias.controller;
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.PolicyRequestDTO;
 import com.hias.model.response.PolicyResponseDTO;
 import com.hias.service.PolicyService;
@@ -29,18 +30,18 @@ public class PolicyController {
         return new ResponseEntity<>(policyService.getDetail(policyNo), HttpStatus.OK);
     }
 
-    @PostMapping("create-policy")
-    public ResponseEntity<PolicyResponseDTO> createPolicy(@RequestBody PolicyRequestDTO policyRequestDTO) {
-        return new ResponseEntity<>(policyService.createPolicy(policyRequestDTO), HttpStatus.OK);
+    @PostMapping("create")
+    public ResponseEntity<PolicyResponseDTO> create(@RequestBody PolicyRequestDTO policyRequestDTO) throws HIASException {
+        return new ResponseEntity<>(policyService.create(policyRequestDTO), HttpStatus.CREATED);
     }
 
-    @PatchMapping("update-policy")
-    public ResponseEntity<PolicyResponseDTO> updatePolicy(@RequestBody PolicyRequestDTO policyRequestDTODTO) {
-        return new ResponseEntity<>(policyService.updatePolicy(policyRequestDTODTO), HttpStatus.OK);
+    @PutMapping("update")
+    public ResponseEntity<PolicyResponseDTO> update(@RequestBody PolicyRequestDTO policyRequestDTODTO) {
+        return new ResponseEntity<>(policyService.update(policyRequestDTODTO), HttpStatus.OK);
     }
 
-    @DeleteMapping("detele-policy")
-    public ResponseEntity<PolicyResponseDTO> deletePolicy(@RequestParam Long policyNo) {
-        return new ResponseEntity<>(policyService.deletePolicy(policyNo), HttpStatus.OK);
+    @DeleteMapping("detele")
+    public ResponseEntity<PolicyResponseDTO> delete(@RequestParam Long policyNo) {
+        return new ResponseEntity<>(policyService.delete(policyNo), HttpStatus.OK);
     }
 }
