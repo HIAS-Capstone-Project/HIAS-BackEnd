@@ -1,7 +1,7 @@
 package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
-import com.hias.entity.*;
+import com.hias.entity.ServiceProvider;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ServiceProviderRequestDTOMapper;
 import com.hias.mapper.response.ServiceProviderResponseDTOMapper;
@@ -76,7 +76,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         if (serviceProviderRequestDTO.getServiceProviderNo() != null) {
             log.info("[update] Update service provider with serviceProviderNo: {}", serviceProviderRequestDTO.getServiceProviderNo());
         } else {
-            if (serviceProviderRepository.findAll().stream().anyMatch(o -> o.getServiceProviderID().equals(saveServiceProvider.getServiceProviderID()))){
+            if (serviceProviderRepository.findAll().stream().anyMatch(o -> o.getServiceProviderID().equals(saveServiceProvider.getServiceProviderID()))) {
                 throw HIASException.buildHIASException("serviceProviderID",
                         messageUtils.getMessage(ErrorMessageCode.SERVICE_PROVIDER_ID_EXISTENCE)
                         , HttpStatus.NOT_ACCEPTABLE);
