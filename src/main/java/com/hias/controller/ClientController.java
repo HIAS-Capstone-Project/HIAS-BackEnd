@@ -47,13 +47,13 @@ public class ClientController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<ClientResponeDTO> create(@RequestBody ClientRequestDTO clientRequestDTODTO) throws HIASException {
-        return new ResponseEntity<>(clientService.create(clientRequestDTODTO), HttpStatus.CREATED);
+    public ResponseEntity<ClientResponeDTO> create(@RequestBody ClientRequestDTO clientRequestDTO) throws HIASException {
+        return new ResponseEntity<>(clientService.create(clientRequestDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("update")
-    public ResponseEntity<ClientResponeDTO> update(@RequestBody ClientRequestDTO clientRequestDTODTO) {
-        return new ResponseEntity<>(clientService.update(clientRequestDTODTO), HttpStatus.OK);
+    public ResponseEntity<ClientResponeDTO> update(@RequestBody ClientRequestDTO clientRequestDTO) {
+        return new ResponseEntity<>(clientService.update(clientRequestDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("delete")

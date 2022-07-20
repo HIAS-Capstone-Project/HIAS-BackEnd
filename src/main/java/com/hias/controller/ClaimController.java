@@ -30,4 +30,16 @@ public class ClaimController {
         claimService.create(claimRequestDTO);
         return new ResponseEntity<>(CommonConstant.CREATED_SUCCESSFULLY, HttpStatus.CREATED);
     }
+
+    @PutMapping("update")
+    public ResponseEntity<String> update(@RequestBody ClaimRequestDTO claimRequestDTO) {
+        claimService.create(claimRequestDTO);
+        return new ResponseEntity<>(CommonConstant.UPDATED_SUCCESSFULLY, HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete-by-claim-no/{claimNo}")
+    public ResponseEntity<String> deleteByClaimNo(@PathVariable Long claimNo) {
+        claimService.deleteByClaimNo(claimNo);
+        return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
+    }
 }

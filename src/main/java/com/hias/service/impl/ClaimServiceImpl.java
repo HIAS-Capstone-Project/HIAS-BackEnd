@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     public List<ClaimResponseDTO> findAll() {
-        List<Claim> claims = claimRepository.findAll();
+        List<Claim> claims = claimRepository.findAllByIsDeletedIsFalse();
         return claimResponseDTOMapper.toDtoList(claims);
     }
 
@@ -34,6 +35,30 @@ public class ClaimServiceImpl implements ClaimService {
     public ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO) {
         Claim claim = claimRequestDTOMapper.toEntity(claimRequestDTO);
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        return claimResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO update(ClaimRequestDTO claimRequestDTO) {
+        Claim claim = claimRequestDTOMapper.toEntity(claimRequestDTO);
+        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        return claimResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO deleteByClaimNo(Long claimNo) {
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        if (!claimOptional.isPresent()) {
+            log.info("[deleteByBenefitNo] Cannot found claim with claimNo : {} in the system.", claimNo);
+        } else {
+            Claim claim = claimOptional.get();
+            claim.setDeleted(Boolean.TRUE);
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+            log.info("[deleteByBenefitNo] Delete claim with claimNo : {} in the system.", claimNo);
+        }
         return claimResponseDTO;
     }
 }
