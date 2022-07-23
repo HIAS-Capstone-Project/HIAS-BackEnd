@@ -9,7 +9,7 @@ public interface ClaimService {
 
     List<ClaimResponseDTO> findAll();
 
-    ClaimResponseDTO  create(ClaimRequestDTO claimRequestDTO);
+    ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);
 
     ClaimResponseDTO update(ClaimRequestDTO claimRequestDTO);
 
