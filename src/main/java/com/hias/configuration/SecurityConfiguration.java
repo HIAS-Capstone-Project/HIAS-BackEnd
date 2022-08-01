@@ -46,8 +46,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
-                .antMatchers("/**/api/test/**", "/**/api/auth/create-user").hasAnyRole(SecurityConstant.SYSTEM_ADMIN)
-                .antMatchers("/**/api/auth/**", "/**").permitAll()
+//                .antMatchers("/**/api/test/ko", "/**/api/auth/create-user").hasAnyRole(SecurityConstant.SYSTEM_ADMIN)
+//                .antMatchers("/**/api/auth/**", "/**", "/**/api/test/test-firebase").permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }

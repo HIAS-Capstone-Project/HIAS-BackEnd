@@ -2,6 +2,8 @@ package com.hias.service.impl;
 
 
 import com.hias.constant.ErrorMessageCode;
+import com.hias.constant.FieldNameConstant;
+import com.hias.entity.HealthCardFormat;
 import com.hias.entity.Member;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.MemberRequestDTOMapper;
@@ -9,10 +11,12 @@ import com.hias.mapper.response.MemberResponseDTOMapper;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponse;
+import com.hias.repository.HealthCardFormatRepository;
 import com.hias.repository.MemberRepository;
 import com.hias.service.MemberService;
 import com.hias.utilities.DirectionUtils;
 import com.hias.utils.MessageUtils;
+import com.hias.utils.validator.MemberValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -31,9 +36,12 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final HealthCardFormatRepository healthCardFormatRepository;
     private final MemberResponseDTOMapper memberResponseDTOMapper;
     private final MemberRequestDTOMapper memberRequestDTOMapper;
     private final MessageUtils messageUtils;
+    private final MemberValidator memberValidator;
 
     @Override
     public PagingResponse findMember(String key, Integer pageIndex, Integer pageSize, String[] sort) {
@@ -83,6 +91,32 @@ public class MemberServiceImpl implements MemberService {
             log.info("[create] Create member");
         }
         return memberRepository.save(saveMem);
+    }
+
+    @Override
+    @Transactional
+    public MemberResponseDTO createMember(MemberRequestDTO memberRequestDTO) throws HIASException {
+        String staffID = memberRequestDTO.getStaffID();
+        Long clientNo = memberRequestDTO.getClientNo();
+        log.info("[createMember] Start create new member.");
+        if (memberValidator.isStaffIDExistanceInSameClient(clientNo, staffID)) {
+            throw HIASException.buildHIASException(FieldNameConstant.STAFF_ID,
+                    messageUtils.getMessage(ErrorMessageCode.STAFF_ID_EXISTENCE),
+                    HttpStatus.NOT_ACCEPTABLE);
+        }
+        Member member = memberRepository.save(memberRequestDTOMapper.toEntity(memberRequestDTO));
+        //create healcard no
+        Long memberNo = member.getMemberNo();
+        log.info("[createMember] Start create heathcardNo for member : {}", memberNo);
+        List<HealthCardFormat> healthCardFormats = healthCardFormatRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
+        if (!CollectionUtils.isEmpty(healthCardFormats)) {
+            member.setHealthCardNo(healthCardFormats.get(0).getPrefix() + memberNo);
+            memberRepository.save(member);
+        }
+
+        MemberResponseDTO memberResponseDTO = memberResponseDTOMapper.toDto(member);
+
+        return memberResponseDTO;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.hias.controller;
 
 
+import com.hias.constant.CommonConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
@@ -40,5 +41,11 @@ public class MemberController {
         log.info(memberRequestDTO.toString());
         memberService.saveMember(memberRequestDTO);
         return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
+
+    @PostMapping("create")
+    public ResponseEntity<String> create(@RequestBody MemberRequestDTO memberRequestDTO) throws HIASException {
+        memberService.createMember(memberRequestDTO);
+        return new ResponseEntity<>(CommonConstant.CREATED_SUCCESSFULLY, HttpStatus.CREATED);
     }
 }

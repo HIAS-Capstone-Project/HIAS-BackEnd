@@ -16,4 +16,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findMember(String keyOne, Pageable pageable);
 
     List<Member> findMemberByClientNo(Long clientNo);
+
+    List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);
 }

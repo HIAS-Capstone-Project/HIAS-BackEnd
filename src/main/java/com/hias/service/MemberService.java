@@ -13,5 +13,7 @@ public interface MemberService {
 
     Member saveMember(MemberRequestDTO member) throws HIASException;
 
+    MemberResponseDTO createMember(MemberRequestDTO memberRequestDTO) throws HIASException;
+
     MemberResponseDTO findMemberByMemberNo(Long memberNo);
 }

@@ -39,7 +39,7 @@ public class Member extends BaseEntity {
     @Column(name = "BANK_ACCOUNT_NO")
     private String bankAccountNo;
 
-    @Column(name = "HEALTH_CARD_NO")
+    @Column(name = "HEALTH_CARD_NO", unique = true)
     private String healthCardNo;
 
     @Column(name = "CLIENT_NO", insertable = false, updatable = false)

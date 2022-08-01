@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.io.IOException;
-
 @Configuration
 @Slf4j
 public class CustomConfiguration {

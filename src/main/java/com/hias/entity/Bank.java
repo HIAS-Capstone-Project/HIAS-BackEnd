@@ -24,6 +24,6 @@ public class Bank extends SoftDeleteEntity {
     @Column(name = "BANK_NAME")
     private String bankName;
 
-    @OneToMany(mappedBy = "bank")
+    @OneToMany(mappedBy = "bank", fetch = FetchType.LAZY)
     private List<Member> memberList = new ArrayList<>();
 }
