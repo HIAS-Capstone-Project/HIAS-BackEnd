@@ -28,4 +28,11 @@ public class ClaimDocument extends SoftDeleteEntity {
     @ManyToOne
     @JoinColumn(name = "CLAIM_NO", nullable = false)
     private Claim claim;
+
+    @Column(name = "LISCENSE_NO", insertable = false, updatable = false)
+    private Long liscenseNo;
+
+    @ManyToOne
+    @JoinColumn(name = "LISCENSE_NO", nullable = false)
+    private Liscense liscense;
 }

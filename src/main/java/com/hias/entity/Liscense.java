@@ -30,4 +30,7 @@ public class Liscense extends SoftDeleteEntity {
 
     @OneToMany(mappedBy = "liscense")
     private List<BenefitLiscense> benefitLiscenses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "liscense")
+    private List<ClaimDocument> claimDocuments = new ArrayList<>();
 }
