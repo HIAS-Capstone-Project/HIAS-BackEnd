@@ -13,7 +13,7 @@ public interface MemberService {
     PagingResponse findMember(String key, Integer pageIndex, Integer pageSize, String[] sort);
 
     PagingResponseModel<MemberResponseDTO> search(String searchValue, Pageable pageable);
-    
+
     void deleteMemberByMemberNo(Long memberNo) throws Exception;
 
     Member saveMember(MemberRequestDTO member) throws HIASException;

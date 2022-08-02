@@ -2,12 +2,19 @@ package com.hias.controller;
 
 
 import com.hias.constant.CommonConstant;
+import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.MemberRequestDTO;
+import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.MemberResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +30,16 @@ public class MemberController {
     @GetMapping("list")
     public ResponseEntity findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
         return new ResponseEntity<>(memberService.findMember(key, pageIndex, pageSize, sort), HttpStatus.OK);
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<PagingResponseModel<MemberResponseDTO>> search(@RequestParam(required = false) String searchValue,
+                                                                         @PageableDefault(page = 0, size = 10)
+                                                                         @SortDefault.SortDefaults({
+                                                                                 @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                         direction = Sort.Direction.DESC)
+                                                                         }) Pageable pageable) {
+        return new ResponseEntity<>(memberService.search(searchValue, pageable), HttpStatus.OK);
     }
 
     @DeleteMapping("delete")
