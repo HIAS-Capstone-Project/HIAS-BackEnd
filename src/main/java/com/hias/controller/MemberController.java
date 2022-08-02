@@ -52,6 +52,6 @@ public class MemberController {
     @PutMapping("update")
     public ResponseEntity<String> update(@RequestBody MemberRequestDTO memberRequestDTO) throws HIASException {
         memberService.createMember(memberRequestDTO);
-        return new ResponseEntity<>(CommonConstant.CREATED_SUCCESSFULLY, HttpStatus.CREATED);
+        return new ResponseEntity<>(CommonConstant.UPDATED_SUCCESSFULLY, HttpStatus.OK);
     }
 }

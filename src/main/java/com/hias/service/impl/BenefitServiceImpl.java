@@ -78,11 +78,10 @@ public class BenefitServiceImpl implements BenefitService {
 
         List<Benefit> benefits = benefitPage.getContent();
 
-        log.info("[search] Found {} elements match with value : {}.", benefits.size());
+        log.info("[search] Found {} elements match with value : {}.", benefits.size(), searchValue);
 
         List<BenefitResponseDTO> benefitResponseDTOS = benefitResponseDTOMapper.toDtoList(benefits);
 
-        log.info("k" + benefitPage.getTotalPages());
         return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
                 pageable,
                 benefitPage.getTotalElements()));
