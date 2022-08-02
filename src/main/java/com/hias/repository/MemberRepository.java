@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -18,4 +19,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findMemberByClientNo(Long clientNo);
 
     List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);
+
+    Optional<Member> findByMemberNoAndIsDeletedIsFalse(Long memberNo);
 }

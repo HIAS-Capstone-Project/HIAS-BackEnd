@@ -48,4 +48,10 @@ public class MemberController {
         memberService.createMember(memberRequestDTO);
         return new ResponseEntity<>(CommonConstant.CREATED_SUCCESSFULLY, HttpStatus.CREATED);
     }
+
+    @PutMapping("update")
+    public ResponseEntity<String> update(@RequestBody MemberRequestDTO memberRequestDTO) throws HIASException {
+        memberService.createMember(memberRequestDTO);
+        return new ResponseEntity<>(CommonConstant.CREATED_SUCCESSFULLY, HttpStatus.CREATED);
+    }
 }

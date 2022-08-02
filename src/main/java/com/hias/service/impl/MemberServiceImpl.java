@@ -3,12 +3,14 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.entity.Benefit;
 import com.hias.entity.HealthCardFormat;
 import com.hias.entity.Member;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.MemberRequestDTOMapper;
 import com.hias.mapper.response.MemberResponseDTOMapper;
 import com.hias.model.request.MemberRequestDTO;
+import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponse;
 import com.hias.repository.HealthCardFormatRepository;
@@ -36,7 +38,6 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-
     private final HealthCardFormatRepository healthCardFormatRepository;
     private final MemberResponseDTOMapper memberResponseDTOMapper;
     private final MemberRequestDTOMapper memberRequestDTOMapper;
@@ -116,6 +117,22 @@ public class MemberServiceImpl implements MemberService {
 
         MemberResponseDTO memberResponseDTO = memberResponseDTOMapper.toDto(member);
 
+        return memberResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public MemberResponseDTO updateMember(MemberRequestDTO memberRequestDTO) throws HIASException {
+        MemberResponseDTO memberResponseDTO = new MemberResponseDTO();
+        Long memberNo = memberRequestDTO.getMemberNo();
+        Optional<Member> memberOptional = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
+        if (!memberOptional.isPresent()) {
+            log.info("[updateMember] Cannot found member with memberNo : {} in the system.", memberNo);
+        } else {
+            Member benefit = memberRequestDTOMapper.toEntity(memberRequestDTO);
+            memberResponseDTO = memberResponseDTOMapper.toDto(memberRepository.save(benefit));
+            log.info("[update] Updated member with memberNo : {} in the system.", memberNo);
+        }
         return memberResponseDTO;
     }
 
