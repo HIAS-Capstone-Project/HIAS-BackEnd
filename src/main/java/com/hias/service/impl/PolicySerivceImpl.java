@@ -2,11 +2,14 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.entity.Benefit;
 import com.hias.entity.Policy;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.PolicyRequestDTOMapper;
 import com.hias.mapper.response.PolicyResponseDTOMapper;
 import com.hias.model.request.PolicyRequestDTO;
+import com.hias.model.response.BenefitResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.model.response.PolicyResponseDTO;
 import com.hias.repository.PolicyRepository;
 import com.hias.service.PolicyService;
@@ -14,6 +17,9 @@ import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.PolicyValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +49,32 @@ public class PolicySerivceImpl implements PolicyService {
 
         }
         return policyResponseDTOS;
+    }
+
+    @Override
+    public PagingResponseModel<PolicyResponseDTO> search(String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Policy> policyPage = policyRepository.findAllBySearchValue(searchValue, pageable);
+
+        if (!policyPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Policy> policies = policyPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", policies.size(), searchValue);
+
+        List<PolicyResponseDTO> benefitResponseDTOS = policyResponseDTOMapper.toDtoList(policies);
+
+        return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
+                pageable,
+                policyPage.getTotalElements()));
     }
 
     @Override

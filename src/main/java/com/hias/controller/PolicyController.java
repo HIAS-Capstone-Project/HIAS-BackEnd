@@ -1,11 +1,18 @@
 package com.hias.controller;
 
+import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.PolicyRequestDTO;
+import com.hias.model.response.BenefitResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.model.response.PolicyResponseDTO;
 import com.hias.service.PolicyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +30,16 @@ public class PolicyController {
     @GetMapping("get-all")
     public ResponseEntity<List<PolicyResponseDTO>> getAll() {
         return new ResponseEntity<>(policyService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<PagingResponseModel<PolicyResponseDTO>> search(@RequestParam(required = false) String searchValue,
+                                                                         @PageableDefault(page = 0, size = 10)
+                                                                         @SortDefault.SortDefaults({
+                                                                                 @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                         direction = Sort.Direction.DESC)
+                                                                         }) Pageable pageable) {
+        return new ResponseEntity<>(policyService.search(searchValue, pageable), HttpStatus.OK);
     }
 
     @GetMapping("policy-detail")
