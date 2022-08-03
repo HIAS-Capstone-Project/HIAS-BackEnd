@@ -1,6 +1,5 @@
 package com.hias.configuration;
 
-import com.hias.constant.SecurityConstant;
 import com.hias.security.JwtAuthEntryPoint;
 import com.hias.security.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;

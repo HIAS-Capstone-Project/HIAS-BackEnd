@@ -28,6 +28,12 @@ public class Liscense extends SoftDeleteEntity {
     @Column(name = "LABEL")
     private String label;
 
+    @Column(name = "REMARK")
+    private String remark;
+
+    @Column(name = "FILE_URL")
+    private String fileUrl;
+
     @OneToMany(mappedBy = "liscense")
     private List<BenefitLiscense> benefitLiscenses = new ArrayList<>();
 

@@ -5,7 +5,6 @@ import com.hias.constant.CommonConstant;
 import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.MemberRequestDTO;
-import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.service.MemberService;
@@ -68,7 +67,7 @@ public class MemberController {
 
     @PutMapping("update")
     public ResponseEntity<String> update(@RequestBody MemberRequestDTO memberRequestDTO) throws HIASException {
-        memberService.createMember(memberRequestDTO);
+        memberService.updateMember(memberRequestDTO);
         return new ResponseEntity<>(CommonConstant.UPDATED_SUCCESSFULLY, HttpStatus.OK);
     }
 }

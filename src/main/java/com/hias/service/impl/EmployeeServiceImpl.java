@@ -1,22 +1,26 @@
 package com.hias.service.impl;
 
 
+import com.hias.constant.ErrorMessageCode;
+import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Employee;
+import com.hias.entity.Member;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.EmployeeRequestDTOMapper;
 import com.hias.mapper.response.EmployeeResponseDTOMapper;
 import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
+import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponse;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.EmployeeRepository;
 import com.hias.service.EmployeeService;
 import com.hias.utilities.DirectionUtils;
+import com.hias.utils.MessageUtils;
+import com.hias.utils.validator.EmployeeValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +38,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeResponseDTOMapper employeeResponseDTOMapper;
     private final EmployeeRequestDTOMapper employeeRequestDTOMapper;
 
+    private final EmployeeValidator employeeValidator;
+
+    private final MessageUtils messageUtils;
+
     @Override
+
     public PagingResponse findEmployee(String key, Integer pageIndex, Integer pageSize, String[] sort) {
         pageIndex = pageIndex == null ? 1 : pageIndex;
         pageSize = pageSize == null ? 5 : pageSize;
@@ -52,6 +61,32 @@ public class EmployeeServiceImpl implements EmployeeService {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(orders));
         Page<Employee> page = employeeRepository.findEmployee(key, pageable);
         return new PagingResponse(employeeResponseDTOMapper.toDtoList(page.toList()), pageIndex, page.getTotalPages(), page.getTotalElements());
+    }
+
+    @Override
+    public PagingResponseModel<EmployeeResponseDTO> search(String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Employee> employeePage = employeeRepository.findAllBySearchValue(searchValue, pageable);
+
+        if (!employeePage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Employee> employees = employeePage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", employees.size(), searchValue);
+
+        List<EmployeeResponseDTO> employeeResponseDTOS = employeeResponseDTOMapper.toDtoList(employees);
+
+        return new PagingResponseModel<>(new PageImpl<>(employeeResponseDTOS,
+                pageable,
+                employeePage.getTotalElements()));
     }
 
     @Override
@@ -78,6 +113,39 @@ public class EmployeeServiceImpl implements EmployeeService {
             log.info("[create] Create employee");
         }
         return employeeRepository.save(saveEmp);
+    }
+
+    @Override
+    @Transactional
+    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeRequestDTO) throws HIASException {
+        String employeeID = employeeRequestDTO.getEmployeeID();
+        log.info("[create] Start create new employee.");
+        if (employeeValidator.isEmployeeIDExistance(employeeID)) {
+            throw HIASException.buildHIASException(FieldNameConstant.EMPLOYEE_ID,
+                    messageUtils.getMessage(ErrorMessageCode.EMPLOYEE_ID_EXISTENCE)
+                    , HttpStatus.NOT_ACCEPTABLE);
+        }
+        EmployeeResponseDTO employeeResponseDTO;
+        Employee employee = employeeRepository.save(employeeRequestDTOMapper.toEntity(employeeRequestDTO));
+        employeeResponseDTO = employeeResponseDTOMapper.toDto(employee);
+        log.info("[create] End create new employee with employee no : {}", employee.getEmployeeNo());
+        return employeeResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public EmployeeResponseDTO updateEmployee(EmployeeRequestDTO employeeRequestDTO) {
+        EmployeeResponseDTO employeeResponseDTO = new EmployeeResponseDTO();
+        Long employeeNo = employeeRequestDTO.getEmployeeNo();
+        Optional<Employee> employeeOptional = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo);
+        if (!employeeOptional.isPresent()) {
+            log.info("[updateEmployee] Cannot found employee with employee no : {} in the system.", employeeNo);
+        } else {
+            Employee employee = employeeRequestDTOMapper.toEntity(employeeRequestDTO);
+            employeeResponseDTO = employeeResponseDTOMapper.toDto(employeeRepository.save(employee));
+            log.info("[update] Updated member with employeeNo : {} in the system.", employeeNo);
+        }
+        return employeeResponseDTO;
     }
 
     @Override

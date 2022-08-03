@@ -1,6 +1,5 @@
 package com.hias.repository;
 
-import com.hias.entity.Benefit;
 import com.hias.entity.Policy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

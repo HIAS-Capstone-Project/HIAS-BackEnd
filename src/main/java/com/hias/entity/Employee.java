@@ -19,7 +19,7 @@ public class Employee extends BaseEntity {
     @Column(name = "EMPLOYEE_NO")
     private Long employeeNo;
 
-    @Column(name = "EMPLOYEE_ID")
+    @Column(name = "EMPLOYEE_ID", updatable = false)
     private String employeeID;
 
     @Column(name = "EMPLOYEE_NAME")

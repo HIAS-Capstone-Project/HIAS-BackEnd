@@ -1,6 +1,7 @@
 package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
+import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Benefit;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
@@ -93,7 +94,7 @@ public class BenefitServiceImpl implements BenefitService {
         String benefitCode = benefitRequestDTO.getBenefitCode();
         log.info("[create] Start create new benefit.");
         if (benefitValidator.isBenefitCodeExistance(benefitCode)) {
-            throw HIASException.buildHIASException(
+            throw HIASException.buildHIASException(FieldNameConstant.BENEFIT_CODE,
                     messageUtils.getMessage(ErrorMessageCode.BENEFIT_CODE_EXISTENCE)
                     , HttpStatus.NOT_ACCEPTABLE);
         }

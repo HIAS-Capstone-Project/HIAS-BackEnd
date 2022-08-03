@@ -3,14 +3,12 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
-import com.hias.entity.Benefit;
 import com.hias.entity.HealthCardFormat;
 import com.hias.entity.Member;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.MemberRequestDTOMapper;
 import com.hias.mapper.response.MemberResponseDTOMapper;
 import com.hias.model.request.MemberRequestDTO;
-import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
@@ -153,8 +151,8 @@ public class MemberServiceImpl implements MemberService {
         if (!memberOptional.isPresent()) {
             log.info("[updateMember] Cannot found member with memberNo : {} in the system.", memberNo);
         } else {
-            Member benefit = memberRequestDTOMapper.toEntity(memberRequestDTO);
-            memberResponseDTO = memberResponseDTOMapper.toDto(memberRepository.save(benefit));
+            Member member = memberRequestDTOMapper.toEntity(memberRequestDTO);
+            memberResponseDTO = memberResponseDTOMapper.toDto(memberRepository.save(member));
             log.info("[update] Updated member with memberNo : {} in the system.", memberNo);
         }
         return memberResponseDTO;

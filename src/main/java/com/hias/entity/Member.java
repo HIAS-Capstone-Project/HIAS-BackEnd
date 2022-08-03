@@ -24,7 +24,7 @@ public class Member extends BaseEntity {
     @Column(name = "MEMBER_NAME")
     private String memberName;
 
-    @Column(name = "STAFF_ID")
+    @Column(name = "STAFF_ID", updatable = false)
     private String staffID;
 
     @Column(name = "PHONE_NUMBER")
