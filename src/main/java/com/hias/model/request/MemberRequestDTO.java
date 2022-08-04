@@ -1,8 +1,10 @@
 package com.hias.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +30,9 @@ public class MemberRequestDTO implements Serializable {
     private Long policyNo;
 
     private Long bankNo;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate dob;
 
     @Override
     public String toString() {

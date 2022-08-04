@@ -4,6 +4,7 @@ import com.hias.entity.base.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Builder
 @AllArgsConstructor
@@ -33,6 +34,9 @@ public class Employee extends BaseEntity {
 
     @Column(name = "ADDRESS")
     private String address;
+
+    @Column(name = "DOB")
+    private LocalDate dob;
 
     @Column(name = "DEPARTMENT_NO", insertable = false, updatable = false)
     private Long departmentNo;

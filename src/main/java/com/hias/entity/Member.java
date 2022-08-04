@@ -4,6 +4,7 @@ import com.hias.entity.base.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class Member extends BaseEntity {
 
     @Column(name = "BANK_ACCOUNT_NO")
     private String bankAccountNo;
+
+    @Column(name = "DOB")
+    private LocalDate dob;
 
     @Column(name = "HEALTH_CARD_NO", unique = true)
     private String healthCardNo;

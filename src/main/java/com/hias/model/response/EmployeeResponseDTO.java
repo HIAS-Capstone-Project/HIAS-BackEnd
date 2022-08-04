@@ -3,6 +3,7 @@ package com.hias.model.response;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +24,6 @@ public class EmployeeResponseDTO implements Serializable {
     private String address;
 
     private Long departmentNo;
+
+    private LocalDate dob;
 }

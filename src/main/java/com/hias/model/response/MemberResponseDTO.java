@@ -3,6 +3,7 @@ package com.hias.model.response;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,4 +32,6 @@ public class MemberResponseDTO implements Serializable {
     private Long policyNo;
 
     private Long bankNo;
+
+    private LocalDate dob;
 }

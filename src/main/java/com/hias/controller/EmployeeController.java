@@ -34,11 +34,11 @@ public class EmployeeController {
 
     @GetMapping("search")
     public ResponseEntity<PagingResponseModel<EmployeeResponseDTO>> search(@RequestParam(required = false) String searchValue,
-                                                                         @PageableDefault(page = 0, size = 10)
-                                                                         @SortDefault.SortDefaults({
-                                                                                 @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
-                                                                                         direction = Sort.Direction.DESC)
-                                                                         }) Pageable pageable) {
+                                                                           @PageableDefault(page = 0, size = 10)
+                                                                           @SortDefault.SortDefaults({
+                                                                                   @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                           direction = Sort.Direction.DESC)
+                                                                           }) Pageable pageable) {
         return new ResponseEntity<>(employeeService.search(searchValue, pageable), HttpStatus.OK);
     }
 

@@ -1,8 +1,10 @@
 package com.hias.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +25,7 @@ public class EmployeeRequestDTO implements Serializable {
     private String address;
 
     private Long departmentNo;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate dob;
 }
