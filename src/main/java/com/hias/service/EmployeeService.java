@@ -4,7 +4,6 @@ import com.hias.entity.Employee;
 import com.hias.exception.HIASException;
 import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
-import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
 import org.springframework.data.domain.Pageable;

@@ -44,4 +44,11 @@ public class Employee extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "DEPARTMENT_NO", nullable = false)
     private Department department;
+
+    @Column(name = "EMPLOYMENT_TYPE_NO", insertable = false, updatable = false)
+    private Long employmentTypeNo;
+
+    @ManyToOne
+    @JoinColumn(name = "EMPLOYMENT_TYPE", nullable = false)
+    private EmploymentType employmentType;
 }

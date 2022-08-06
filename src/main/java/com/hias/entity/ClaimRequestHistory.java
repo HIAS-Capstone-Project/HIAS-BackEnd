@@ -19,12 +19,12 @@ public class ClaimRequestHistory extends SoftDeleteEntity {
     @Column(name = "CLAIM_REQUEST_HISTORY_NO")
     private Long claimRequestHistoryNo;
 
-    @Column(name = "CLAIM_PROCESSOR_NO", insertable = false, updatable = false)
-    private Long claimProcessorNo;
+    @Column(name = "EMPLOYEE_NO", insertable = false, updatable = false)
+    private Long employeeNo;
 
     @ManyToOne
-    @JoinColumn(name = "CLAIM_PROCESSOR_NO", nullable = false)
-    private ClaimProcessor claimProcessor;
+    @JoinColumn(name = "EMPLOYEE_NO", nullable = false)
+    private Employee employee;
 
     @Column(name = "CLAIM_NO", insertable = false, updatable = false)
     private Long claimNo;
@@ -33,6 +33,6 @@ public class ClaimRequestHistory extends SoftDeleteEntity {
     @JoinColumn(name = "CLAIM_NO", nullable = false)
     private Claim claim;
 
-    @Column(name = "REMARK", insertable = false, updatable = false)
+    @Column(name = "REMARK")
     private String remark;
 }

@@ -19,12 +19,12 @@ public class EmployeeClient extends SoftDeleteEntity {
     @Column(name = "EMPLOYEE_CLIENT_NO")
     private Long employeeClientNo;
 
-    @Column(name = "BUSINESS_EMPLOYEE_NO", insertable = false, updatable = false)
-    private Long businessEmployeeNo;
+    @Column(name = "EMPLOYEE_NO", insertable = false, updatable = false)
+    private Long employeeNo;
 
     @ManyToOne
-    @JoinColumn(name = "BUSINESS_EMPLOYEE_NO", nullable = false)
-    private BusinessEmployee businessEmployee;
+    @JoinColumn(name = "EMPLOYEE_NO", nullable = false)
+    private Employee employee;
 
     @Column(name = "CLIENT_NO", insertable = false, updatable = false)
     private Long clientNo;

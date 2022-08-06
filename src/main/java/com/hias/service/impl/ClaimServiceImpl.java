@@ -4,6 +4,7 @@ import com.hias.entity.Claim;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.model.request.ClaimRequestDTO;
+import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.repository.ClaimRepository;
 import com.hias.service.ClaimService;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,4 +63,12 @@ public class ClaimServiceImpl implements ClaimService {
         }
         return claimResponseDTO;
     }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO submitByMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) {
+
+        return null;
+    }
+
 }

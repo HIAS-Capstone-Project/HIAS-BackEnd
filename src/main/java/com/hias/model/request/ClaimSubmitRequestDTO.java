@@ -6,13 +6,14 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class ClaimRequestDTO implements Serializable {
+public class ClaimSubmitRequestDTO implements Serializable {
     private Long claimNo;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
@@ -31,5 +32,6 @@ public class ClaimRequestDTO implements Serializable {
     private BigDecimal claimAmount;
     private Long serviceProviderNo;
     private Long memberNo;
-    private Long benefitItemNo;
+    private Long benefitNo;
+    private List<Long> liscenseNos;
 }

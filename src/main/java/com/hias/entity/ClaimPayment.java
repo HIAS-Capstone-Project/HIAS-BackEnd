@@ -27,12 +27,12 @@ public class ClaimPayment extends BaseEntity {
     @JoinColumn(name = "CLAIM_NO", nullable = false)
     private Claim claim;
 
-    @Column(name = "ACCOUNTANT_NO", insertable = false, updatable = false)
-    private Long accountNo;
+    @Column(name = "EMPLOYEE_NO", insertable = false, updatable = false)
+    private Long employeeNo;
 
     @ManyToOne
-    @JoinColumn(name = "ACCOUNTANT_NO", nullable = false)
-    private Accountant accountant;
+    @JoinColumn(name = "EMPLOYEE_NO", nullable = false)
+    private Employee employee;
 
     @Column(name = "PAYMENT_AMOUNT")
     private BigDecimal paymentAmount;

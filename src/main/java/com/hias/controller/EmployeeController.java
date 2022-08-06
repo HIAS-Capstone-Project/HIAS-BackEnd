@@ -6,7 +6,6 @@ import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
-import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.service.EmployeeService;
 import lombok.AllArgsConstructor;
