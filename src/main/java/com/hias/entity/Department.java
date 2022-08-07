@@ -1,6 +1,7 @@
 package com.hias.entity;
 
 import com.hias.entity.base.BaseEntity;
+import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Table(name = "DEPARTMENT", schema = "HIAS")
 @Getter
 @Setter
-public class Department extends BaseEntity {
+public class Department extends SoftDeleteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +30,7 @@ public class Department extends BaseEntity {
 
     @OneToMany(mappedBy = "department")
     private List<Employee> employeeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    private List<DepartmentEmploymentType> departmentEmploymentTypes = new ArrayList<>();
 }

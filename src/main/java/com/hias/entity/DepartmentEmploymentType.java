@@ -1,11 +1,9 @@
 package com.hias.entity;
 
-import com.hias.entity.base.BaseEntity;
+import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -14,19 +12,24 @@ import java.util.List;
 @Table(name = "DEPARTMENT_EMPLOYMENT_TYPE", schema = "HIAS")
 @Getter
 @Setter
-public class DepartmentEmploymentType extends BaseEntity {
+public class DepartmentEmploymentType extends SoftDeleteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "DEPARTMENT_EMPLOYMENT_TYPE_NO")
+    private Long departmentEmploymentTypeNo;
+
+    @Column(name = "EMPLOYMENT_TYPE_NO", insertable = false, updatable = false)
+    private Long employmentTypeNo;
+
+    @ManyToOne
+    @JoinColumn(name = "EMPLOYMENT_TYPE_NO", nullable = false)
+    private EmploymentType employmentType;
+
+    @Column(name = "DEPARTMENT_NO", insertable = false, updatable = false)
     private Long departmentNo;
 
-    @Column(name = "DEPARTMENT_CODE")
-    private String departmentCode;
-
-    @Column(name = "DEPARTMENT_NAME")
-    private String departmentName;
-
-    @OneToMany(mappedBy = "department")
-    private List<Employee> employeeList = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "DEPARTMENT_NO", nullable = false)
+    private Department department;
 }

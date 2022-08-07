@@ -29,4 +29,7 @@ public class EmploymentType extends SoftDeleteEntity {
 
     @OneToMany(mappedBy = "employmentType")
     private List<Employee> employeeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employmentType", fetch = FetchType.LAZY)
+    private List<DepartmentEmploymentType> departmentEmploymentTypes = new ArrayList<>();
 }

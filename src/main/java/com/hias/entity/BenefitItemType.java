@@ -25,12 +25,12 @@ public class BenefitItemType extends SoftDeleteEntity {
     @Column(name = "BENEFIT_ITEM_TYPE_CODE")
     private String benefitItemTypeCode;
 
-    @Column(name = "BENEFIT_ITEM_NAME")
+    @Column(name = "BENEFIT_ITEM_TYPE_NAME")
     private String benefitItemTypeName;
 
     @Column(name = "REMARK")
     private String remark;
 
-    @OneToMany(mappedBy = "benefitItemType", fetch = FetchType.LAZY)
-    private List<BenefitItem> benefitItems = new ArrayList<>();
+//    @OneToMany(mappedBy = "benefitItemType", fetch = FetchType.LAZY)
+//    private List<BenefitItem> benefitItems = new ArrayList<>();
 }

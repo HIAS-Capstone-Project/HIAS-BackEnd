@@ -38,12 +38,12 @@ public class BenefitItem extends SoftDeleteEntity {
     @JoinColumn(name = "BENEFIT_NO", nullable = false)
     private Benefit benefit;
 
-    @Column(name = "BENEFIT_ITEM_TYPE_NO", insertable = false, updatable = false)
-    private Long benefitItemTypeNo;
-
-    @ManyToOne
-    @JoinColumn(name = "BENEFIT_ITEM_TYPE_NO", nullable = false)
-    private BenefitItemType benefitItemType;
+//    @Column(name = "BENEFIT_ITEM_TYPE_NO", insertable = false, updatable = false)
+//    private Long benefitItemTypeNo;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "BENEFIT_ITEM_TYPE_NO", nullable = false)
+//    private BenefitItemType benefitItemType;
 
     @OneToMany(mappedBy = "benefitItem", fetch = FetchType.LAZY)
     private List<Claim> claimList = new ArrayList<>();

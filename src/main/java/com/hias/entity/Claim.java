@@ -23,7 +23,7 @@ public class Claim extends BaseEntity {
     @Column(name = "CLAIM_NO")
     private Long claimNo;
 
-    @Column(name = "CLAIM_ID")
+    @Column(name = "CLAIM_ID", insertable = false, updatable = false)
     private String claimID;
 
     @Column(name = "VISIT_DATE")
@@ -40,6 +40,9 @@ public class Claim extends BaseEntity {
 
     @Column(name = "REMARK")
     private String remark;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     @Column(name = "CLAIM_AMOUNT")
     private BigDecimal claimAmount;

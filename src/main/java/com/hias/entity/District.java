@@ -4,8 +4,6 @@ import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -18,12 +16,16 @@ public class District extends SoftDeleteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BANK_NO")
-    private Long bankNo;
+    @Column(name = "DISTRICT_NO")
+    private Long districtNo;
 
-    @Column(name = "BANK_NAME")
-    private String bankName;
+    @Column(name = "DISTRICT_NAME")
+    private String districtName;
 
-    @OneToMany(mappedBy = "bank", fetch = FetchType.LAZY)
-    private List<Member> memberList = new ArrayList<>();
+    @Column(name = "PROVINCE_NO", insertable = false, updatable = false)
+    private Long provinceNo;
+
+    @ManyToOne
+    @JoinColumn(name = "PROVINCE_NO", nullable = false)
+    private Province province;
 }
