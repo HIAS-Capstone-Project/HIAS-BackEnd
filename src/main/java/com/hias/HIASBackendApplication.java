@@ -18,7 +18,7 @@ public class HIASBackendApplication {
 
     @PostConstruct
     void configTimeZone() {
-        TimeZone.setDefault(TimeZone.getTimeZone("VST"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         log.info("now : " + LocalDateTime.now());
     }
 }
