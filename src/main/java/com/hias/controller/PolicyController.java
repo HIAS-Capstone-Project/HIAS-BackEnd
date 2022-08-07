@@ -56,7 +56,7 @@ public class PolicyController {
         return new ResponseEntity<>(policyService.update(policyRequestDTODTO), HttpStatus.OK);
     }
 
-    @DeleteMapping("detele")
+    @DeleteMapping("delete")
     public ResponseEntity<PolicyResponseDTO> delete(@RequestParam Long policyNo) {
         return new ResponseEntity<>(policyService.delete(policyNo), HttpStatus.OK);
     }

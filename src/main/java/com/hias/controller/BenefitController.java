@@ -54,7 +54,7 @@ public class BenefitController {
         return new ResponseEntity<>(CommonConstant.CREATED_SUCCESSFULLY, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("delete-by-benefit-no/{benefitNo}")
+    @DeleteMapping("delete/{benefitNo}")
     public ResponseEntity<String> delete(@PathVariable Long benefitNo) {
         benefitService.deleteByBenefitNo(benefitNo);
         return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
