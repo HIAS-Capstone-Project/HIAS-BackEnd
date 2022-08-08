@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 
 
@@ -14,12 +15,17 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class UserRequestDTO {
 
-    @NotBlank(message = "{AUTH_001}")
     private String username;
 
-    @NotBlank(message = "{AUTH_002}")
     private String password;
 
-    @NotBlank(message = "{AUTH_003}")
     private String roleName;
+
+    private Long clientNo;
+
+    private Long memberNo;
+
+    private Long employeeNo;
+
+    private Long serviceProviderNo;
 }

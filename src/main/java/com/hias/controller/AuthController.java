@@ -67,6 +67,10 @@ public class AuthController {
         User user = userRepository.save(User.builder()
                 .userName(userRequestDTO.getUsername())
                 .password(encoder.encode(userRequestDTO.getPassword()))
+                .employeeNo(userRequestDTO.getEmployeeNo())
+                .memberNo(userRequestDTO.getMemberNo())
+                .clientNo(userRequestDTO.getClientNo())
+                .serviceProviderNo(userRequestDTO.getServiceProviderNo())
                 .build());
         userRoleRepository.save(UserRole.builder()
                 .user(user)
