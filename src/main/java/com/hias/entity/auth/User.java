@@ -28,6 +28,18 @@ public class User extends BaseEntity {
     @Column(name = "PASSWORD")
     private String password;
 
+    @Column(name = "CLIENT_NO")
+    private Long clientNo;
+
+    @Column(name = "MEMBER_NO")
+    private Long memberNo;
+
+    @Column(name = "EMPLOYEE_NO")
+    private Long employeeNo;
+
+    @Column(name = "SERVICE_PROVIDER_NO")
+    private Long serviceProviderNo;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<UserRole> userRoleList;
 }

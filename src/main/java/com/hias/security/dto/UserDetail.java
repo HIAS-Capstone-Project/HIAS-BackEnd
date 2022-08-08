@@ -16,11 +16,14 @@ public class UserDetail extends User {
     private String name;
     private List<String> roles;
 
-    public UserDetail(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    private Long primaryKey;
+
+    public UserDetail(String username, String password, Collection<? extends GrantedAuthority> authorities, Long primaryKey) {
         super(username, password, authorities);
         this.roles = authorities
                 .stream()
                 .map(k -> k.getAuthority()).collect(Collectors.toList());
+        this.primaryKey = primaryKey;
     }
 
     @Override
