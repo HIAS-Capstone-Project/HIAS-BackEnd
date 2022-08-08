@@ -11,9 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +22,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    private static List<String> fieldsHasLongValue = Stream
+            .of("clientNo", "memberNo", "employeeNo", "serviceProviderNo")
+            .collect(Collectors.toList());
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,6 +40,26 @@ public class UserServiceImpl implements UserDetailsService {
         user.getUserRoleList().forEach(userRole -> {
             authorities.add(new SimpleGrantedAuthority(userRole.getRole().getRoleName()));
         });
-        return new UserDetail(user.getUserName(), user.getPassword(), authorities);
+        Long primaryKey = getEntityPrimaryKey(user);
+        return new UserDetail(user.getUserName(), user.getPassword(), authorities, primaryKey);
+    }
+
+    private Long getEntityPrimaryKey(User user) {
+        Long primaryKey = null;
+        for (String fieldName : fieldsHasLongValue) {
+            Field field;
+            try {
+                field = user.getClass().getDeclaredField(fieldName);
+                field.setAccessible(Boolean.TRUE);
+                Object value = field.get(user);
+                if (value != null) {
+                    primaryKey = (Long) value;
+                    break;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return primaryKey;
     }
 }
