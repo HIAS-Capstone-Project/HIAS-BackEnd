@@ -25,5 +25,7 @@ public class EmployeeResponseDTO implements Serializable {
 
     private Long departmentNo;
 
+    private Long employmentTypeNo;
+
     private LocalDate dob;
 }

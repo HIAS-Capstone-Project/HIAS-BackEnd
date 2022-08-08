@@ -26,6 +26,8 @@ public class EmployeeRequestDTO implements Serializable {
 
     private Long departmentNo;
 
+    private Long employmentTypeNo;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dob;
 }
