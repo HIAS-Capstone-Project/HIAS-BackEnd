@@ -3,6 +3,8 @@ package com.hias.model.response;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,4 +18,6 @@ public class DepartmentResponseDTO implements Serializable {
     private String departmentCode;
 
     private String departmentName;
+
+    private List<EmploymentTypeResponseDTO> list = new ArrayList<>();
 }

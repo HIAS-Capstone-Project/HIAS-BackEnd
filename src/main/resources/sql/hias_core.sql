@@ -236,7 +236,8 @@ CREATE TABLE HIAS.DEPARTMENT_EMPLOYMENT_TYPE
     CREATED_BY                    VARCHAR(2000) DEFAULT 'System',
     CREATED_ON                    TIMESTAMP     DEFAULT (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh'),
     MODIFIED_BY                   VARCHAR(2000) DEFAULT 'System',
-    MODIFIED_ON                   TIMESTAMP     DEFAULT (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')
+    MODIFIED_ON                   TIMESTAMP     DEFAULT (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh'),
+    PRIMARY KEY (DEPARTMENT_EMPLOYMENT_TYPE_NO)
 );
 
 --Set up Employee

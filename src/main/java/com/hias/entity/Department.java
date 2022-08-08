@@ -1,6 +1,5 @@
 package com.hias.entity;
 
-import com.hias.entity.base.BaseEntity;
 import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
@@ -31,6 +30,6 @@ public class Department extends SoftDeleteEntity {
     @OneToMany(mappedBy = "department")
     private List<Employee> employeeList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "department", fetch = FetchType.EAGER)
     private List<DepartmentEmploymentType> departmentEmploymentTypes = new ArrayList<>();
 }
