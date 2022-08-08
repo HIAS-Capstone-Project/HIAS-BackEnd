@@ -49,6 +49,6 @@ public class Employee extends BaseEntity {
     private Long employmentTypeNo;
 
     @ManyToOne
-    @JoinColumn(name = "EMPLOYMENT_TYPE", nullable = false)
+    @JoinColumn(name = "EMPLOYMENT_TYPE_NO", nullable = false)
     private EmploymentType employmentType;
 }
