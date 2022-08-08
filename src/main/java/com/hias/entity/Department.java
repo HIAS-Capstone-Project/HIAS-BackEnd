@@ -1,6 +1,5 @@
 package com.hias.entity;
 
-import com.hias.entity.base.BaseEntity;
 import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
