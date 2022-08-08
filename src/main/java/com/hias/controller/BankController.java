@@ -1,8 +1,8 @@
 package com.hias.controller;
 
 
-import com.hias.model.response.DepartmentResponseDTO;
-import com.hias.service.DepartmentService;
+import com.hias.model.response.BankResponseDTO;
+import com.hias.service.BankService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,10 +19,10 @@ import java.util.List;
 @Slf4j
 public class BankController {
 
-    private final DepartmentService departmentService;
+    private final BankService bankService;
 
     @GetMapping("find-all")
-    public ResponseEntity<List<DepartmentResponseDTO>> findAll() {
-        return new ResponseEntity<>(departmentService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<BankResponseDTO>> findAll() {
+        return new ResponseEntity<>(bankService.findAll(), HttpStatus.OK);
     }
 }
