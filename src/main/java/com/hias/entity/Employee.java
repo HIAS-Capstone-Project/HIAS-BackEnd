@@ -1,6 +1,8 @@
 package com.hias.entity;
 
+import com.hias.constant.GenderEnum;
 import com.hias.entity.base.BaseEntity;
+import com.hias.jpa_converter.GenderEnumConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,6 +36,10 @@ public class Employee extends BaseEntity {
 
     @Column(name = "ADDRESS")
     private String address;
+
+    @Column(name = "GENDER")
+    @Convert(converter = GenderEnumConverter.class)
+    private GenderEnum genderEnum = GenderEnum.OTHER;
 
     @Column(name = "DOB")
     private LocalDate dob;

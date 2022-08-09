@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public enum RecordSource {
-    MS("MS", "Member Submission"),
-    SS("SS", "Service Provider Submission");
+    M("M", "Member"),
+    SVP("SVP", "Service Provider");
 
     private String code;
     private String value;

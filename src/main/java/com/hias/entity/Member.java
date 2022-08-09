@@ -1,6 +1,8 @@
 package com.hias.entity;
 
+import com.hias.constant.GenderEnum;
 import com.hias.entity.base.BaseEntity;
+import com.hias.jpa_converter.GenderEnumConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -45,6 +47,16 @@ public class Member extends BaseEntity {
 
     @Column(name = "HEALTH_CARD_NO", unique = true)
     private String healthCardNo;
+
+    @Column(name = "GENDER")
+    @Convert(converter = GenderEnumConverter.class)
+    private GenderEnum genderEnum = GenderEnum.OTHER;
+
+    @Column(name = "START_DATE")
+    private LocalDate startDate;
+
+    @Column(name = "END_DATE")
+    private LocalDate endDate;
 
     @Column(name = "CLIENT_NO", insertable = false, updatable = false)
     private Long clientNo;

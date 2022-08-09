@@ -32,6 +32,12 @@ public class Claim extends BaseEntity {
     @Column(name = "SUBMITTED_DATE")
     private LocalDateTime submittedDate;
 
+    @Column(name = "MEDICAL_EXAMINATION_DATE")
+    private LocalDateTime medicalExaminationDate;
+
+    @Column(name = "BUSINESS_EXAMINATION_DATE")
+    private LocalDateTime businessExaminationDate;
+
     @Column(name = "APPROVED_DATE")
     private LocalDateTime approvedDate;
 
@@ -43,6 +49,9 @@ public class Claim extends BaseEntity {
 
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @Column(name = "MEDICAL_ADDRESS")
+    private String medicalAddress;
 
     @Column(name = "CLAIM_AMOUNT")
     private BigDecimal claimAmount;

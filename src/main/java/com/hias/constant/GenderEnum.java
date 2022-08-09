@@ -7,19 +7,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public enum StatusCode {
-    ACTIVE("ACT", "Active"),
-    TERMINATED("TER", "Terminated"),
-    SUBMITTED("SUB", "Submitted"),
-    APPROVED("APR", "Approved"),
-    PAYMENT_PROCESSING("PAY", "Payment Processing"),
-    SETTLED("SET", "Settled");
+public enum GenderEnum {
+    MALE("M", "Male"),
+    FEMALE("F", "Female"),
+    OTHER("O", "Other");
 
     private String code;
     private String value;
 
-    public static StatusCode findByString(String code) {
-        for (StatusCode statusCode : StatusCode.values()) {
+    public static GenderEnum findByString(String code) {
+        for (GenderEnum statusCode : GenderEnum.values()) {
             if (statusCode.getCode().equalsIgnoreCase(code)) {
                 return statusCode;
             }
