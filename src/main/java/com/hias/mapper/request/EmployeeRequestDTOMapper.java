@@ -12,5 +12,6 @@ import org.mapstruct.Mapping;
 public interface EmployeeRequestDTOMapper extends EntityMapper<EmployeeRequestDTO, Employee> {
     @Override
     @Mapping(source = "departmentNo", target = "department.departmentNo")
+    @Mapping(source = "employmentTypeNo", target = "employmentType.employmentTypeNo")
     Employee toEntity(EmployeeRequestDTO employeeRequestDTO);
 }

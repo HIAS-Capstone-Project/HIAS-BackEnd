@@ -2,13 +2,16 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.entity.Benefit;
 import com.hias.entity.Policy;
+import com.hias.entity.PolicyCoverage;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.PolicyRequestDTOMapper;
 import com.hias.mapper.response.PolicyResponseDTOMapper;
 import com.hias.model.request.PolicyRequestDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.model.response.PolicyResponseDTO;
+import com.hias.repository.PolicyCoverageRepository;
 import com.hias.repository.PolicyRepository;
 import com.hias.service.PolicyService;
 import com.hias.utils.MessageUtils;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +39,7 @@ public class PolicySerivceImpl implements PolicyService {
     private final PolicyResponseDTOMapper policyResponseDTOMapper;
     private final PolicyRequestDTOMapper policyRequestDTOMapper;
     private final PolicyValidator policyValidator;
+    private final PolicyCoverageRepository policyCoverageRepository;
 
     @Override
     public List<PolicyResponseDTO> getAll() {
@@ -98,6 +103,14 @@ public class PolicySerivceImpl implements PolicyService {
                     HttpStatus.NOT_ACCEPTABLE);
         }
         Policy policy = policyRepository.save(policyRequestDTOMapper.toEntity(policyRequestDTO));
+        log.info("Created Policy with ID: {}", policy.getPolicyNo());
+        List<PolicyCoverage> policyCoverages = new ArrayList<>();
+        policyRequestDTO.getBenefitNos().forEach(o -> {
+            policyCoverages.add(PolicyCoverage.builder().policyNo(policy.getPolicyNo()).benefitNo(o).
+                    policy(Policy.builder().policyNo(policy.getPolicyNo()).build()).
+                    benefit(Benefit.builder().benefitNo(o).build()).build());
+        });
+        policyCoverageRepository.saveAllAndFlush(policyCoverages);
         return policyResponseDTOMapper.toDto(policy);
     }
 

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
 
     List<Policy> findByPolicyCodeAndClientNoAndIsDeletedIsFalse(String policyCode, Long clientNo);
