@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +120,25 @@ public class PolicySerivceImpl implements PolicyService {
         PolicyResponseDTO policyResponseDTO = new PolicyResponseDTO();
         if (policy.isPresent()) {
             Policy updatedPolicy = policyRequestDTOMapper.toEntity(policyRequestDTO);
+            List<PolicyCoverage> policyCoverages = policyCoverageRepository.findAllByPolicyNo(updatedPolicy.getPolicyNo());
+            List<PolicyCoverage> updatedPolicyCoverage = new ArrayList<>();
+            policyRequestDTO.getBenefitNos().forEach(o -> {
+                if(policyCoverages.stream().filter(p -> p.getBenefitNo() == o).count() == 0){
+                    updatedPolicyCoverage.add(PolicyCoverage.builder().policyNo(updatedPolicy.getPolicyNo()).benefitNo(o).
+                            policy(Policy.builder().policyNo(updatedPolicy.getPolicyNo()).build()).
+                            benefit(Benefit.builder().benefitNo(o).build()).build());
+                }
+            });
+            policyCoverages.forEach(o -> {
+                if (policyRequestDTO.getBenefitNos().stream().filter(b -> b == o.getBenefitNo()).count() == 0){
+                    o.setDeleted(true);
+                    updatedPolicyCoverage.add(o);
+                }
+            });
             policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(updatedPolicy));
+            log.info("Updated Policy");
+            policyCoverageRepository.saveAllAndFlush(updatedPolicyCoverage);
+            log.info("Updated relevant benefits in Policy Coverage");
         }
         return policyResponseDTO;
     }
