@@ -28,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -104,11 +105,9 @@ public class PolicySerivceImpl implements PolicyService {
         Policy policy = policyRepository.save(policyRequestDTOMapper.toEntity(policyRequestDTO));
         log.info("Created Policy with ID: {}", policy.getPolicyNo());
         List<PolicyCoverage> policyCoverages = new ArrayList<>();
-        policyRequestDTO.getBenefitNos().forEach(o -> {
-            policyCoverages.add(PolicyCoverage.builder().policyNo(policy.getPolicyNo()).benefitNo(o).
-                    policy(Policy.builder().policyNo(policy.getPolicyNo()).build()).
-                    benefit(Benefit.builder().benefitNo(o).build()).build());
-        });
+        policyRequestDTO.getBenefitNos().forEach(o -> policyCoverages.add(PolicyCoverage.builder().policyNo(policy.getPolicyNo()).benefitNo(o).
+                policy(Policy.builder().policyNo(policy.getPolicyNo()).build()).
+                benefit(Benefit.builder().benefitNo(o).build()).build()));
         policyCoverageRepository.saveAllAndFlush(policyCoverages);
         return policyResponseDTOMapper.toDto(policy);
     }
@@ -123,14 +122,19 @@ public class PolicySerivceImpl implements PolicyService {
             List<PolicyCoverage> policyCoverages = policyCoverageRepository.findAllByPolicyNo(updatedPolicy.getPolicyNo());
             List<PolicyCoverage> updatedPolicyCoverage = new ArrayList<>();
             policyRequestDTO.getBenefitNos().forEach(o -> {
-                if(policyCoverages.stream().filter(p -> p.getBenefitNo() == o).count() == 0){
-                    updatedPolicyCoverage.add(PolicyCoverage.builder().policyNo(updatedPolicy.getPolicyNo()).benefitNo(o).
-                            policy(Policy.builder().policyNo(updatedPolicy.getPolicyNo()).build()).
-                            benefit(Benefit.builder().benefitNo(o).build()).build());
+                if(policyCoverages.stream().anyMatch(p -> Objects.equals(p.getBenefitNo(), o) && p.isDeleted())){
+                    updatedPolicyCoverage.add(policyCoverages.stream().filter(p ->(Objects.equals(p.getBenefitNo(), o))).
+                            peek(p -> p.setDeleted(false)).findFirst().get());
+                }else {
+                    if(policyCoverages.stream().noneMatch(p -> Objects.equals(p.getBenefitNo(), o))){
+                        updatedPolicyCoverage.add(PolicyCoverage.builder().policyNo(updatedPolicy.getPolicyNo()).benefitNo(o).
+                                policy(Policy.builder().policyNo(updatedPolicy.getPolicyNo()).build()).
+                                benefit(Benefit.builder().benefitNo(o).build()).build());
+                    }
                 }
             });
             policyCoverages.forEach(o -> {
-                if (policyRequestDTO.getBenefitNos().stream().filter(b -> b == o.getBenefitNo()).count() == 0){
+                if (policyRequestDTO.getBenefitNos().stream().noneMatch(b -> Objects.equals(b, o.getBenefitNo()))){
                     o.setDeleted(true);
                     updatedPolicyCoverage.add(o);
                 }
