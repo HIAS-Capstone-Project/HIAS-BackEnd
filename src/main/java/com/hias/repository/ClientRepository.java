@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
 
-    List<Client> findByCorporateIDAndIsDeletedIsFalse(String corporateID);
+    List<Client> findByCorporateIDIgnoreCaseAndIsDeletedIsFalse(String corporateID);
 
     List<Client> findByIsDeletedIsFalse();
 

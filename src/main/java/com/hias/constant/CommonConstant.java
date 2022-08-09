@@ -8,5 +8,6 @@ public class CommonConstant {
     public static final String CREATED_SUCCESSFULLY = "Created Successfully.";
     public static final String UPDATED_SUCCESSFULLY = "Update Successfully.";
     public static final String DELETED_SUCCESSFULLY = "Deleted Successfully.";
+    public static final String DASH = "-";
 
 }

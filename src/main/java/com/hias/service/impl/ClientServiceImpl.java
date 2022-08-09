@@ -1,8 +1,10 @@
 package com.hias.service.impl;
 
+import com.hias.constant.CommonConstant;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Client;
+import com.hias.entity.HealthCardFormat;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
@@ -10,11 +12,13 @@ import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.ClientRepository;
+import com.hias.repository.HealthCardFormatRepository;
 import com.hias.service.ClientService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.ClientValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +36,7 @@ import java.util.Optional;
 @Slf4j
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
+    private final HealthCardFormatRepository healthCardFormatRepository;
     private final ClientResponeDTOMapper clientResponeDTOMapper;
     private final ClientRequestDTOMapper clientRequestDTOMapper;
     private final ClientValidator clientValidator;
@@ -99,6 +104,13 @@ public class ClientServiceImpl implements ClientService {
 
         log.info("[createClient] start get detail client");
         Client client = clientRepository.save(clientRequestDTOMapper.toEntity(clientRequestDTO));
+        if (client != null) {
+            healthCardFormatRepository.save(HealthCardFormat.builder()
+                    .client(client)
+                    .clientNo(client.getClientNo())
+                    .prefix(StringUtils.upperCase(corporateID) + CommonConstant.DASH)
+                    .build());
+        }
         log.info("create client successfully");
         return clientResponeDTOMapper.toDto(client);
     }

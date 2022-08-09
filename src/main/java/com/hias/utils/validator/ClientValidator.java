@@ -17,7 +17,7 @@ public class ClientValidator {
     private final ClientRepository clientRepository;
 
     public boolean isCorporateIDExistance(String corporateID) {
-        List<Client> clients = clientRepository.findByCorporateIDAndIsDeletedIsFalse(corporateID);
+        List<Client> clients = clientRepository.findByCorporateIDIgnoreCaseAndIsDeletedIsFalse(corporateID);
         return CollectionUtils.isNotEmpty(clients);
     }
 
