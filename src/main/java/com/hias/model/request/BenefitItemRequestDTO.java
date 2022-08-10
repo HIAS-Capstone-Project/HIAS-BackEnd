@@ -3,6 +3,7 @@ package com.hias.model.request;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,4 +21,6 @@ public class BenefitItemRequestDTO implements Serializable {
     private String benefitItemName;
 
     private String remark;
+
+    private BigDecimal budgetAmount;
 }
