@@ -22,7 +22,7 @@ public class Policy extends BaseEntity {
     @Column(name = "POLICY_NO")
     private Long policyNo;
 
-    @Column(name = "POLICY_CODE")
+    @Column(name = "POLICY_CODE", updatable = false)
     private String policyCode;
 
     @Column(name = "POLICY_NAME")

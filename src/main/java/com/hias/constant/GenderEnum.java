@@ -1,5 +1,6 @@
 package com.hias.constant;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,10 @@ public enum GenderEnum {
             }
         }
         return null;
+    }
+
+    @JsonValue
+    public String getCode() {
+        return this.getCode();
     }
 }

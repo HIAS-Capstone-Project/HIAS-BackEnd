@@ -22,7 +22,7 @@ public class Benefit extends BaseEntity {
     @Column(name = "BENEFIT_NO")
     private Long benefitNo;
 
-    @Column(name = "BENEFIT_CODE")
+    @Column(name = "BENEFIT_CODE", updatable = false)
     private String benefitCode;
 
     @Column(name = "BENEFIT_NAME")

@@ -20,7 +20,7 @@ public class ServiceProvider extends BaseEntity {
     @Column(name = "SERVICE_PROVIDER_NO")
     private Long serviceProviderNo;
 
-    @Column(name = "SERVICE_PROVIDER_ID")
+    @Column(name = "SERVICE_PROVIDER_ID", updatable = false)
     private String serviceProviderID;
 
     @Column(name = "SERVICE_PROVIDER_NAME")
