@@ -24,6 +24,6 @@ public class Province extends SoftDeleteEntity {
     @Column(name = "PROVINCE_NAME")
     private String provinceName;
 
-    @OneToMany(mappedBy = "province")
+    @OneToMany(mappedBy = "province", fetch = FetchType.EAGER)
     private List<District> districts = new ArrayList<>();
 }

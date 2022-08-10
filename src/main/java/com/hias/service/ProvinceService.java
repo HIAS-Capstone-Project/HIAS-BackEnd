@@ -1,11 +1,11 @@
 package com.hias.service;
 
-import com.hias.entity.Province;
+import com.hias.model.response.ProvinceResponseDTO;
 
 import java.util.List;
 
 public interface ProvinceService {
 
-    List<Province> findAll();
+    List<ProvinceResponseDTO> findAll();
 
 }

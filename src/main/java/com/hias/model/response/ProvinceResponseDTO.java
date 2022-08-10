@@ -3,6 +3,7 @@ package com.hias.model.response;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,7 +12,9 @@ import java.io.Serializable;
 @Setter
 public class ProvinceResponseDTO implements Serializable {
 
-    private Long bankNo;
+    private Long provinceNo;
 
-    private String bankName;
+    private String provinceName;
+
+    private List<DistrictResponseDTO> districtResponseDTOS;
 }
