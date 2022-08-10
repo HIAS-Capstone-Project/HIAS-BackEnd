@@ -23,6 +23,7 @@ public class MemberRequestDTO implements Serializable {
     private String email;
 
     private String address;
+
     private String bankAccountNo;
 
     private Long clientNo;
@@ -34,6 +35,12 @@ public class MemberRequestDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dob;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate endDate;
+
     @Override
     public String toString() {
         return "MemberRequestDTO{" +
@@ -42,10 +49,14 @@ public class MemberRequestDTO implements Serializable {
                 ", staffID='" + staffID + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
                 ", bankAccountNo='" + bankAccountNo + '\'' +
                 ", clientNo=" + clientNo +
                 ", policyNo=" + policyNo +
                 ", bankNo=" + bankNo +
+                ", dob=" + dob +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 '}';
     }
 }

@@ -34,4 +34,8 @@ public class MemberResponseDTO implements Serializable {
     private Long bankNo;
 
     private LocalDate dob;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 }

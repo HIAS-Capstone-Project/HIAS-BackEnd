@@ -3,6 +3,8 @@ package com.hias.model.response;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +20,6 @@ public class BenefitResponseDTO implements Serializable {
     private String benefitName;
 
     private String remark;
+
+    private List<Long> benefitItemNos = new ArrayList<>();
 }

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -73,9 +74,12 @@ public class PolicySerivceImpl implements PolicyService {
 
         log.info("[search] Found {} elements match with value : {}.", policies.size(), searchValue);
 
-        List<PolicyResponseDTO> benefitResponseDTOS = policyResponseDTOMapper.toDtoList(policies);
+        List<PolicyResponseDTO> policyResponseDTOS = policyResponseDTOMapper.toDtoList(policies);
 
-        return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
+        policyResponseDTOS.forEach(p -> p.setBenefitNos(policyCoverageRepository.findAllByPolicyNoAndIsDeletedIsFalse(p.getPolicyNo()).
+                stream().map(PolicyCoverage::getBenefitNo).collect(Collectors.toList())));
+
+        return new PagingResponseModel<>(new PageImpl<>(policyResponseDTOS,
                 pageable,
                 policyPage.getTotalElements()));
     }

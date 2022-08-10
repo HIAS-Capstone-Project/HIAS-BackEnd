@@ -25,4 +25,6 @@ public interface BenefitItemRepository extends JpaRepository<BenefitItem, Long> 
             "or lower(b.benefitItemCode) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(b.benefitItemName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<BenefitItem> findAllBySearchValue(String searchValue, Pageable pageable);
+
+    List<BenefitItem> findByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
 }

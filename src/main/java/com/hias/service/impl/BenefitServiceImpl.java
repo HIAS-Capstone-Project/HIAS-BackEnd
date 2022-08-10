@@ -3,12 +3,14 @@ package com.hias.service.impl;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Benefit;
+import com.hias.entity.BenefitItem;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
 import com.hias.mapper.response.BenefitResponseDTOMapper;
 import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.PagingResponseModel;
+import com.hias.repository.BenefitItemRepository;
 import com.hias.repository.BenefitRepository;
 import com.hias.service.BenefitService;
 import com.hias.utils.MessageUtils;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -37,6 +40,7 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitResponseDTOMapper benefitResponseDTOMapper;
     private final BenefitValidator benefitValidator;
     private final MessageUtils messageUtils;
+    private final BenefitItemRepository benefitItemRepository;
 
     @Override
     public BenefitResponseDTO findByBenefitNo(Long benefitNo) {
@@ -82,6 +86,9 @@ public class BenefitServiceImpl implements BenefitService {
         log.info("[search] Found {} elements match with value : {}.", benefits.size(), searchValue);
 
         List<BenefitResponseDTO> benefitResponseDTOS = benefitResponseDTOMapper.toDtoList(benefits);
+
+        benefitResponseDTOS.forEach(b -> b.setBenefitItemNos(benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(b.getBenefitNo()).
+                stream().map(BenefitItem::getBenefitItemNo).collect(Collectors.toList())));
 
         return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
                 pageable,
