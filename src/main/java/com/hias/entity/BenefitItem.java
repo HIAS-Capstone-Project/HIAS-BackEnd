@@ -5,6 +5,7 @@ import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class BenefitItem extends SoftDeleteEntity {
 
     @Column(name = "REMARK")
     private String remark;
+
+    @Column(name = "BUDGET_AMOUNT")
+    private BigDecimal budgetAmount;
 
     @Column(name = "BENEFIT_NO", insertable = false, updatable = false)
     private Long benefitNo;

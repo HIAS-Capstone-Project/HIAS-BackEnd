@@ -33,7 +33,4 @@ public class PolicyCoverage extends SoftDeleteEntity {
     @ManyToOne
     @JoinColumn(name = "BENEFIT_NO", nullable = false)
     private Benefit benefit;
-
-    @Column(name = "BUDGET_AMOUNT")
-    private BigDecimal budgetAmount;
 }
