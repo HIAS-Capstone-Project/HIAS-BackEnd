@@ -26,7 +26,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         List<Province> provinces = provinceRepository.findAllByIsDeletedIsFalse();
         List<ProvinceResponseDTO> provinceResponseDTOS = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(provinces)) {
-            
+
             for (Province province : provinces) {
                 ProvinceResponseDTO provinceResponseDTO = provinceResponseDTOMapper.toDto(province);
                 provinceResponseDTO.setDistrictResponseDTOS(districtResponseDTOMapper.toDtoList(province.getDistricts()));
