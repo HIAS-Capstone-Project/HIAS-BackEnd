@@ -1,5 +1,6 @@
 package com.hias.model.response;
 
+import com.hias.constant.GenderEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -28,4 +29,6 @@ public class EmployeeResponseDTO implements Serializable {
     private Long employmentTypeNo;
 
     private LocalDate dob;
+
+    private GenderEnum genderEnum;
 }

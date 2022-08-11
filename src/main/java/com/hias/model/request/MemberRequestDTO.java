@@ -1,6 +1,7 @@
 package com.hias.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hias.constant.GenderEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -32,6 +33,8 @@ public class MemberRequestDTO implements Serializable {
 
     private Long bankNo;
 
+    private GenderEnum genderEnum;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dob;
 
@@ -54,6 +57,7 @@ public class MemberRequestDTO implements Serializable {
                 ", clientNo=" + clientNo +
                 ", policyNo=" + policyNo +
                 ", bankNo=" + bankNo +
+                ", genderEnum=" + genderEnum +
                 ", dob=" + dob +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +

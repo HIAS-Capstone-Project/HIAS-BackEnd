@@ -1,5 +1,6 @@
 package com.hias.model.response;
 
+import com.hias.constant.GenderEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -38,4 +39,6 @@ public class MemberResponseDTO implements Serializable {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    private GenderEnum genderEnum;
 }

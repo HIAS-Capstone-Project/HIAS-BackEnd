@@ -27,6 +27,6 @@ public enum GenderEnum {
 
     @JsonValue
     public String getCode() {
-        return this.getCode();
+        return this.code;
     }
 }
