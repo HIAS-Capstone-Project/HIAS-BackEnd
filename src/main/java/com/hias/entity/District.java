@@ -4,6 +4,8 @@ import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -28,4 +30,7 @@ public class District extends SoftDeleteEntity {
     @ManyToOne
     @JoinColumn(name = "PROVINCE_NO", nullable = false)
     private Province province;
+
+    @OneToMany(mappedBy = "district")
+    private List<Member> memberList = new ArrayList<>();
 }

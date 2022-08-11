@@ -41,4 +41,6 @@ public class MemberResponseDTO implements Serializable {
     private LocalDate endDate;
 
     private GenderEnum genderEnum;
+
+    private Long districtNo;
 }

@@ -81,4 +81,11 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Claim> claimList = new ArrayList<>();
+
+    @Column(name = "DISTRICT_NO", insertable = false, updatable = false)
+    private Long districtNo;
+
+    @ManyToOne
+    @JoinColumn(name = "DISTRICT_NO", nullable = false)
+    private District district;
 }
