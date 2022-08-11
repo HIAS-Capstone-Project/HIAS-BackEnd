@@ -25,4 +25,9 @@ public class DistrictController {
     public ResponseEntity<List<DistrictResponseDTO>> findByProvinceNo(@PathVariable Long provinceNo) {
         return new ResponseEntity<>(districtService.findByProvinceNo(provinceNo), HttpStatus.OK);
     }
+
+    @GetMapping("find-by-district-no/{districtNo}")
+    public ResponseEntity<DistrictResponseDTO> findByDistrictNo(@PathVariable Long districtNo) {
+        return new ResponseEntity<>(districtService.findByDistrictNo(districtNo), HttpStatus.OK);
+    }
 }

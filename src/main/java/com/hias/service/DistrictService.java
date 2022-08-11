@@ -8,4 +8,6 @@ public interface DistrictService {
 
     List<DistrictResponseDTO> findByProvinceNo(Long provinceNo);
 
+    DistrictResponseDTO findByDistrictNo(Long districtNo);
+
 }

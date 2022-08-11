@@ -8,4 +8,5 @@ public interface ProvinceService {
 
     List<ProvinceResponseDTO> findAll();
 
+    ProvinceResponseDTO findByProvinceNo(Long provinceNo);
 }

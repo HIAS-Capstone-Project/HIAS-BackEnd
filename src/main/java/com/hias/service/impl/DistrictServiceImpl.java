@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,5 +28,15 @@ public class DistrictServiceImpl implements DistrictService {
             districtResponseDTOS = districtResponseDTOMapper.toDtoList(districts);
         }
         return districtResponseDTOS;
+    }
+
+    @Override
+    public DistrictResponseDTO findByDistrictNo(Long districtNo) {
+        Optional<District> optionalDistrict = districtRepository.findDistinctByDistrictNoAndIsDeletedIsFalse(districtNo);
+        DistrictResponseDTO districtResponseDTO = new DistrictResponseDTO();
+        if (optionalDistrict.isPresent()){
+            districtResponseDTO = districtResponseDTOMapper.toDto(optionalDistrict.get());
+        }
+        return districtResponseDTO;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -34,5 +35,16 @@ public class ProvinceServiceImpl implements ProvinceService {
             }
         }
         return provinceResponseDTOS;
+    }
+
+    @Override
+    public ProvinceResponseDTO findByProvinceNo(Long provinceNo) {
+        ProvinceResponseDTO provinceResponseDTO = new ProvinceResponseDTO();
+        Optional<Province> optionalProvince = provinceRepository.findProvinceByProvinceNoAndIsDeletedIsFalse(provinceNo);
+        if (optionalProvince.isPresent()) {
+            provinceResponseDTO = provinceResponseDTOMapper.toDto(optionalProvince.get());
+            provinceResponseDTO.setDistrictResponseDTOS(districtResponseDTOMapper.toDtoList(optionalProvince.get().getDistricts()));
+        }
+        return provinceResponseDTO;
     }
 }
