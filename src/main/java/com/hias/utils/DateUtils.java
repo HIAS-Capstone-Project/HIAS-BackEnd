@@ -3,6 +3,7 @@ package com.hias.utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -16,6 +17,12 @@ public class DateUtils {
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern, localeVN);
         String formatDate = localDate.format(dtf);
+        return formatDate;
+    }
+
+    public static String currentDateTimeAsString(String pattern) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(pattern, localeVN);
+        String formatDate = LocalDateTime.now().format(dtf);
         return formatDate;
     }
 

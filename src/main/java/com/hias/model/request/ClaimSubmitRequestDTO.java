@@ -26,5 +26,5 @@ public class ClaimSubmitRequestDTO implements Serializable {
     private Long serviceProviderNo;
     private Long memberNo;
     private Long benefitNo;
-    private List<Long> liscenseNos;
+    private List<Long> licenseNos;
 }

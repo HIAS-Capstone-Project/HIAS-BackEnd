@@ -59,6 +59,9 @@ public class Claim extends BaseEntity {
     @Column(name = "SERVICE_PROVIDER_NO")
     private Long serviceProviderNo;
 
+    @Column(name = "BENEFIT_NO")
+    private Long benefitNo;
+
     @Column(name = "MEMBER_NO", insertable = false, updatable = false)
     private Long memberNo;
 
@@ -66,12 +69,12 @@ public class Claim extends BaseEntity {
     @JoinColumn(name = "MEMBER_NO", nullable = false)
     private Member member;
 
-    @Column(name = "BENEFIT_ITEM_NO", insertable = false, updatable = false)
-    private Long benefitItemNo;
-
-    @ManyToOne
-    @JoinColumn(name = "BENEFIT_ITEM_NO", nullable = false)
-    private BenefitItem benefitItem;
+//    @Column(name = "BENEFIT_ITEM_NO", insertable = false, updatable = false)
+//    private Long benefitItemNo;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "BENEFIT_ITEM_NO", nullable = false)
+//    private BenefitItem benefitItem;
 
     @OneToMany(mappedBy = "claim", fetch = FetchType.LAZY)
     private List<ClaimRequestHistory> claimRequestHistories = new ArrayList<>();

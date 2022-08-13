@@ -13,11 +13,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getApiError(), ex.getHttpStatus());
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleException(Exception ex) {
-        return new ResponseEntity<>(ApiError.builder()
-                .errorMessage(ex.getMessage())
-                .httpStatus(HttpStatus.BAD_REQUEST)
-                .build(), HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiError> handleException(Exception ex) {
+//        return new ResponseEntity<>(ApiError.builder()
+//                .errorMessage(ex.getMessage())
+//                .httpStatus(HttpStatus.BAD_REQUEST)
+//                .build(), HttpStatus.BAD_REQUEST);
+//    }
 }
