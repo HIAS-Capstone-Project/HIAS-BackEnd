@@ -79,7 +79,7 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "BANK_NO", nullable = false)
     private Bank bank;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Claim> claimList = new ArrayList<>();
 
     @Column(name = "DISTRICT_NO", insertable = false, updatable = false)

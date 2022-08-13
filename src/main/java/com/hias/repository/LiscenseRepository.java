@@ -1,14 +1,14 @@
 package com.hias.repository;
 
-import com.hias.entity.Liscense;
+import com.hias.entity.License;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface LiscenseRepository extends JpaRepository<Liscense, Long> {
+public interface LiscenseRepository extends JpaRepository<License, Long> {
 
-    List<Liscense> findAllByIsDeletedIsFalse();
+    List<License> findAllByIsDeletedIsFalse();
 
 }

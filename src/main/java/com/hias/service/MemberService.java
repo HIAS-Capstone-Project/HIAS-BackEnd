@@ -8,10 +8,14 @@ import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+
 public interface MemberService {
     PagingResponse findMember(String key, Integer pageIndex, Integer pageSize, String[] sort);
 
     PagingResponseModel<MemberResponseDTO> search(String searchValue, Pageable pageable);
+
+    MemberResponseDTO searchByHealthCardNo(String searchValue, LocalDate visitDate) throws HIASException;
 
     void deleteMemberByMemberNo(Long memberNo) throws Exception;
 

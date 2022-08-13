@@ -2,7 +2,6 @@ package com.hias.model.response;
 
 import lombok.*;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @NoArgsConstructor

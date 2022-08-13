@@ -14,9 +14,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("api/member/")
@@ -41,6 +44,14 @@ public class MemberController {
         return new ResponseEntity<>(memberService.search(searchValue, pageable), HttpStatus.OK);
     }
 
+    @GetMapping("search-by-health-card-no")
+    public ResponseEntity<MemberResponseDTO> searchByHealthCardNo(@RequestParam String healthCardNo,
+                                                                  @RequestParam
+                                                                  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate visitDate) throws HIASException {
+
+        return new ResponseEntity<>(memberService.searchByHealthCardNo(healthCardNo, visitDate), HttpStatus.OK);
+    }
+
     @DeleteMapping("delete")
     public ResponseEntity<String> findMember(@RequestParam Long memberNo) throws Exception {
         memberService.deleteMemberByMemberNo(memberNo);
@@ -48,7 +59,7 @@ public class MemberController {
     }
 
     @GetMapping("find-detail")
-    public ResponseEntity<MemberResponseDTO> findMemberById(@RequestParam Long memberNo) {
+    public ResponseEntity<MemberResponseDTO> findByMemberNo(@RequestParam Long memberNo) {
         return new ResponseEntity<>(memberService.findMemberByMemberNo(memberNo), HttpStatus.OK);
     }
 

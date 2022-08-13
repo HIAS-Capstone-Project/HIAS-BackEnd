@@ -71,4 +71,11 @@ public class ClaimServiceImpl implements ClaimService {
         return null;
     }
 
+    @Override
+    @Transactional
+    public ClaimResponseDTO saveDraftForMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) {
+
+        return null;
+    }
+
 }
