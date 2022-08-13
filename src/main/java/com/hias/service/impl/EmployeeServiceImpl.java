@@ -90,7 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void deleteEmployeeByEmployeeNo(Long employeeNo) throws HIASException {
-        Optional<Employee> employee = employeeRepository.findById(employeeNo);
+        Optional<Employee> employee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo);
         if (employee.isPresent()) {
             Employee employee1 = employee.get();
             employee1.setDeleted(Boolean.TRUE);
