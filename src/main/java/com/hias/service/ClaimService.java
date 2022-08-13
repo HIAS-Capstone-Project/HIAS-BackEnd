@@ -18,4 +18,6 @@ public interface ClaimService {
     ClaimResponseDTO deleteByClaimNo(Long claimNo);
 
     ClaimResponseDTO submitByMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files);
+
+    ClaimResponseDTO saveDraftForMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files);
 }

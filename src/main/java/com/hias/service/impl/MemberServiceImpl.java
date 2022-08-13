@@ -16,6 +16,7 @@ import com.hias.repository.HealthCardFormatRepository;
 import com.hias.repository.MemberRepository;
 import com.hias.service.MemberService;
 import com.hias.utilities.DirectionUtils;
+import com.hias.utils.DateUtils;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.MemberValidator;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
@@ -84,6 +86,19 @@ public class MemberServiceImpl implements MemberService {
         return new PagingResponseModel<>(new PageImpl<>(memberResponseDTOS,
                 pageable,
                 memberPage.getTotalElements()));
+    }
+
+    @Override
+    public MemberResponseDTO searchByHealthCardNo(String healthCardNo, LocalDate visitDate) throws HIASException {
+        List<Member> members = memberRepository.searchByHealthCardNo(healthCardNo, visitDate);
+        if (CollectionUtils.isEmpty(members)) {
+            throw HIASException.buildHIASException(messageUtils.getMessage(ErrorMessageCode.HEALCARD_NO_NOT_EXISTENCE,
+                    healthCardNo,
+                    DateUtils.formatDate(visitDate, "dd-MM-yyyy")), HttpStatus.NOT_ACCEPTABLE);
+        }
+        MemberResponseDTO memberResponseDTO = memberResponseDTOMapper.toDto(members.get(0));
+
+        return memberResponseDTO;
     }
 
     @Override

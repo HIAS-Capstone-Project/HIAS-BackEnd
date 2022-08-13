@@ -34,7 +34,7 @@ public class DistrictServiceImpl implements DistrictService {
     public DistrictResponseDTO findByDistrictNo(Long districtNo) {
         Optional<District> optionalDistrict = districtRepository.findDistinctByDistrictNoAndIsDeletedIsFalse(districtNo);
         DistrictResponseDTO districtResponseDTO = new DistrictResponseDTO();
-        if (optionalDistrict.isPresent()){
+        if (optionalDistrict.isPresent()) {
             districtResponseDTO = districtResponseDTOMapper.toDto(optionalDistrict.get());
         }
         return districtResponseDTO;

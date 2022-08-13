@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +21,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);
 
-    Optional<Member> findByMemberNoAndIsDeletedIsFalse(Long memberNo);
+    @Query("select m from Member m where m.healthCardNo = :healthCardNo " +
+            "and m.startDate <= (:visitDate) " +
+            "and (m.endDate is null or m.endDate >= :visitDate) " +
+            "order by m.modifiedOn desc")
+    List<Member> searchByHealthCardNo(String healthCardNo, LocalDate visitDate);
 
     @Query("select m from Member m " +
             "where m.isDeleted = false " +
@@ -28,4 +33,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "or lower(m.staffID) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(m.memberName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Member> findAllBySearchValue(String searchValue, Pageable pageable);
+
+    Optional<Member> findByMemberNoAndIsDeletedIsFalse(Long memberNo);
 }

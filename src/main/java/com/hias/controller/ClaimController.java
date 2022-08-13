@@ -53,4 +53,13 @@ public class ClaimController {
         }
         return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
     }
+
+    @PostMapping("save-draft-for-member")
+    public ResponseEntity<String> saveDraftForMember(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
+                                                     @RequestPart List<MultipartFile> documents) {
+        if (documents != null) {
+            System.out.println(documents.get(0).getOriginalFilename() + " " + documents.get(0).getName());
+        }
+        return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
+    }
 }
