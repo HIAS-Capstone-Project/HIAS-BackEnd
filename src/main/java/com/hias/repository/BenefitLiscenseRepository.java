@@ -1,16 +1,16 @@
 package com.hias.repository;
 
-import com.hias.entity.BenefitLiscense;
+import com.hias.entity.BenefitLicense;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface BenefitLiscenseRepository extends JpaRepository<BenefitLiscense, Long> {
+public interface BenefitLiscenseRepository extends JpaRepository<BenefitLicense, Long> {
 
-    List<BenefitLiscense> findAllByIsDeletedIsFalse();
+    List<BenefitLicense> findAllByIsDeletedIsFalse();
 
-    List<BenefitLiscense> findByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
+    List<BenefitLicense> findByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
 
 }

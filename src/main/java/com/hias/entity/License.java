@@ -12,18 +12,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "LISCENSE", schema = "HIAS")
+@Table(name = "LICENSE", schema = "HIAS")
 @Getter
 @Setter
-public class Liscense extends SoftDeleteEntity {
+public class License extends SoftDeleteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LISCENSE_NO")
-    private Long liscenseNo;
+    @Column(name = "LICENSE_NO")
+    private Long licenseNo;
 
-    @Column(name = "LISCENSE_NAME")
-    private String liscenseName;
+    @Column(name = "LICENSE_NAME")
+    private String licenseName;
 
     @Column(name = "LABEL")
     private String label;
@@ -34,9 +34,9 @@ public class Liscense extends SoftDeleteEntity {
     @Column(name = "FILE_URL")
     private String fileUrl;
 
-    @OneToMany(mappedBy = "liscense")
-    private List<BenefitLiscense> benefitLiscenses = new ArrayList<>();
+    @OneToMany(mappedBy = "license")
+    private List<BenefitLicense> benefitLicenses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "liscense")
+    @OneToMany(mappedBy = "license")
     private List<ClaimDocument> claimDocuments = new ArrayList<>();
 }

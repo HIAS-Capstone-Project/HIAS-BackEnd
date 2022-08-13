@@ -9,11 +9,11 @@ import java.io.Serializable;
 @Builder
 @Getter
 @Setter
-public class LiscenseResponseDTO implements Serializable {
+public class LicenseResponseDTO implements Serializable {
 
-    private Long liscenseNo;
+    private Long licenseNo;
 
-    private String liscenseName;
+    private String licenseName;
 
     private String label;
 
