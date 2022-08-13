@@ -10,13 +10,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m WHERE m.isDeleted = false AND (m.memberName LIKE %?1% OR m.staffID LIKE %?1%)")
     Page<Member> findMember(String keyOne, Pageable pageable);
 
-    List<Member> findMemberByClientNo(Long clientNo);
+    List<Member> findByIsDeletedIsFalse();
+
+    List<Member> findMemberByClientNoAndIsDeletedIsFalse(Long clientNo);
 
     List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);
 

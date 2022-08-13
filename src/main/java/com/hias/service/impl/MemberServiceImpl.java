@@ -89,7 +89,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMemberByMemberNo(Long memberNo) throws Exception {
-        Optional<Member> member = memberRepository.findById(memberNo);
+        Optional<Member> member = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
         if (member.isPresent()) {
             Member member1 = member.get();
             member1.setDeleted(Boolean.TRUE);
@@ -107,7 +107,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRequestDTO.getMemberNo() != null) {
             log.info("[update] Update member with memberNo: {}", memberRequestDTO.getMemberNo());
         } else {
-            if (memberRepository.findMemberByClientNo(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))) {
+            if (memberRepository.findMemberByClientNoAndIsDeletedIsFalse(memberRequestDTO.getClientNo()).stream().anyMatch(o -> memberRequestDTO.getStaffID().equals(o.getStaffID()))) {
                 throw HIASException.buildHIASException("staffID", messageUtils.getMessage(ErrorMessageCode.STAFF_ID_EXISTENCE), HttpStatus.NOT_ACCEPTABLE);
             }
             saveMem.setHealthCardNo(UUID.randomUUID().toString());

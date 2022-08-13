@@ -58,7 +58,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
     @Override
     @Transactional
     public void deleteServiceProviderByID(Long serviceProviderNo) throws Exception {
-        Optional<ServiceProvider> serviceProvider = serviceProviderRepository.findById(serviceProviderNo);
+        Optional<ServiceProvider> serviceProvider = serviceProviderRepository.findByServiceProviderNoAndIsDeletedIsFalse(serviceProviderNo);
         if (serviceProvider.isPresent()) {
             ServiceProvider serviceProvider1 = serviceProvider.get();
             serviceProvider1.setDeleted(Boolean.TRUE);
