@@ -12,9 +12,12 @@ public enum StatusCode {
     ACTIVE("ACT", "Active"),
     DRAFT("DRA", "Draft"),
     TERMINATED("TER", "Terminated"),
+    CANCELED("CXL", "Canceled"),
     SUBMITTED("SUB", "Submitted"),
     BUSINESS_APPROVED("BA", "Business Approved"),
+    BUSINESS_VERIFYING("BV", "Business Verifying"),
     MEDICAL_APPROVED("MA", "Medical Approved"),
+    MEDICAL_VERIFYING("MV", "Medical Verifying"),
     APPROVED("APR", "Approved"),
     PAYMENT_PROCESSING("PAY", "Payment Processing"),
     SETTLED("SET", "Settled");

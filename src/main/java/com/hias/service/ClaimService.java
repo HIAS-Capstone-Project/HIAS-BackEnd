@@ -1,5 +1,6 @@
 package com.hias.service;
 
+import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -18,7 +19,9 @@ public interface ClaimService {
 
     ClaimResponseDTO deleteByClaimNo(Long claimNo);
 
-    ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException;
+    ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
 
-    ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException;
+    ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
+
+    ClaimResponseDTO cancelClaim(Long claimNo);
 }
