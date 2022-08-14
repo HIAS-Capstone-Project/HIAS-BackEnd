@@ -5,6 +5,7 @@ import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ClaimService {
@@ -19,5 +20,5 @@ public interface ClaimService {
 
     ClaimResponseDTO submitByMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files);
 
-    ClaimResponseDTO saveDraftForMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files);
+    ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException;
 }

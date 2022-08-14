@@ -15,7 +15,7 @@ public class FireBaseUtils {
 
     private final Bucket bucket;
 
-    private void uploadFile(MultipartFile file, String fileName) throws IOException {
+    public void uploadFile(MultipartFile file, String fileName) throws IOException {
         if (file == null) {
             log.info("[uploadFile] Cannot upload because file is not present");
         }

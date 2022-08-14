@@ -49,6 +49,6 @@ public class BenefitItem extends SoftDeleteEntity {
 //    @JoinColumn(name = "BENEFIT_ITEM_TYPE_NO", nullable = false)
 //    private BenefitItemType benefitItemType;
 
-    @OneToMany(mappedBy = "benefitItem", fetch = FetchType.LAZY)
-    private List<Claim> claimList = new ArrayList<>();
+//    @OneToMany(mappedBy = "benefitItem", fetch = FetchType.LAZY)
+//    private List<Claim> claimList = new ArrayList<>();
 }

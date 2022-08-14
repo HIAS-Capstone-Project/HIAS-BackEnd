@@ -1,5 +1,6 @@
 package com.hias.constant;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public enum StatusCode {
     ACTIVE("ACT", "Active"),
+    DRAFT("DRA", "Draft"),
     TERMINATED("TER", "Terminated"),
     SUBMITTED("SUB", "Submitted"),
     APPROVED("APR", "Approved"),
@@ -25,5 +27,10 @@ public enum StatusCode {
             }
         }
         return null;
+    }
+
+    @JsonValue
+    public String getCode() {
+        return this.code;
     }
 }
