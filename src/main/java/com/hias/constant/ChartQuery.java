@@ -6,4 +6,9 @@ public class ChartQuery {
             "INNER JOIN HIAS.MEMBER m ON d.district_no = m.district_no " +
             "WHERE 1 = 1 %s" +
             "GROUP BY province_name";
+
+    public static final String MEMBER_ONBOARD_CHART_QUERY = "SELECT EXTRACT(YEAR FROM start_date) AS key, COUNT(member_no) value\n" +
+            "FROM HIAS.member %s\n" +
+            "GROUP BY EXTRACT(YEAR FROM start_date)\n" +
+            "ORDER BY key";
 }

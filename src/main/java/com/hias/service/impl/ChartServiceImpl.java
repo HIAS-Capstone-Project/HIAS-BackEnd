@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class ChartServiceImpl implements ChartService {
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
     private final NamedParameterJdbcTemplate template;
 
     @Override
@@ -33,7 +33,7 @@ public class ChartServiceImpl implements ChartService {
         String role = userDetail.getRoles().get(0);
         List<Member> memberList;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
-            memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
+            memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(userDetail.getPrimaryKey());
         } else {
             if (clientNo != null) {
                 memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
@@ -50,14 +50,18 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    @Transactional
     public ChartResponseDTO findMemberLocationChart(Long clientNo) {
-        log.info("Starting Transaction");
         String query = ChartQuery.MEMBER_LOCATION_CHART_QUERY;
-        if(clientNo != null){
-            query = String.format(query, String.format("AND m.client_no = %s", clientNo));
-        }else {
-            query = String.format(query, "");
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = userDetail.getRoles().get(0);
+        if("ROLE_CLIENT".equalsIgnoreCase(role)){
+            query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
+        } else{
+            if(clientNo != null){
+                query = String.format(query, String.format("AND m.client_no = %s", clientNo));
+            }else {
+                query = String.format(query, "");
+            }
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         return ChartResponseDTO.builder().chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
@@ -69,7 +73,7 @@ public class ChartServiceImpl implements ChartService {
         String role = userDetail.getRoles().get(0);
         List<Member> memberList;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
-            memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
+            memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(userDetail.getPrimaryKey());
         } else {
             if (clientNo != null) {
                 memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
@@ -81,5 +85,23 @@ public class ChartServiceImpl implements ChartService {
         statistics.add(new StatisticDTO("Male", memberList.stream().filter(o -> "M".equalsIgnoreCase(o.getGenderEnum().getCode())).count()));
         statistics.add(new StatisticDTO("Female", memberList.stream().filter(o -> "F".equalsIgnoreCase(o.getGenderEnum().getCode())).count()));
         return ChartResponseDTO.builder().chartType(ChartConstant.BAR_CHART).statistics(statistics).build();
+    }
+
+    @Override
+    public ChartResponseDTO findMemberOnboardChart(Long clientNo) {
+        String query = ChartQuery.MEMBER_ONBOARD_CHART_QUERY;
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = userDetail.getRoles().get(0);
+        if("ROLE_CLIENT".equalsIgnoreCase(role)){
+            query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
+        } else{
+            if(clientNo != null){
+                query = String.format(query, String.format("AND m.client_no = %s", clientNo));
+            }else {
+                query = String.format(query, "");
+            }
+        }
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        return ChartResponseDTO.builder().chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();
     }
 }
