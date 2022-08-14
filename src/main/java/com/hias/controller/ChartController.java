@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("api/chart/")
@@ -42,8 +44,8 @@ public class ChartController {
 
     // just for admin, accountant, employee, client. client only sees their employees, others can see all and filter by client
     @GetMapping("member-by-onboard-year")
-    public ResponseEntity<ChartResponseDTO> findMemberByOnboardYear(@RequestParam(required = false) Long clientNo) {
-        ChartResponseDTO chartResponseDTO = chartService.findMemberOnboardChart(clientNo);
-        return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
+    public ResponseEntity<List<ChartResponseDTO>> findMemberByOnboardYear(@RequestParam(required = false) Long[] clientNos) {
+        List<ChartResponseDTO> chartResponseDTOs = chartService.findMemberOnboardChart(clientNos);
+        return new ResponseEntity<>(chartResponseDTOs, HttpStatus.OK);
     }
 }

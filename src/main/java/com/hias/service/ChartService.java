@@ -3,6 +3,8 @@ package com.hias.service;
 import com.hias.model.response.ChartResponseDTO;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface ChartService {
     ChartResponseDTO findMemberAgeChart(Long clientNo);
 
@@ -10,5 +12,5 @@ public interface ChartService {
 
     ChartResponseDTO findMemberGenderChart(Long clientNo);
 
-    ChartResponseDTO findMemberOnboardChart(Long clientNo);
+    List<ChartResponseDTO> findMemberOnboardChart(Long[] clientNos);
 }

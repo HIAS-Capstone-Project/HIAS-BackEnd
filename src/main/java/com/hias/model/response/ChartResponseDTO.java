@@ -15,4 +15,5 @@ import java.util.List;
 public class ChartResponseDTO {
     private List<StatisticDTO> statistics = new ArrayList<>();
     private String chartType;
+    private String chartName;
 }
