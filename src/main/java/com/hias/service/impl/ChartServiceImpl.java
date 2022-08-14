@@ -60,7 +60,7 @@ public class ChartServiceImpl implements ChartService {
             query = String.format(query, "");
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
-        return ChartResponseDTO.builder().chartType(ChartConstant.BAR_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
