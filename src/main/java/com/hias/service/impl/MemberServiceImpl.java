@@ -1,6 +1,7 @@
 package com.hias.service.impl;
 
 
+import com.hias.constant.DateConstant;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
 import com.hias.entity.HealthCardFormat;
@@ -92,9 +93,12 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponseDTO searchByHealthCardNo(String healthCardNo, LocalDate visitDate) throws HIASException {
         List<Member> members = memberRepository.searchByHealthCardNo(healthCardNo, visitDate);
         if (CollectionUtils.isEmpty(members)) {
-            throw HIASException.buildHIASException(messageUtils.getMessage(ErrorMessageCode.HEALCARD_NO_NOT_EXISTENCE,
-                    healthCardNo,
-                    DateUtils.formatDate(visitDate, "dd-MM-yyyy")), HttpStatus.NOT_ACCEPTABLE);
+            throw HIASException.buildHIASException(
+                    FieldNameConstant.HEALTH_CARD_NO,
+                    messageUtils.getMessage(ErrorMessageCode.HEALCARD_NO_NOT_EXISTENCE,
+                            healthCardNo,
+                            DateUtils.formatDate(visitDate, DateConstant.DD_MM_YYYY)),
+                    HttpStatus.NOT_ACCEPTABLE);
         }
         MemberResponseDTO memberResponseDTO = memberResponseDTOMapper.toDto(members.get(0));
 

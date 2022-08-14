@@ -26,4 +26,11 @@ public class DateUtils {
         return formatDate;
     }
 
+    public static boolean isDateBetween(LocalDate startDate, LocalDate effectiveDate, LocalDate endDate) {
+        if (startDate == null || effectiveDate == null) {
+            return false;
+        }
+        return (startDate.isEqual(effectiveDate) || startDate.isBefore(effectiveDate)) && endDate != null && (endDate.isEqual(effectiveDate) || endDate.isAfter(effectiveDate));
+    }
+
 }

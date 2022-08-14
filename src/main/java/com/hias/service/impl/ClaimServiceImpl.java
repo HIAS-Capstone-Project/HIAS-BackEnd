@@ -4,6 +4,7 @@ import com.hias.constant.*;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
 import com.hias.entity.License;
+import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
@@ -13,17 +14,23 @@ import com.hias.model.response.ClaimResponseDTO;
 import com.hias.repository.ClaimDocumentRepository;
 import com.hias.repository.ClaimRepository;
 import com.hias.repository.EmployeeRepository;
+import com.hias.repository.MemberRepository;
 import com.hias.service.ClaimService;
 import com.hias.utils.DateUtils;
 import com.hias.utils.FireBaseUtils;
+import com.hias.utils.MessageUtils;
+import com.hias.utils.validator.ClaimValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +41,14 @@ public class ClaimServiceImpl implements ClaimService {
 
     private final ClaimRepository claimRepository;
     private final EmployeeRepository employeeRepository;
+    private final MemberRepository memberRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
     private final ClaimResponseDTOMapper claimResponseDTOMapper;
     private final FireBaseUtils fireBaseUtils;
+    private final MessageUtils messageUtils;
+    private final ClaimValidator claimValidator;
 
     @Override
     public List<ClaimResponseDTO> findAll() {
@@ -80,7 +90,10 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException {
+    public ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
+
+        validateVisitDate(claimSubmitRequestDTO);
+
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setRecordSource(RecordSource.M);
@@ -92,6 +105,8 @@ public class ClaimServiceImpl implements ClaimService {
         Optional<Long> employeeNo = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
         if (employeeNo.isPresent()) {
             claimCreated.setBusinessAppraisalBy(employeeNo.get());
+            claimCreated.setStatusCode(StatusCode.BUSINESS_VERIFYING);
+            claimCreated.setSubmittedDate(LocalDateTime.now());
             claimCreated = claimRepository.save(claimCreated);
         }
 
@@ -101,7 +116,10 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException {
+    public ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
+
+        validateVisitDate(claimSubmitRequestDTO);
+
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.DRAFT);
         claim.setRecordSource(RecordSource.M);
@@ -113,6 +131,16 @@ public class ClaimServiceImpl implements ClaimService {
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimCreated);
 
         return claimResponseDTO;
+    }
+
+    private void validateVisitDate(ClaimSubmitRequestDTO claimSubmitRequestDTO) throws HIASException {
+        Long memberNo = claimSubmitRequestDTO.getMemberNo();
+        LocalDate visitDate = claimSubmitRequestDTO.getVisitDate().toLocalDate();
+        if (!claimValidator.isValidBenefitPeriod(memberNo, visitDate)) {
+            throw HIASException.buildHIASException(FieldNameConstant.VISIT_DATE,
+                    messageUtils.getMessage(ErrorMessageCode.INVALID_MEMBER_VISIT_DATE),
+                    HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files, Claim claimCreated) throws IOException {
@@ -142,6 +170,14 @@ public class ClaimServiceImpl implements ClaimService {
         claimDocument.setPathFile(fileName);
         claimDocument.setFileUrl(String.format(FireBaseConstant.FILE_URL, fileName));
         claimDocumentRepository.save(claimDocument);
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO cancelClaim(Long claimNo) {
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+
+        return null;
     }
 
 }

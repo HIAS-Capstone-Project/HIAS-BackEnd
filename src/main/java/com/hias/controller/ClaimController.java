@@ -1,6 +1,7 @@
 package com.hias.controller;
 
 import com.hias.constant.CommonConstant;
+import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -48,18 +49,23 @@ public class ClaimController {
 
     @PostMapping(path = "submit-by-member")
     public ResponseEntity<String> submitByMember(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                                 @RequestPart List<MultipartFile> documents) {
-        if (documents != null) {
-            System.out.println(documents.get(0).getOriginalFilename() + " " + documents.get(0).getName());
-        }
-        return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
+                                                 @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
+
+        claimService.submitForMember(claimSubmitRequestDTO, documents);
+        return new ResponseEntity<>(CommonConstant.SUBMIT_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("save-draft-for-member")
     public ResponseEntity<String> saveDraftForMember(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                                     @RequestPart List<MultipartFile> documents) throws IOException {
+                                                     @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
 
         claimService.saveDraftForMember(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.OK);
+    }
+
+    @PostMapping("cancel-claim/{claimNo}")
+    public ResponseEntity<String> cancelClaim(@PathVariable Long claimNo) {
+
+        return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.CREATED);
     }
 }

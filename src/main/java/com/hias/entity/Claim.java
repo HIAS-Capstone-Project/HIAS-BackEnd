@@ -64,7 +64,7 @@ public class Claim extends BaseEntity {
     @Column(name = "BENEFIT_NO")
     private Long benefitNo;
 
-    @Column(name = "business_appraisal_by")
+    @Column(name = "BUSINESS_APPRAISAL_BY")
     private Long businessAppraisalBy;
 
     @Column(name = "MEDICAL_APPRAISAL_BY")

@@ -28,12 +28,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Page<Employee> findAllBySearchValue(String searchValue, Pageable pageable);
 
     @Query("select e.employeeNo from Employee e " +
-            "join Claim c on e.employeeNo = c.businessAppraisalBy and c.isDeleted = false and e.isDeleted = false " +
+            "left join Claim c on e.employeeNo = c.businessAppraisalBy " +
+            "and (c.isDeleted is null or c.isDeleted = false) and " +
+            "e.isDeleted = false " +
             "where c.businessExaminationDate is null and " +
-            "c.statusCode <> :#{T(com.hias.constant.StatusCode).BUSINESS_APPROVED} and " +
+            "(c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).BUSINESS_APPROVED}) and " +
             "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).BA} " +
             "group by e.employeeNo " +
-            "order by count(e.employeeNo) asc,e.modifiedOn desc")
+            "order by count(e) asc,e.modifiedOn desc")
     Optional<Long> findBusinessAppraiserHasClaimAtLeast();
 
     @Query("select e.employeeNo from Employee e " +

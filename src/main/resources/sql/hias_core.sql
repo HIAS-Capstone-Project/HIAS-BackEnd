@@ -2,6 +2,7 @@
 -- DROP SCHEMA HIAS;
 --Set up Client
 -- drop schema hias cascade;
+-- truncate table hias.claim restart identity cascade;
 
 CREATE TABLE HIAS.USERS
 (
