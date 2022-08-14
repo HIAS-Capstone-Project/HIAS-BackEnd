@@ -3,7 +3,6 @@ package com.hias.mapper.request;
 import com.hias.constant.CommonConstant;
 import com.hias.entity.Claim;
 import com.hias.mapper.EntityMapper;
-import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

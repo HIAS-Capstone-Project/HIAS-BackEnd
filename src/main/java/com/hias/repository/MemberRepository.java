@@ -36,4 +36,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findAllBySearchValue(String searchValue, Pageable pageable);
 
     Optional<Member> findByMemberNoAndIsDeletedIsFalse(Long memberNo);
+
 }

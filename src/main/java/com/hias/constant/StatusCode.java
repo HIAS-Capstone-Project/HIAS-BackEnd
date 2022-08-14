@@ -13,6 +13,8 @@ public enum StatusCode {
     DRAFT("DRA", "Draft"),
     TERMINATED("TER", "Terminated"),
     SUBMITTED("SUB", "Submitted"),
+    BUSINESS_APPROVED("BA", "Business Approved"),
+    MEDICAL_APPROVED("MA", "Medical Approved"),
     APPROVED("APR", "Approved"),
     PAYMENT_PROCESSING("PAY", "Payment Processing"),
     SETTLED("SET", "Settled");

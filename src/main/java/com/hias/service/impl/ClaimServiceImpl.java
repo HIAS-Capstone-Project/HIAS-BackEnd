@@ -1,9 +1,6 @@
 package com.hias.service.impl;
 
-import com.hias.constant.CommonConstant;
-import com.hias.constant.DateConstant;
-import com.hias.constant.FireBaseConstant;
-import com.hias.constant.StatusCode;
+import com.hias.constant.*;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
 import com.hias.entity.License;
@@ -15,6 +12,7 @@ import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.repository.ClaimDocumentRepository;
 import com.hias.repository.ClaimRepository;
+import com.hias.repository.EmployeeRepository;
 import com.hias.service.ClaimService;
 import com.hias.utils.DateUtils;
 import com.hias.utils.FireBaseUtils;
@@ -35,6 +33,7 @@ import java.util.Optional;
 public class ClaimServiceImpl implements ClaimService {
 
     private final ClaimRepository claimRepository;
+    private final EmployeeRepository employeeRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
@@ -81,9 +80,23 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO submitByMember(Long memberNo, ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) {
+    public ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException {
+        Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
+        claim.setStatusCode(StatusCode.SUBMITTED);
+        claim.setRecordSource(RecordSource.M);
 
-        return null;
+        Claim claimCreated = claimRepository.save(claim);
+
+        processClaimDocuments(claimSubmitRequestDTO, files, claimCreated);
+
+        Optional<Long> employeeNo = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
+        if (employeeNo.isPresent()) {
+            claimCreated.setBusinessAppraisalBy(employeeNo.get());
+            claimCreated = claimRepository.save(claimCreated);
+        }
+
+        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimCreated);
+        return claimResponseDTO;
     }
 
     @Override
@@ -91,8 +104,18 @@ public class ClaimServiceImpl implements ClaimService {
     public ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException {
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.DRAFT);
+        claim.setRecordSource(RecordSource.M);
+
         Claim claimCreated = claimRepository.save(claim);
 
+        processClaimDocuments(claimSubmitRequestDTO, files, claimCreated);
+
+        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimCreated);
+
+        return claimResponseDTO;
+    }
+
+    private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files, Claim claimCreated) throws IOException {
         String fileName, extension, originalFileName;
         MultipartFile file;
         List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
@@ -107,8 +130,6 @@ public class ClaimServiceImpl implements ClaimService {
 
             saveClaimDocument(claimCreated, fileName, licenseNos, index);
         }
-
-        return null;
     }
 
     private void saveClaimDocument(Claim claimCreated, String fileName, List<Long> licenseNos, int index) {

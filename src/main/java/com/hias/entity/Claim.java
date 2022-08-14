@@ -1,6 +1,8 @@
 package com.hias.entity;
 
+import com.hias.constant.RecordSource;
 import com.hias.entity.base.BaseEntity;
+import com.hias.jpa_converter.RecordSourceConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -61,6 +63,16 @@ public class Claim extends BaseEntity {
 
     @Column(name = "BENEFIT_NO")
     private Long benefitNo;
+
+    @Column(name = "business_appraisal_by")
+    private Long businessAppraisalBy;
+
+    @Column(name = "MEDICAL_APPRAISAL_BY")
+    private Long medicalAppraisalBy;
+
+    @Column(name = "RECORD_SOURCE")
+    @Convert(converter = RecordSourceConverter.class)
+    private RecordSource recordSource;
 
     @Column(name = "MEMBER_NO", insertable = false, updatable = false)
     private Long memberNo;
