@@ -25,6 +25,12 @@ public class ChartController {
         return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
     }
 
+    @GetMapping("member-by-gender")
+    public ResponseEntity<ChartResponseDTO> findMemberByGender(@RequestParam(required = false) Long clientNo) {
+        ChartResponseDTO chartResponseDTO = chartService.findMemberGenderChart(clientNo);
+        return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
+    }
+
     @GetMapping("member-by-location")
     public ResponseEntity<ChartResponseDTO> findMemberByLocation(@RequestParam(required = false) Long clientNo) {
         ChartResponseDTO chartResponseDTO = chartService.findMemberLocationChart(clientNo);

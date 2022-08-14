@@ -14,5 +14,6 @@ public interface MemberRequestDTOMapper extends EntityMapper<MemberRequestDTO, M
     @Mapping(source = "clientNo", target = "client.clientNo")
     @Mapping(source = "policyNo", target = "policy.policyNo")
     @Mapping(source = "bankNo", target = "bank.bankNo")
+    @Mapping(source = "districtNo", target = "district.districtNo")
     Member toEntity(MemberRequestDTO memberRequestDTO);
 }
