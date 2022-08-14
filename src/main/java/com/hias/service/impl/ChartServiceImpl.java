@@ -1,7 +1,9 @@
 package com.hias.service.impl;
 
 import com.hias.constant.ChartConstant;
+import com.hias.constant.ChartQuery;
 import com.hias.entity.Member;
+import com.hias.mapper.StatisticsRowMapper;
 import com.hias.model.response.ChartResponseDTO;
 import com.hias.model.response.StatisticDTO;
 import com.hias.repository.MemberRepository;
@@ -9,12 +11,11 @@ import com.hias.security.dto.UserDetail;
 import com.hias.service.ChartService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,7 @@ import java.util.List;
 @Slf4j
 public class ChartServiceImpl implements ChartService {
     private MemberRepository memberRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final NamedParameterJdbcTemplate template;
 
     @Override
     public ChartResponseDTO findMemberAgeChart(Long clientNo) {
@@ -42,9 +42,9 @@ public class ChartServiceImpl implements ChartService {
             }
         }
         List<StatisticDTO> statistics = new ArrayList<>();
-        statistics.add(new StatisticDTO("<30", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() < 30).count()));
-        statistics.add(new StatisticDTO(">50", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() > 50).count()));
-        statistics.add(new StatisticDTO("30<= <=50", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() >= 30 &&
+        statistics.add(new StatisticDTO("under 30", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() < 30).count()));
+        statistics.add(new StatisticDTO("greater than 50", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() > 50).count()));
+        statistics.add(new StatisticDTO("between 30 and 50", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() >= 30 &&
                 LocalDate.now().minusYears(o.getDob().getYear()).getYear() <= 50).count()));
         return ChartResponseDTO.builder().chartType(ChartConstant.PIE_CHART).statistics(statistics).build();
     }
@@ -53,17 +53,13 @@ public class ChartServiceImpl implements ChartService {
     @Transactional
     public ChartResponseDTO findMemberLocationChart(Long clientNo) {
         log.info("Starting Transaction");
-        String x = "SELECT COUNT(member_name), province_name "+
-                "FROM HIAS.DISTRICT d INNER JOIN HIAS.PROVINCE p ON d.province_no = p.province_no " +
-                "INNER JOIN HIAS.MEMBER m ON d.district_no = m.district_no " +
-                "WHERE 1 = 1 %s" +
-                "GROUP BY province_name";
+        String query = ChartQuery.MEMBER_LOCATION_CHART_QUERY;
         if(clientNo != null){
-            x = String.format(x, String.format("AND m.client_no = %s", clientNo));
+            query = String.format(query, String.format("AND m.client_no = %s", clientNo));
         }else {
-            x = String.format(x, "");
+            query = String.format(query, "");
         }
-        List<StatisticDTO> statisticDTOS = entityManager.createQuery(String.valueOf(x)).getResultList();
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         return ChartResponseDTO.builder().chartType(ChartConstant.BAR_CHART).statistics(statisticDTOS).build();
     }
 
