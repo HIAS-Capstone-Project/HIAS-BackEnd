@@ -7,6 +7,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -57,4 +59,7 @@ public class Employee extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "EMPLOYMENT_TYPE_NO", nullable = false)
     private EmploymentType employmentType;
+
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+    private List<EmployeeClient> employeeClients = new ArrayList<>();
 }
