@@ -19,7 +19,6 @@ public class ClaimSubmitRequestDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime visitDate;
 
-    private String remark;
     private BigDecimal claimAmount;
     private String description;
     private String medicalAddress;

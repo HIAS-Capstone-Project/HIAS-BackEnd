@@ -38,6 +38,11 @@ public class BenefitController {
         return new ResponseEntity<>(benefitService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("find-by-member-no/{memberNo}")
+    public ResponseEntity<List<BenefitResponseDTO>> findByMemberNo(Long memberNo) {
+        return new ResponseEntity<>(benefitService.findAll(), HttpStatus.OK);
+    }
+
     @GetMapping("search")
     public ResponseEntity<PagingResponseModel<BenefitResponseDTO>> search(@RequestParam(required = false) String searchValue,
                                                                           @PageableDefault(page = 0, size = 10)

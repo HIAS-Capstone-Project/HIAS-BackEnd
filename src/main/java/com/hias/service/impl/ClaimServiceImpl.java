@@ -22,6 +22,7 @@ import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.ClaimValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -118,19 +123,29 @@ public class ClaimServiceImpl implements ClaimService {
     @Transactional
     public ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
 
+        validateDraftClaim(claimSubmitRequestDTO);
+
         validateVisitDate(claimSubmitRequestDTO);
 
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.DRAFT);
         claim.setRecordSource(RecordSource.M);
 
-        Claim claimCreated = claimRepository.save(claim);
+        Claim claimSaved = claimRepository.save(claim);
 
-        processClaimDocuments(claimSubmitRequestDTO, files, claimCreated);
+        processClaimDocuments(claimSubmitRequestDTO, files, claimSaved);
 
-        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimCreated);
+        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
 
         return claimResponseDTO;
+    }
+
+    private void validateDraftClaim(ClaimSubmitRequestDTO claimSubmitRequestDTO) throws HIASException {
+        if (!claimValidator.isDraftClaim(claimSubmitRequestDTO.getClaimNo())) {
+            throw HIASException.buildHIASException(
+                    messageUtils.getMessage(ErrorMessageCode.NOT_DRAFT_CLAIM),
+                    HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     private void validateVisitDate(ClaimSubmitRequestDTO claimSubmitRequestDTO) throws HIASException {
@@ -144,11 +159,25 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files, Claim claimCreated) throws IOException {
+        Long claimNo = claimSubmitRequestDTO.getClaimNo();
+        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+
+        Map<Long, ClaimDocument> claimDocumentMap = new HashMap<>();
+
+        if (CollectionUtils.isNotEmpty(claimDocuments)) {
+            claimDocumentMap = claimDocuments
+                    .stream()
+                    .collect(Collectors.toMap(ClaimDocument::getLicenseNo, Function.identity()));
+        }
+
         String fileName, extension, originalFileName;
         MultipartFile file;
         List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
+        Long licenseNo;
         int size = Math.min(files.size(), licenseNos.size());
         for (int index = 0; index < size; index++) {
+            licenseNo = licenseNos.get(index);
+            ClaimDocument claimDocument = claimDocumentMap.get(licenseNo);
             file = files.get(index);
             originalFileName = file.getOriginalFilename().trim();
             fileName = originalFileName.replaceAll(CommonConstant.REGEX_FILE_EXTENSION, StringUtils.EMPTY);
@@ -156,11 +185,11 @@ public class ClaimServiceImpl implements ClaimService {
             fileName = fileName + DateUtils.currentDateTimeAsString(DateConstant.DD_MM_YYYY_HH_MM_SS_SSS) + CommonConstant.DOT + extension;
             fireBaseUtils.uploadFile(file, fileName);
 
-            saveClaimDocument(claimCreated, fileName, licenseNos, index);
+            saveClaimDocumentForMember(claimCreated, originalFileName, fileName, licenseNos, index);
         }
     }
 
-    private void saveClaimDocument(Claim claimCreated, String fileName, List<Long> licenseNos, int index) {
+    private void saveClaimDocumentForMember(Claim claimCreated, String originalFileName, String fileName, List<Long> licenseNos, int index) {
         ClaimDocument claimDocument = new ClaimDocument();
         claimDocument.setClaimNo(claimCreated.getClaimNo());
         claimDocument.setClaim(claimCreated);
@@ -168,6 +197,8 @@ public class ClaimServiceImpl implements ClaimService {
         claimDocument.setLicense(License.builder().licenseNo(licenseNos.get(index)).build());
         claimDocument.setLicenseNo(licenseNos.get(index));
         claimDocument.setPathFile(fileName);
+        claimDocument.setFileName(fileName);
+        claimDocument.setOriginalFileName(originalFileName);
         claimDocument.setFileUrl(String.format(FireBaseConstant.FILE_URL, fileName));
         claimDocumentRepository.save(claimDocument);
     }

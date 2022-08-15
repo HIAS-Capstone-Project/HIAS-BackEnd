@@ -37,7 +37,7 @@ public class ClaimController {
 
     @PutMapping("update")
     public ResponseEntity<String> update(@RequestBody ClaimRequestDTO claimRequestDTO) {
-        claimService.create(claimRequestDTO);
+        claimService.update(claimRequestDTO);
         return new ResponseEntity<>(CommonConstant.UPDATED_SUCCESSFULLY, HttpStatus.OK);
     }
 

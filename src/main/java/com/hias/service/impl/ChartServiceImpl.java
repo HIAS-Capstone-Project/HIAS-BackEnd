@@ -55,12 +55,12 @@ public class ChartServiceImpl implements ChartService {
         String query = ChartQuery.MEMBER_LOCATION_CHART_QUERY;
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
-        if("ROLE_CLIENT".equalsIgnoreCase(role)){
+        if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
-        } else{
-            if(clientNo != null){
+        } else {
+            if (clientNo != null) {
                 query = String.format(query, String.format("AND m.client_no = %s", clientNo));
-            }else {
+            } else {
                 query = String.format(query, "");
             }
         }
@@ -97,20 +97,20 @@ public class ChartServiceImpl implements ChartService {
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
         String tempQue;
-        if("ROLE_CLIENT".equalsIgnoreCase(role)){
+        if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             tempQue = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
             statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
             chartResponseDTO = ChartResponseDTO.builder().chartName(clientService.getDetail(userDetail.getPrimaryKey()).getClientName()).chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();
             list.add(chartResponseDTO);
-        } else{
-            if(clientNos != null){
-                for(Long clientNo: clientNos){
+        } else {
+            if (clientNos != null) {
+                for (Long clientNo : clientNos) {
                     tempQue = String.format(query, String.format("AND m.client_no = %s", clientNo));
                     statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
                     chartResponseDTO = ChartResponseDTO.builder().chartName(clientService.getDetail(clientNo).getClientName()).chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();
                     list.add(chartResponseDTO);
                 }
-            }else {
+            } else {
                 tempQue = String.format(query, "");
                 statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
                 chartResponseDTO = ChartResponseDTO.builder().chartName("All members").chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();

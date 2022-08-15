@@ -25,6 +25,12 @@ public class ClaimDocument extends SoftDeleteEntity {
     @Column(name = "PATH_FILE")
     private String pathFile;
 
+    @Column(name = "FILE_NAME")
+    private String fileName;
+
+    @Column(name = "ORIGINAL_FILE_NAME")
+    private String originalFileName;
+
     @Column(name = "CLAIM_NO", insertable = false, updatable = false)
     private Long claimNo;
 

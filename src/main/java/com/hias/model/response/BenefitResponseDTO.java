@@ -22,4 +22,5 @@ public class BenefitResponseDTO implements Serializable {
     private String remark;
 
     private List<Long> benefitItemNos = new ArrayList<>();
+    private List<BenefitItemResponseDTO> benefitItemResponseDTOS = new ArrayList<>();
 }

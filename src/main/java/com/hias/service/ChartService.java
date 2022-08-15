@@ -1,7 +1,6 @@
 package com.hias.service;
 
 import com.hias.model.response.ChartResponseDTO;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

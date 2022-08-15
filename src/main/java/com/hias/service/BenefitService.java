@@ -14,6 +14,8 @@ public interface BenefitService {
 
     List<BenefitResponseDTO> findAll();
 
+    List<BenefitResponseDTO> findByMemberNo(Long memberNo);
+
     PagingResponseModel<BenefitResponseDTO> search(String searchValue, Pageable pageable);
 
     BenefitResponseDTO create(BenefitRequestDTO benefitRequestDTO) throws HIASException;
