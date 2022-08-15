@@ -10,6 +10,7 @@ import com.hias.repository.MemberRepository;
 import com.hias.security.dto.UserDetail;
 import com.hias.service.ChartService;
 import com.hias.service.ClientService;
+import com.hias.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -27,11 +28,13 @@ public class ChartServiceImpl implements ChartService {
     private final MemberRepository memberRepository;
     private final NamedParameterJdbcTemplate template;
     private final ClientService clientService;
+    private final EmployeeService employeeService;
 
     @Override
     public ChartResponseDTO findMemberAgeChart(Long clientNo) {
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
+        log.info("[findMemberAgeChart] role: {}", role);
         List<Member> memberList;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(userDetail.getPrimaryKey());
@@ -55,6 +58,7 @@ public class ChartServiceImpl implements ChartService {
         String query = ChartQuery.MEMBER_LOCATION_CHART_QUERY;
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
+        log.info("[findMemberLocationChart] role: {}", role);
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
         } else {
@@ -72,6 +76,7 @@ public class ChartServiceImpl implements ChartService {
     public ChartResponseDTO findMemberGenderChart(Long clientNo) {
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
+        log.info("[findMemberGenderChart] role: {}", role);
         List<Member> memberList;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(userDetail.getPrimaryKey());
@@ -96,6 +101,7 @@ public class ChartServiceImpl implements ChartService {
         String query = ChartQuery.MEMBER_ONBOARD_CHART_QUERY;
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
+        log.info("[findMemberOnboardChart] role: {}", role);
         String tempQue;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             tempQue = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
@@ -117,7 +123,52 @@ public class ChartServiceImpl implements ChartService {
                 list.add(chartResponseDTO);
             }
         }
-
         return list;
     }
+
+    @Override
+    public ChartResponseDTO findClaimStatusChart(Long clientNo) {
+        String query = ChartQuery.CLAIM_STATUS_CHART_QUERY;
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = userDetail.getRoles().get(0);
+        log.info("[findClaimStatusChart] role: {}", role);
+        String chartName;
+        if("ROLE_CLIENT".equalsIgnoreCase(role)){
+            query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
+            chartName = String.format("Claim status statistics for client: %s",clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
+        } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)){
+            if (clientNo == null){
+                query = String.format(query, String.format("AND m.client_no IN(\n" +
+                        "        SELECT ec.client_no\n" +
+                        "        FROM HIAS.employee_client ec\n" +
+                        "        WHERE ec.employee_no = %s\n" +
+                        "    )", userDetail.getPrimaryKey()));
+                chartName = String.format("Claims status statistics in charge by employee: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
+            }
+            else {
+                query = String.format(query, String.format("AND m.client_no IN(\n" +
+                        "        SELECT ec.client_no\n" +
+                        "        FROM HIAS.employee_client ec\n" +
+                        "        WHERE ec.employee_no = %s AND ec.client_no = %s\n" +
+                        "    )", userDetail.getPrimaryKey(), clientNo));
+                chartName = String.format("Claims status statistics in charge by employee: %s with client: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName(),
+                        clientService.getDetail(clientNo).getClientName());
+            }
+        } else {
+            if (clientNo != null){
+                query = String.format(query, String.format("AND m.client_no = %s", clientNo));
+                chartName = String.format("Claim status statistics for to client: %s", clientService.getDetail(clientNo).getClientName());
+            }
+            else {
+                query = String.format(query, "");
+                chartName = "Claim status statistics";
+            }
+        }
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().chartName(chartName).chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+
+        return chartResponseDTO;
+    }
+
+
 }

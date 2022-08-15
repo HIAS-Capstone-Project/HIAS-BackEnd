@@ -12,4 +12,13 @@ public class ChartQuery {
             "WHERE 1 = 1 %s \n" +
             "GROUP BY EXTRACT(YEAR FROM start_date) " +
             "ORDER BY key";
+
+    public static final String CLAIM_STATUS_CHART_QUERY = "SELECT c.status_code key, COUNT(c.claim_no) value\n" +
+            "FROM HIAS.claim c\n" +
+            "WHERE c.member_no IN(\n" +
+            "    SELECT m.member_no\n" +
+            "    FROM HIAS.member m\n" +
+            "    WHERE 1 = 1 %s\n" +
+            ")\n" +
+            "GROUP BY c.status_code";
 }

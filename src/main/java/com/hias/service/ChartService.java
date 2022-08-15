@@ -12,4 +12,6 @@ public interface ChartService {
     ChartResponseDTO findMemberGenderChart(Long clientNo);
 
     List<ChartResponseDTO> findMemberOnboardChart(Long[] clientNos);
+
+    ChartResponseDTO findClaimStatusChart(Long clientNo);
 }
