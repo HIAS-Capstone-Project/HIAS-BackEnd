@@ -39,8 +39,8 @@ public class BenefitController {
     }
 
     @GetMapping("find-by-member-no/{memberNo}")
-    public ResponseEntity<List<BenefitResponseDTO>> findByMemberNo(Long memberNo) {
-        return new ResponseEntity<>(benefitService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<BenefitResponseDTO>> findByMemberNo(@PathVariable Long memberNo) {
+        return new ResponseEntity<>(benefitService.findByMemberNo(memberNo), HttpStatus.OK);
     }
 
     @GetMapping("search")
