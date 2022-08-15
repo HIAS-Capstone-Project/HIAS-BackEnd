@@ -12,6 +12,7 @@ import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.ClientRepository;
+import com.hias.repository.EmployeeClientRepository;
 import com.hias.repository.HealthCardFormatRepository;
 import com.hias.service.ClientService;
 import com.hias.utils.MessageUtils;
@@ -30,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +42,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientResponeDTOMapper clientResponeDTOMapper;
     private final ClientRequestDTOMapper clientRequestDTOMapper;
     private final ClientValidator clientValidator;
+    private final EmployeeClientRepository employeeClientRepository;
 
     @Override
     public List<ClientResponeDTO> getAll() {
@@ -142,5 +145,11 @@ public class ClientServiceImpl implements ClientService {
             }
         }
         return clientResponeDTO;
+    }
+
+    @Override
+    public List<ClientResponeDTO> findByEmployeeNo(Long employeeNo) {
+        return employeeClientRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo).
+                stream().map(o -> getDetail(o.getClientNo())).collect(Collectors.toList());
     }
 }

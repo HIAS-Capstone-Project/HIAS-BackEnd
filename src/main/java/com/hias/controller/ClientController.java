@@ -61,5 +61,8 @@ public class ClientController {
         return new ResponseEntity<>(clientService.delete(clientNo), HttpStatus.OK);
     }
 
-
+    @GetMapping("find-by-employee-no")
+    public ResponseEntity<List<ClientResponeDTO>> findByEmployeeNo(@RequestParam Long employeeNo) {
+        return new ResponseEntity<>(clientService.findByEmployeeNo(employeeNo), HttpStatus.OK);
+    }
 }

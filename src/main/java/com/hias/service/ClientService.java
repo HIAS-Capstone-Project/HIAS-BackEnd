@@ -21,4 +21,6 @@ public interface ClientService {
     ClientResponeDTO update(ClientRequestDTO clientRequestDTO);
 
     ClientResponeDTO delete(Long clienNo);
+
+    List<ClientResponeDTO> findByEmployeeNo(Long employeeNo);
 }
