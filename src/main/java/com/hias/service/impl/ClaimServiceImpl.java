@@ -7,9 +7,11 @@ import com.hias.entity.License;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
+import com.hias.mapper.response.ClaimDocumentResponseDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
+import com.hias.model.response.ClaimDocumentResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.ClaimDocumentRepository;
@@ -36,10 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,6 +54,7 @@ public class ClaimServiceImpl implements ClaimService {
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
     private final ClaimResponseDTOMapper claimResponseDTOMapper;
+    private final ClaimDocumentResponseDTOMapper claimDocumentResponseDTOMapper;
     private final FireBaseUtils fireBaseUtils;
     private final MessageUtils messageUtils;
     private final ClaimValidator claimValidator;
@@ -71,6 +71,22 @@ public class ClaimServiceImpl implements ClaimService {
         Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
         if (claimOptional.isPresent()) {
             claimResponseDTO = claimResponseDTOMapper.toDto(claimOptional.get());
+            List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+            if (CollectionUtils.isNotEmpty(claimDocuments)) {
+                List<ClaimDocumentResponseDTO> claimDocumentResponseDTOS = new ArrayList<>();
+                License license;
+                for (ClaimDocument claimDocument : claimDocuments) {
+                    ClaimDocumentResponseDTO claimDocumentResponseDTO = claimDocumentResponseDTOMapper.toDto(claimDocument);
+
+                    license = claimDocument.getLicense();
+                    claimDocumentResponseDTO.setLabel(license.getLabel());
+                    claimDocumentResponseDTO.setLicenseName(license.getLicenseName());
+                    claimDocumentResponseDTO.setLicenseNo(license.getLicenseNo());
+
+                    claimDocumentResponseDTOS.add(claimDocumentResponseDTO);
+                }
+                claimResponseDTO.setClaimDocumentResponseDTOS(claimDocumentResponseDTOS);
+            }
         }
         return claimResponseDTO;
     }
