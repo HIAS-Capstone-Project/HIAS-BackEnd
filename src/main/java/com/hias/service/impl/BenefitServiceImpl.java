@@ -2,13 +2,7 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
-import com.hias.entity.Benefit;
-import com.hias.entity.BenefitItem;
-
-import com.hias.entity.BenefitLicense;
-import com.hias.entity.PolicyCoverage;
 import com.hias.entity.*;
-
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
 import com.hias.mapper.response.BenefitItemResponseDTOMapper;
@@ -17,10 +11,6 @@ import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitItemResponseDTO;
 import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.PagingResponseModel;
-import com.hias.repository.BenefitItemRepository;
-import com.hias.repository.BenefitLiscenseRepository;
-import com.hias.repository.BenefitRepository;
-import com.hias.repository.PolicyCoverageRepository;
 import com.hias.repository.*;
 import com.hias.service.BenefitService;
 import com.hias.utils.MessageUtils;
@@ -175,21 +165,22 @@ public class BenefitServiceImpl implements BenefitService {
         } else {
             Benefit benefit = benefitOptional.get();
             List<PolicyCoverage> policyCoverageList = policyCoverageRepository.findAllByBenefitNoAndIsDeletedIsFalse(benefitNo);
-            if(!policyCoverageList.isEmpty()){
-                for ( PolicyCoverage policyCoverage:policyCoverageList) {
+            if (!policyCoverageList.isEmpty()) {
+                for (PolicyCoverage policyCoverage : policyCoverageList) {
                     policyCoverage.setDeleted(true);
-                } policyCoverageRepository.saveAll(policyCoverageList);
+                }
+                policyCoverageRepository.saveAll(policyCoverageList);
             }
             List<BenefitLicense> benefitLicenseList = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
-            if(!benefitLicenseList.isEmpty()){
-                for ( BenefitLicense benefitLicense:benefitLicenseList) {
+            if (!benefitLicenseList.isEmpty()) {
+                for (BenefitLicense benefitLicense : benefitLicenseList) {
                     benefitLicense.setDeleted(true);
                 }
                 benefitLiscenseRepository.saveAll(benefitLicenseList);
             }
             List<BenefitItem> benefitItemList = benefitItemRepository.findAllByBenefitNoAndIsDeletedIsFalse(benefitNo);
-            if(!benefitItemList.isEmpty()){
-                for (BenefitItem benefitItem : benefitItemList){
+            if (!benefitItemList.isEmpty()) {
+                for (BenefitItem benefitItem : benefitItemList) {
                     benefitItem.setDeleted(true);
                 }
                 benefitItemRepository.saveAll(benefitItemList);

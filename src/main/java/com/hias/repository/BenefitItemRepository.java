@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface BenefitItemRepository extends JpaRepository<BenefitItem, Long> {
 
     List<BenefitItem> findAllByIsDeletedIsFalse();
+
     List<BenefitItem> findAllByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
 
     Optional<BenefitItem> findByBenefitItemNoAndIsDeletedIsFalse(Long benefitItemNo);

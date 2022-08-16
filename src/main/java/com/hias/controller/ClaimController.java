@@ -47,7 +47,7 @@ public class ClaimController {
         return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
     }
 
-    @PostMapping(path = "submit-by-member")
+    @PostMapping("submit-by-member")
     public ResponseEntity<String> submitByMember(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
                                                  @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
 

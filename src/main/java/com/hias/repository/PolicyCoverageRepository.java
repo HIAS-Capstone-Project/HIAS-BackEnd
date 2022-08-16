@@ -10,7 +10,10 @@ import java.util.List;
 @Repository
 public interface PolicyCoverageRepository extends JpaRepository<PolicyCoverage, Long> {
     List<PolicyCoverage> findAllByPolicyNo(Long policyNo);
+
     List<PolicyCoverage> findAllByBenefitNo(Long benefitNo);
+
     List<PolicyCoverage> findAllByPolicyNoAndIsDeletedIsFalse(Long policyNo);
+
     List<PolicyCoverage> findAllByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
 }

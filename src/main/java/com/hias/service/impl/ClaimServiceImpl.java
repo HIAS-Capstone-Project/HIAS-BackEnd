@@ -11,6 +11,7 @@ import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.ClaimDocumentRepository;
 import com.hias.repository.ClaimRepository;
 import com.hias.repository.EmployeeRepository;
@@ -24,6 +25,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +63,33 @@ public class ClaimServiceImpl implements ClaimService {
     public List<ClaimResponseDTO> findAll() {
         List<Claim> claims = claimRepository.findAllByIsDeletedIsFalse();
         return claimResponseDTOMapper.toDtoList(claims);
+    }
+
+    @Override
+    public PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable) {
+
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValue(searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
     }
 
     @Override

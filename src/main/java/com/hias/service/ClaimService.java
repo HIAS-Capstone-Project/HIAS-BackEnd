@@ -4,6 +4,8 @@ import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
+import com.hias.model.response.PagingResponseModel;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -12,6 +14,8 @@ import java.util.List;
 public interface ClaimService {
 
     List<ClaimResponseDTO> findAll();
+
+    PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable);
 
     ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);
 
