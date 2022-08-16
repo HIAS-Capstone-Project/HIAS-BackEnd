@@ -25,9 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -182,8 +181,45 @@ public class BenefitServiceImpl implements BenefitService {
         } else {
             Benefit benefit = benefitRequestDTOMapper.toEntity(benefitRequestDTO);
             benefitResponseDTO = benefitResponseDTOMapper.toDto(benefitRepository.save(benefit));
+            processForBenefitLicense(benefitRequestDTO, benefitNo, benefit);
             log.info("[update] Updated benefit with benefitNo : {} in the system.", benefitNo);
         }
         return benefitResponseDTO;
+    }
+
+    private void processForBenefitLicense(BenefitRequestDTO benefitRequestDTO, Long benefitNo, Benefit benefit) {
+        List<BenefitLicense> benefitLicenses = benefitLiscenseRepository.findByBenefitNo(benefitNo);
+        Map<Long, BenefitLicense> benefitLicenseMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(benefitLicenses)) {
+            benefitLicenseMap = benefitLicenses.stream()
+                    .collect(Collectors.toMap(BenefitLicense::getLicenseNo, Function.identity()));
+        }
+        List<BenefitLicense> savedBenefitLicenses = new ArrayList<>();
+        List<Long> licenseNos = benefitRequestDTO.getLicenseNos();
+        if (CollectionUtils.isEmpty(licenseNos)) {
+            savedBenefitLicenses = benefitLicenses.stream()
+                    .filter(b -> !b.isDeleted())
+                    .peek(b -> b.setDeleted(Boolean.TRUE))
+                    .collect(Collectors.toList());
+        } else {
+            for (Long licenseNo : licenseNos) {
+                BenefitLicense benefitLicense = benefitLicenseMap.get(licenseNo);
+                if (benefitLicense == null) {
+                    savedBenefitLicenses.add(BenefitLicense
+                            .builder()
+                            .benefitNo(benefitNo)
+                            .benefit(benefit)
+                            .licenseNo(licenseNo)
+                            .license(License.builder().licenseNo(licenseNo).build())
+                            .build());
+                } else {
+                    if (benefitLicense.isDeleted()) {
+                        benefitLicense.setDeleted(Boolean.FALSE);
+                        savedBenefitLicenses.add(benefitLicense);
+                    }
+                }
+            }
+        }
+        benefitLiscenseRepository.saveAll(savedBenefitLicenses);
     }
 }
