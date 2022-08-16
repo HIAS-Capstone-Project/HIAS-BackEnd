@@ -9,6 +9,7 @@ import com.hias.mapper.request.ClaimRequestDTOMapper;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.ClaimDocumentResponseDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
+import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimDocumentResponseDTO;
@@ -53,6 +54,7 @@ public class ClaimServiceImpl implements ClaimService {
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
     private final ClaimResponseDTOMapper claimResponseDTOMapper;
     private final ClaimDocumentResponseDTOMapper claimDocumentResponseDTOMapper;
+    private final LicenseResponseDTOMapper licenseResponseDTOMapper;
     private final FireBaseUtils fireBaseUtils;
     private final MessageUtils messageUtils;
     private final ClaimValidator claimValidator;
@@ -77,10 +79,7 @@ public class ClaimServiceImpl implements ClaimService {
                     ClaimDocumentResponseDTO claimDocumentResponseDTO = claimDocumentResponseDTOMapper.toDto(claimDocument);
 
                     license = claimDocument.getLicense();
-                    claimDocumentResponseDTO.setLabel(license.getLabel());
-                    claimDocumentResponseDTO.setLicenseName(license.getLicenseName());
-                    claimDocumentResponseDTO.setLicenseNo(license.getLicenseNo());
-
+                    claimDocumentResponseDTO.setLicenseResponseDTO(licenseResponseDTOMapper.toDto(license));
                     claimDocumentResponseDTOS.add(claimDocumentResponseDTO);
                 }
                 claimResponseDTO.setClaimDocumentResponseDTOS(claimDocumentResponseDTOS);
