@@ -2,7 +2,7 @@ package com.hias.service.impl;
 
 import com.hias.entity.BenefitLicense;
 import com.hias.entity.License;
-import com.hias.mapper.response.LiscenseResponseDTOMapper;
+import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.response.LicenseResponseDTO;
 import com.hias.repository.BenefitLiscenseRepository;
 import com.hias.repository.LiscenseRepository;
@@ -22,7 +22,7 @@ public class LicenseServiceImpl implements LicenseService {
 
     private final LiscenseRepository liscenseRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
-    private final LiscenseResponseDTOMapper liscenseResponseDTOMapper;
+    private final LicenseResponseDTOMapper liscenseResponseDTOMapper;
 
     @Override
     public List<LicenseResponseDTO> findAll() {

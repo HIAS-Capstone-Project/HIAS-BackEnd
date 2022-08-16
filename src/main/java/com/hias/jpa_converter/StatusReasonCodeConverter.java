@@ -1,6 +1,5 @@
 package com.hias.jpa_converter;
 
-import com.hias.constant.StatusCode;
 import com.hias.constant.StatusReasonCode;
 
 import javax.persistence.AttributeConverter;

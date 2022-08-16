@@ -7,5 +7,5 @@ import com.hias.model.response.LicenseResponseDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = CommonConstant.SPRING)
-public interface LiscenseResponseDTOMapper extends EntityMapper<LicenseResponseDTO, License> {
+public interface LicenseResponseDTOMapper extends EntityMapper<LicenseResponseDTO, License> {
 }

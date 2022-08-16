@@ -7,9 +7,11 @@ import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
 import com.hias.mapper.response.BenefitItemResponseDTOMapper;
 import com.hias.mapper.response.BenefitResponseDTOMapper;
+import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitItemResponseDTO;
 import com.hias.model.response.BenefitResponseDTO;
+import com.hias.model.response.LicenseResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.*;
 import com.hias.service.BenefitService;
@@ -44,6 +46,7 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitLiscenseRepository benefitLiscenseRepository;
     private final MemberRepository memberRepository;
     private final BenefitItemResponseDTOMapper benefitItemResponseDTOMapper;
+    private final LicenseResponseDTOMapper licenseResponseDTOMapper;
 
 
     @Override
@@ -54,8 +57,13 @@ public class BenefitServiceImpl implements BenefitService {
             log.warn("[findByBenefitNo] Cannot found benefit with benefit no : {}", benefitNo);
             return benefitResponseDTO;
         }
+        benefitResponseDTO = benefitResponseDTOMapper.toDto(benefitOptional.get());
+        List<BenefitLicense> benefitLicenses = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+        List<License> licenses = benefitLicenses.stream().map(b -> b.getLicense()).collect(Collectors.toList());
+        List<LicenseResponseDTO> licenseResponseDTOS = licenseResponseDTOMapper.toDtoList(licenses);
+        benefitResponseDTO.setLicenseResponseDTOS(licenseResponseDTOS);
         log.info("[findByBenefitNo] Found benefit with benefit no : {}", benefitNo);
-        return benefitResponseDTOMapper.toDto(benefitOptional.get());
+        return benefitResponseDTO;
     }
 
     @Override
@@ -117,6 +125,7 @@ public class BenefitServiceImpl implements BenefitService {
 
         benefitResponseDTOS.forEach(b -> b.setBenefitItemNos(benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(b.getBenefitNo()).
                 stream().map(BenefitItem::getBenefitItemNo).collect(Collectors.toList())));
+
 
         return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
                 pageable,
