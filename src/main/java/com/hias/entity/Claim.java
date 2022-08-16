@@ -1,8 +1,10 @@
 package com.hias.entity;
 
 import com.hias.constant.RecordSource;
+import com.hias.constant.StatusReasonCode;
 import com.hias.entity.base.BaseEntity;
 import com.hias.jpa_converter.RecordSourceConverter;
+import com.hias.jpa_converter.StatusReasonCodeConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -79,6 +81,10 @@ public class Claim extends BaseEntity {
     @Column(name = "RECORD_SOURCE")
     @Convert(converter = RecordSourceConverter.class)
     private RecordSource recordSource;
+
+    @Column(name = "STATUS_REASON_CODE")
+    @Convert(converter = StatusReasonCodeConverter.class)
+    private StatusReasonCode statusReasonCode;
 
     @Column(name = "MEMBER_NO", insertable = false, updatable = false)
     private Long memberNo;

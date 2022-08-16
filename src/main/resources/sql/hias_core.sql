@@ -360,6 +360,7 @@ CREATE TABLE HIAS.CLAIM
     BENEFIT_NO                INTEGER,
     STATUS_CODE               VARCHAR(3)    DEFAULT 'DRA',
     RECORD_SOURCE             VARCHAR(3)    DEFAULT 'M',
+    STATUS_REASON_CODE        VARCHAR(10),
     IS_DELETED                BOOLEAN       DEFAULT FALSE,
     CREATED_BY                VARCHAR(2000) DEFAULT 'System',
     CREATED_ON                TIMESTAMP     DEFAULT (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh'),
