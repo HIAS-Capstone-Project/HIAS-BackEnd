@@ -20,7 +20,8 @@ public enum StatusCode {
     MEDICAL_VERIFYING("MV", "Medical Verifying"),
     APPROVED("APR", "Approved"),
     PAYMENT_PROCESSING("PAY", "Payment Processing"),
-    SETTLED("SET", "Settled");
+    SETTLED("SET", "Settled"),
+    REJECTED("REJ", "Rejected");
 
     private String code;
     private String value;

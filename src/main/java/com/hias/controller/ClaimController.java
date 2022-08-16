@@ -85,8 +85,8 @@ public class ClaimController {
     }
 
     @PostMapping("cancel-claim/{claimNo}")
-    public ResponseEntity<String> cancelClaim(@PathVariable Long claimNo) {
-
-        return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.CREATED);
+    public ResponseEntity<String> cancelClaim(@PathVariable Long claimNo) throws HIASException {
+        claimService.cancelClaim(claimNo);
+        return new ResponseEntity<>(CommonConstant.CANCELED_SUCCESSFULLY, HttpStatus.OK);
     }
 }

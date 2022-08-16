@@ -270,10 +270,20 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO cancelClaim(Long claimNo) {
+    public ClaimResponseDTO cancelClaim(Long claimNo) throws HIASException {
         Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
-
-        return null;
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            if (!StatusCode.DRAFT.equals(claim.getStatusCode())) {
+                throw HIASException.buildHIASException(
+                        messageUtils.getMessage(ErrorMessageCode.NOT_DRAFT_CLAIM),
+                        HttpStatus.NOT_ACCEPTABLE);
+            }
+            claim.setStatusCode(StatusCode.CANCELED);
+            claimRepository.save(claim);
+        }
+        return claimResponseDTO;
     }
 
 }
