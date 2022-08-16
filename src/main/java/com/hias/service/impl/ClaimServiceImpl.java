@@ -173,11 +173,15 @@ public class ClaimServiceImpl implements ClaimService {
         String fileName, extension, originalFileName;
         MultipartFile file;
         List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
-        Long licenseNo;
+        Long licenseNo, claimDocumentNo = null;
         int size = Math.min(files.size(), licenseNos.size());
         for (int index = 0; index < size; index++) {
             licenseNo = licenseNos.get(index);
             ClaimDocument claimDocument = claimDocumentMap.get(licenseNo);
+            if (claimDocument != null) {
+                claimDocumentNo = claimDocument.getClaimDocumentNo();
+            }
+
             file = files.get(index);
             originalFileName = file.getOriginalFilename().trim();
             fileName = originalFileName.replaceAll(CommonConstant.REGEX_FILE_EXTENSION, StringUtils.EMPTY);
@@ -185,12 +189,15 @@ public class ClaimServiceImpl implements ClaimService {
             fileName = fileName + DateUtils.currentDateTimeAsString(DateConstant.DD_MM_YYYY_HH_MM_SS_SSS) + CommonConstant.DOT + extension;
             fireBaseUtils.uploadFile(file, fileName);
 
-            saveClaimDocumentForMember(claimCreated, originalFileName, fileName, licenseNos, index);
+            saveClaimDocumentForMember(claimCreated, originalFileName, fileName, claimDocumentNo, licenseNos, index);
         }
     }
 
-    private void saveClaimDocumentForMember(Claim claimCreated, String originalFileName, String fileName, List<Long> licenseNos, int index) {
+    private void saveClaimDocumentForMember(Claim claimCreated, String originalFileName, String fileName, Long claimDocumentNo, List<Long> licenseNos, int index) {
         ClaimDocument claimDocument = new ClaimDocument();
+        if (claimDocumentNo != null) {
+            claimDocument.setClaimDocumentNo(claimDocumentNo);
+        }
         claimDocument.setClaimNo(claimCreated.getClaimNo());
         claimDocument.setClaim(claimCreated);
         claimDocument.setClaimNo(claimCreated.getClaimNo());

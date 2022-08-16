@@ -3,6 +3,7 @@ package com.hias.model.request;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +19,6 @@ public class BenefitRequestDTO implements Serializable {
     private String benefitName;
 
     private String remark;
+
+    private List<Long> licenseNos;
 }

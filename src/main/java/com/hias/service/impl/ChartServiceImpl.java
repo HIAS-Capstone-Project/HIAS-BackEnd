@@ -133,19 +133,18 @@ public class ChartServiceImpl implements ChartService {
         String role = userDetail.getRoles().get(0);
         log.info("[findClaimStatusChart] role: {}", role);
         String chartName;
-        if("ROLE_CLIENT".equalsIgnoreCase(role)){
+        if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
-            chartName = String.format("Claim status statistics for client: %s",clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
-        } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)){
-            if (clientNo == null){
+            chartName = String.format("Claim status statistics for client: %s", clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
+        } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)) {
+            if (clientNo == null) {
                 query = String.format(query, String.format("AND m.client_no IN(\n" +
                         "        SELECT ec.client_no\n" +
                         "        FROM HIAS.employee_client ec\n" +
                         "        WHERE ec.employee_no = %s\n" +
                         "    )", userDetail.getPrimaryKey()));
                 chartName = String.format("Claims status statistics in charge by employee: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
-            }
-            else {
+            } else {
                 query = String.format(query, String.format("AND m.client_no IN(\n" +
                         "        SELECT ec.client_no\n" +
                         "        FROM HIAS.employee_client ec\n" +
@@ -155,11 +154,10 @@ public class ChartServiceImpl implements ChartService {
                         clientService.getDetail(clientNo).getClientName());
             }
         } else {
-            if (clientNo != null){
+            if (clientNo != null) {
                 query = String.format(query, String.format("AND m.client_no = %s", clientNo));
                 chartName = String.format("Claim status statistics for to client: %s", clientService.getDetail(clientNo).getClientName());
-            }
-            else {
+            } else {
                 query = String.format(query, "");
                 chartName = "Claim status statistics";
             }

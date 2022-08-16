@@ -2,10 +2,7 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
-import com.hias.entity.Benefit;
-import com.hias.entity.BenefitItem;
-import com.hias.entity.Member;
-import com.hias.entity.PolicyCoverage;
+import com.hias.entity.*;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
 import com.hias.mapper.response.BenefitItemResponseDTOMapper;
@@ -14,10 +11,7 @@ import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitItemResponseDTO;
 import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.PagingResponseModel;
-import com.hias.repository.BenefitItemRepository;
-import com.hias.repository.BenefitRepository;
-import com.hias.repository.MemberRepository;
-import com.hias.repository.PolicyCoverageRepository;
+import com.hias.repository.*;
 import com.hias.service.BenefitService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.BenefitValidator;
@@ -49,8 +43,8 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitValidator benefitValidator;
     private final MessageUtils messageUtils;
     private final BenefitItemRepository benefitItemRepository;
-
     private final PolicyCoverageRepository policyCoverageRepository;
+    private final BenefitLiscenseRepository benefitLiscenseRepository;
 
     @Override
     public BenefitResponseDTO findByBenefitNo(Long benefitNo) {
@@ -141,6 +135,21 @@ public class BenefitServiceImpl implements BenefitService {
         }
         BenefitResponseDTO benefitResponseDTO;
         Benefit benefitCreated = benefitRepository.save(benefitRequestDTOMapper.toEntity(benefitRequestDTO));
+        List<Long> licenseNos = benefitRequestDTO.getLicenseNos();
+        if (CollectionUtils.isNotEmpty(licenseNos)) {
+            List<BenefitLicense> benefitLicenses = new ArrayList<>();
+            for (Long licenseNo : licenseNos) {
+                BenefitLicense benefitLicense = BenefitLicense.builder()
+                        .benefitNo(benefitCreated.getBenefitNo())
+                        .benefit(benefitCreated)
+                        .licenseNo(licenseNo)
+                        .license(License.builder().licenseNo(licenseNo).build())
+                        .build();
+                benefitLicenses.add(benefitLicense);
+            }
+            benefitLiscenseRepository.saveAll(benefitLicenses);
+        }
+
         benefitResponseDTO = benefitResponseDTOMapper.toDto(benefitCreated);
         log.info("[create] End create new benefit with benefit no : {}", benefitResponseDTO.getBenefitNo());
         return benefitResponseDTO;
