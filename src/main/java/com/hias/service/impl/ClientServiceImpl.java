@@ -3,17 +3,14 @@ package com.hias.service.impl;
 import com.hias.constant.CommonConstant;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
-import com.hias.entity.Client;
-import com.hias.entity.HealthCardFormat;
+import com.hias.entity.*;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponeDTO;
 import com.hias.model.response.PagingResponseModel;
-import com.hias.repository.ClientRepository;
-import com.hias.repository.EmployeeClientRepository;
-import com.hias.repository.HealthCardFormatRepository;
+import com.hias.repository.*;
 import com.hias.service.ClientService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.ClientValidator;
@@ -43,7 +40,9 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRequestDTOMapper clientRequestDTOMapper;
     private final ClientValidator clientValidator;
     private final EmployeeClientRepository employeeClientRepository;
-
+    private final PolicyRepository policyRepository;
+    private final PolicyCoverageRepository policyCoverageRepository;
+    private final MemberRepository memberRepository;
     @Override
     public List<ClientResponeDTO> getAll() {
         log.info("[getAll] Start get all clients.");
@@ -140,6 +139,42 @@ public class ClientServiceImpl implements ClientService {
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
             if (!client.isDeleted()) {
+                List<Policy> policyList = policyRepository.findAllByClientNoAndIsDeletedIsFalse(clientNo);
+                if(!policyList.isEmpty()){
+                    List<Long> policyNos = policyList.stream().map(policy -> policy.getPolicyNo()).collect(Collectors.toList());
+                    for (Policy policy: policyList) {
+                        policy.setDeleted(true);
+                    }
+                    List<PolicyCoverage> policyCoverageList=policyCoverageRepository.findAllByPolicyNos(policyNos);
+                    if(!CollectionUtils.isEmpty(policyCoverageList)){
+                        for (PolicyCoverage policyCoverage: policyCoverageList) {
+                            policyCoverage.setDeleted(true);
+                        }
+                        policyCoverageRepository.saveAll(policyCoverageList);
+                    }
+                    policyRepository.saveAll(policyList);
+                }
+                List<Member> memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
+                if(!memberList.isEmpty()){
+                    for (Member member: memberList) {
+                        member.setDeleted(true);
+                    }
+                    memberRepository.saveAll(memberList);
+                }
+                List<EmployeeClient> employeeClients = employeeClientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
+                if(!CollectionUtils.isEmpty(employeeClients)){
+                    for (EmployeeClient employeeClient: employeeClients) {
+                        employeeClient.setDeleted(true);
+                    }
+                    employeeClientRepository.saveAll(employeeClients);
+                }
+                List<HealthCardFormat> healthCardFormatList = healthCardFormatRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
+                if(!CollectionUtils.isEmpty(healthCardFormatList)){
+                    for (HealthCardFormat healthCardFormat: healthCardFormatList) {
+                        healthCardFormat.setDeleted(true);
+                    }
+                    healthCardFormatRepository.saveAll(healthCardFormatList);
+                }
                 client.setDeleted(true);
                 clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(client));
             }

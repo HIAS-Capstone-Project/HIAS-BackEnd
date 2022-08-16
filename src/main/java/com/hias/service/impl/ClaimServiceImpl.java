@@ -3,6 +3,7 @@ package com.hias.service.impl;
 import com.hias.constant.*;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
+import com.hias.entity.ClaimRequestHistory;
 import com.hias.entity.License;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
@@ -117,6 +118,7 @@ public class ClaimServiceImpl implements ClaimService {
             log.info("[deleteByBenefitNo] Cannot found claim with claimNo : {} in the system.", claimNo);
         } else {
             Claim claim = claimOptional.get();
+
             claim.setDeleted(Boolean.TRUE);
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
             log.info("[deleteByBenefitNo] Delete claim with claimNo : {} in the system.", claimNo);

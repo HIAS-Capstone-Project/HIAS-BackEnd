@@ -16,6 +16,7 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
     List<Policy> findByPolicyCodeAndClientNoAndIsDeletedIsFalse(String policyCode, Long clientNo);
 
     List<Policy> findByIsDeletedIsFalse();
+    List<Policy> findAllByClientNoAndIsDeletedIsFalse(Long clientNo);
 
     Optional<Policy> findByPolicyNoAndIsDeletedIsFalse(Long policyNo);
 
