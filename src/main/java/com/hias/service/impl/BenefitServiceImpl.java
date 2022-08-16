@@ -180,7 +180,7 @@ public class BenefitServiceImpl implements BenefitService {
                     policyCoverage.setDeleted(true);
                 } policyCoverageRepository.saveAll(policyCoverageList);
             }
-            List<BenefitLicense> benefitLicenseList = benefitLiscenseRepository.findAllByBenefitNoAndIsDeletedIsFalse(benefitNo);
+            List<BenefitLicense> benefitLicenseList = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
             if(!benefitLicenseList.isEmpty()){
                 for ( BenefitLicense benefitLicense:benefitLicenseList) {
                     benefitLicense.setDeleted(true);

@@ -12,11 +12,7 @@ public interface BenefitLiscenseRepository extends JpaRepository<BenefitLicense,
     List<BenefitLicense> findAllByIsDeletedIsFalse();
 
     List<BenefitLicense> findByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
-
-<<<<<<< HEAD
-    List<BenefitLicense> findAllByBenefitNoAndIsDeletedIsFalse(Long benefitNo);
-=======
     List<BenefitLicense> findByBenefitNo(Long benefitNo);
->>>>>>> develop
+
 
 }
