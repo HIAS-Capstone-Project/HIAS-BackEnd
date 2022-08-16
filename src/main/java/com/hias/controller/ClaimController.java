@@ -1,13 +1,19 @@
 package com.hias.controller;
 
 import com.hias.constant.CommonConstant;
+import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
+import com.hias.model.response.PagingResponseModel;
 import com.hias.service.ClaimService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +33,16 @@ public class ClaimController {
     @GetMapping("find-all")
     public ResponseEntity<List<ClaimResponseDTO>> findAll() {
         return new ResponseEntity<>(claimService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> search(@RequestParam(required = false) String searchValue,
+                                                                        @PageableDefault(page = 0, size = 10)
+                                                                        @SortDefault.SortDefaults({
+                                                                                @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                        direction = Sort.Direction.DESC)
+                                                                        }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.search(searchValue, pageable), HttpStatus.OK);
     }
 
     @PostMapping("create")
