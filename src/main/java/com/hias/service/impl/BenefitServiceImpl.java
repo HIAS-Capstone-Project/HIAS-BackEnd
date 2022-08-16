@@ -7,8 +7,11 @@ import com.hias.entity.BenefitItem;
 
 import com.hias.entity.BenefitLicense;
 import com.hias.entity.PolicyCoverage;
+import com.hias.entity.*;
+
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
+import com.hias.mapper.response.BenefitItemResponseDTOMapper;
 import com.hias.mapper.response.BenefitResponseDTOMapper;
 import com.hias.model.request.BenefitRequestDTO;
 import com.hias.model.response.BenefitItemResponseDTO;
@@ -18,6 +21,7 @@ import com.hias.repository.BenefitItemRepository;
 import com.hias.repository.BenefitLiscenseRepository;
 import com.hias.repository.BenefitRepository;
 import com.hias.repository.PolicyCoverageRepository;
+import com.hias.repository.*;
 import com.hias.service.BenefitService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.BenefitValidator;
@@ -31,9 +35,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +52,9 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitItemRepository benefitItemRepository;
     private final PolicyCoverageRepository policyCoverageRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
+    private final MemberRepository memberRepository;
+    private final BenefitItemResponseDTOMapper benefitItemResponseDTOMapper;
+
 
     @Override
     public BenefitResponseDTO findByBenefitNo(Long benefitNo) {
@@ -75,7 +81,26 @@ public class BenefitServiceImpl implements BenefitService {
 
     @Override
     public List<BenefitResponseDTO> findByMemberNo(Long memberNo) {
-        return null;
+        List<BenefitResponseDTO> benefitResponseDTOS = new ArrayList<>();
+        Optional<Member> memberOptional = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            List<PolicyCoverage> policyCoverages = policyCoverageRepository.findAllByPolicyNoAndIsDeletedIsFalse(member.getPolicyNo());
+            List<Benefit> benefits = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(policyCoverages)) {
+                benefits = policyCoverages
+                        .stream().map(p -> p.getBenefit()).collect(Collectors.toList());
+            }
+
+            for (Benefit benefit : benefits) {
+                BenefitResponseDTO benefitResponseDTO = benefitResponseDTOMapper.toDto(benefit);
+                List<BenefitItem> benefitItems = benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(benefit.getBenefitNo());
+                List<BenefitItemResponseDTO> benefitItemResponseDTOS = benefitItemResponseDTOMapper.toDtoList(benefitItems);
+                benefitResponseDTO.setBenefitItemResponseDTOS(benefitItemResponseDTOS);
+                benefitResponseDTOS.add(benefitResponseDTO);
+            }
+        }
+        return benefitResponseDTOS;
     }
 
     @Override
@@ -120,6 +145,21 @@ public class BenefitServiceImpl implements BenefitService {
         }
         BenefitResponseDTO benefitResponseDTO;
         Benefit benefitCreated = benefitRepository.save(benefitRequestDTOMapper.toEntity(benefitRequestDTO));
+        List<Long> licenseNos = benefitRequestDTO.getLicenseNos();
+        if (CollectionUtils.isNotEmpty(licenseNos)) {
+            List<BenefitLicense> benefitLicenses = new ArrayList<>();
+            for (Long licenseNo : licenseNos) {
+                BenefitLicense benefitLicense = BenefitLicense.builder()
+                        .benefitNo(benefitCreated.getBenefitNo())
+                        .benefit(benefitCreated)
+                        .licenseNo(licenseNo)
+                        .license(License.builder().licenseNo(licenseNo).build())
+                        .build();
+                benefitLicenses.add(benefitLicense);
+            }
+            benefitLiscenseRepository.saveAll(benefitLicenses);
+        }
+
         benefitResponseDTO = benefitResponseDTOMapper.toDto(benefitCreated);
         log.info("[create] End create new benefit with benefit no : {}", benefitResponseDTO.getBenefitNo());
         return benefitResponseDTO;
@@ -172,8 +212,45 @@ public class BenefitServiceImpl implements BenefitService {
         } else {
             Benefit benefit = benefitRequestDTOMapper.toEntity(benefitRequestDTO);
             benefitResponseDTO = benefitResponseDTOMapper.toDto(benefitRepository.save(benefit));
+            processForBenefitLicense(benefitRequestDTO, benefitNo, benefit);
             log.info("[update] Updated benefit with benefitNo : {} in the system.", benefitNo);
         }
         return benefitResponseDTO;
+    }
+
+    private void processForBenefitLicense(BenefitRequestDTO benefitRequestDTO, Long benefitNo, Benefit benefit) {
+        List<BenefitLicense> benefitLicenses = benefitLiscenseRepository.findByBenefitNo(benefitNo);
+        Map<Long, BenefitLicense> benefitLicenseMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(benefitLicenses)) {
+            benefitLicenseMap = benefitLicenses.stream()
+                    .collect(Collectors.toMap(BenefitLicense::getLicenseNo, Function.identity()));
+        }
+        List<BenefitLicense> savedBenefitLicenses = new ArrayList<>();
+        List<Long> licenseNos = benefitRequestDTO.getLicenseNos();
+        if (CollectionUtils.isEmpty(licenseNos)) {
+            savedBenefitLicenses = benefitLicenses.stream()
+                    .filter(b -> !b.isDeleted())
+                    .peek(b -> b.setDeleted(Boolean.TRUE))
+                    .collect(Collectors.toList());
+        } else {
+            for (Long licenseNo : licenseNos) {
+                BenefitLicense benefitLicense = benefitLicenseMap.get(licenseNo);
+                if (benefitLicense == null) {
+                    savedBenefitLicenses.add(BenefitLicense
+                            .builder()
+                            .benefitNo(benefitNo)
+                            .benefit(benefit)
+                            .licenseNo(licenseNo)
+                            .license(License.builder().licenseNo(licenseNo).build())
+                            .build());
+                } else {
+                    if (benefitLicense.isDeleted()) {
+                        benefitLicense.setDeleted(Boolean.FALSE);
+                        savedBenefitLicenses.add(benefitLicense);
+                    }
+                }
+            }
+        }
+        benefitLiscenseRepository.saveAll(savedBenefitLicenses);
     }
 }
