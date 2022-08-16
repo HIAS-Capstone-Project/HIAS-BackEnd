@@ -40,7 +40,7 @@ public class Benefit extends BaseEntity {
     @OneToMany(mappedBy = "benefit", fetch = FetchType.LAZY)
     private List<PolicyCoverage> policyCoverageList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "benefit")
+    @OneToMany(mappedBy = "benefit", fetch = FetchType.LAZY)
     private List<BenefitLicense> benefitLiscenses = new ArrayList<>();
 
     @OneToMany(mappedBy = "benefit", fetch = FetchType.LAZY)
