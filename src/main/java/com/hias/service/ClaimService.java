@@ -15,6 +15,8 @@ public interface ClaimService {
 
     List<ClaimResponseDTO> findAll();
 
+    ClaimResponseDTO viewDetail(Long claimNo);
+
     PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable);
 
     ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);

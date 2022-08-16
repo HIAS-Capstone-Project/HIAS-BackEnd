@@ -43,6 +43,7 @@ public class ClientServiceImpl implements ClientService {
     private final PolicyRepository policyRepository;
     private final PolicyCoverageRepository policyCoverageRepository;
     private final MemberRepository memberRepository;
+
     @Override
     public List<ClientResponeDTO> getAll() {
         log.info("[getAll] Start get all clients.");
@@ -140,14 +141,14 @@ public class ClientServiceImpl implements ClientService {
             Client client = optionalClient.get();
             if (!client.isDeleted()) {
                 List<Policy> policyList = policyRepository.findAllByClientNoAndIsDeletedIsFalse(clientNo);
-                if(!policyList.isEmpty()){
+                if (!policyList.isEmpty()) {
                     List<Long> policyNos = policyList.stream().map(policy -> policy.getPolicyNo()).collect(Collectors.toList());
-                    for (Policy policy: policyList) {
+                    for (Policy policy : policyList) {
                         policy.setDeleted(true);
                     }
-                    List<PolicyCoverage> policyCoverageList=policyCoverageRepository.findAllByPolicyNos(policyNos);
-                    if(!CollectionUtils.isEmpty(policyCoverageList)){
-                        for (PolicyCoverage policyCoverage: policyCoverageList) {
+                    List<PolicyCoverage> policyCoverageList = policyCoverageRepository.findAllByPolicyNos(policyNos);
+                    if (!CollectionUtils.isEmpty(policyCoverageList)) {
+                        for (PolicyCoverage policyCoverage : policyCoverageList) {
                             policyCoverage.setDeleted(true);
                         }
                         policyCoverageRepository.saveAll(policyCoverageList);
@@ -155,22 +156,22 @@ public class ClientServiceImpl implements ClientService {
                     policyRepository.saveAll(policyList);
                 }
                 List<Member> memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
-                if(!memberList.isEmpty()){
-                    for (Member member: memberList) {
+                if (!memberList.isEmpty()) {
+                    for (Member member : memberList) {
                         member.setDeleted(true);
                     }
                     memberRepository.saveAll(memberList);
                 }
                 List<EmployeeClient> employeeClients = employeeClientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
-                if(!CollectionUtils.isEmpty(employeeClients)){
-                    for (EmployeeClient employeeClient: employeeClients) {
+                if (!CollectionUtils.isEmpty(employeeClients)) {
+                    for (EmployeeClient employeeClient : employeeClients) {
                         employeeClient.setDeleted(true);
                     }
                     employeeClientRepository.saveAll(employeeClients);
                 }
                 List<HealthCardFormat> healthCardFormatList = healthCardFormatRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
-                if(!CollectionUtils.isEmpty(healthCardFormatList)){
-                    for (HealthCardFormat healthCardFormat: healthCardFormatList) {
+                if (!CollectionUtils.isEmpty(healthCardFormatList)) {
+                    for (HealthCardFormat healthCardFormat : healthCardFormatList) {
                         healthCardFormat.setDeleted(true);
                     }
                     healthCardFormatRepository.saveAll(healthCardFormatList);

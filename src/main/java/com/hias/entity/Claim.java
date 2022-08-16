@@ -31,6 +31,12 @@ public class Claim extends BaseEntity {
     @Column(name = "VISIT_DATE")
     private LocalDateTime visitDate;
 
+    @Column(name = "ADMISSION_FROM_DATE")
+    private LocalDateTime admissionFromDate;
+
+    @Column(name = "ADMISSION_TO_DATE")
+    private LocalDateTime admissionToDate;
+
     @Column(name = "SUBMITTED_DATE")
     private LocalDateTime submittedDate;
 
@@ -80,13 +86,6 @@ public class Claim extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "MEMBER_NO", nullable = false)
     private Member member;
-
-//    @Column(name = "BENEFIT_ITEM_NO", insertable = false, updatable = false)
-//    private Long benefitItemNo;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "BENEFIT_ITEM_NO", nullable = false)
-//    private BenefitItem benefitItem;
 
     @OneToMany(mappedBy = "claim", fetch = FetchType.LAZY)
     private List<ClaimRequestHistory> claimRequestHistories = new ArrayList<>();

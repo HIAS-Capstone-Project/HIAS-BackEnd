@@ -35,6 +35,11 @@ public class ClaimController {
         return new ResponseEntity<>(claimService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("view-detail/{claimNo}")
+    public ResponseEntity<ClaimResponseDTO> viewDetail(@PathVariable Long claimNo) {
+        return new ResponseEntity<>(claimService.viewDetail(claimNo), HttpStatus.OK);
+    }
+
     @GetMapping("search")
     public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> search(@RequestParam(required = false) String searchValue,
                                                                         @PageableDefault(page = 0, size = 10)

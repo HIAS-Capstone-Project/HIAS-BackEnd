@@ -22,6 +22,8 @@ public class ClaimResponseDTO implements Serializable {
     private LocalDateTime paymentDate;
     private LocalDateTime medicalExaminationDate;
     private LocalDateTime businessExaminationDate;
+    private LocalDateTime admissionFromDate;
+    private LocalDateTime admissionToDate;
     private String remark;
     private String medicalAddress;
     private String description;

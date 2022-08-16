@@ -3,7 +3,6 @@ package com.hias.service.impl;
 import com.hias.constant.*;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
-import com.hias.entity.ClaimRequestHistory;
 import com.hias.entity.License;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
@@ -64,6 +63,16 @@ public class ClaimServiceImpl implements ClaimService {
     public List<ClaimResponseDTO> findAll() {
         List<Claim> claims = claimRepository.findAllByIsDeletedIsFalse();
         return claimResponseDTOMapper.toDtoList(claims);
+    }
+
+    @Override
+    public ClaimResponseDTO viewDetail(Long claimNo) {
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        if (claimOptional.isPresent()) {
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimOptional.get());
+        }
+        return claimResponseDTO;
     }
 
     @Override
