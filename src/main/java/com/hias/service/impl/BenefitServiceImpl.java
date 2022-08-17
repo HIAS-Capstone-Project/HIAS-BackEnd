@@ -9,7 +9,6 @@ import com.hias.mapper.response.BenefitItemResponseDTOMapper;
 import com.hias.mapper.response.BenefitResponseDTOMapper;
 import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.request.BenefitRequestDTO;
-import com.hias.model.response.BenefitItemResponseDTO;
 import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.LicenseResponseDTO;
 import com.hias.model.response.PagingResponseModel;
@@ -90,12 +89,24 @@ public class BenefitServiceImpl implements BenefitService {
                 benefits = policyCoverages
                         .stream().map(p -> p.getBenefit()).collect(Collectors.toList());
             }
-
+            List<BenefitLicense> benefitLicenses;
+            List<License> licenses;
+            List<BenefitItem> benefitItems;
+            Long benefitNo;
             for (Benefit benefit : benefits) {
+                benefitNo = benefit.getBenefitNo();
+
+                //set benefit items
                 BenefitResponseDTO benefitResponseDTO = benefitResponseDTOMapper.toDto(benefit);
-                List<BenefitItem> benefitItems = benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(benefit.getBenefitNo());
-                List<BenefitItemResponseDTO> benefitItemResponseDTOS = benefitItemResponseDTOMapper.toDtoList(benefitItems);
-                benefitResponseDTO.setBenefitItemResponseDTOS(benefitItemResponseDTOS);
+                benefitItems = benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+                benefitResponseDTO.setBenefitItemNos(benefitItems.stream().map(b -> b.getBenefitItemNo()).collect(Collectors.toList()));
+                benefitResponseDTO.setBenefitItemResponseDTOS(benefitItemResponseDTOMapper.toDtoList(benefitItems));
+
+                //set licenses
+                benefitLicenses = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+                licenses = benefitLicenses.stream().map(b -> b.getLicense()).collect(Collectors.toList());
+                benefitResponseDTO.setLicenseResponseDTOS(licenseResponseDTOMapper.toDtoList(licenses));
+
                 benefitResponseDTOS.add(benefitResponseDTO);
             }
         }
@@ -136,7 +147,7 @@ public class BenefitServiceImpl implements BenefitService {
             benefitResponseDTO.setBenefitItemNos(benefitItems.stream().map(b -> b.getBenefitItemNo()).collect(Collectors.toList()));
             benefitResponseDTO.setBenefitItemResponseDTOS(benefitItemResponseDTOMapper.toDtoList(benefitItems));
 
-            //set license
+            //set licenses
             benefitLicenses = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
             licenses = benefitLicenses.stream().map(b -> b.getLicense()).collect(Collectors.toList());
             benefitResponseDTO.setLicenseResponseDTOS(licenseResponseDTOMapper.toDtoList(licenses));

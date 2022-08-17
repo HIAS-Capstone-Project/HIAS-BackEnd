@@ -82,9 +82,9 @@ public class ChartController {
     */
     @GetMapping("policy-by-usage")
     public ResponseEntity<ChartResponseDTO> findPolicyByUsage(@RequestParam(required = false)
-                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                               @RequestParam(required = false)
-                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         ChartResponseDTO chartResponseDTO = chartService.findPolicyByUsage(startDate, endDate);
         return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
     }

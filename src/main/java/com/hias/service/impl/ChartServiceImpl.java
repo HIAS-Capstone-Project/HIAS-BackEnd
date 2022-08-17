@@ -171,7 +171,7 @@ public class ChartServiceImpl implements ChartService {
     @Override
     public ChartResponseDTO findPolicyByUsage(LocalDate startDate, LocalDate endDate) {
         String query = ChartQuery.POLICY_BY_USAGE;
-        if(startDate == null){
+        if (startDate == null) {
             query = String.format(query, "");
         } else {
             query = String.format(query, String.format("AND m.start_date BETWEEN '%s' :: timestamp AND '%s' :: timestamp", startDate, endDate));
