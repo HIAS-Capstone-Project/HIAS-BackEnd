@@ -54,4 +54,7 @@ public class Client extends BaseEntity {
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<HealthCardFormat> clientHealthCardFormats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    private List<ClientBusinessSector> clientBusinessSectors = new ArrayList<>();
 }
