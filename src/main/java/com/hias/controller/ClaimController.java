@@ -95,4 +95,10 @@ public class ClaimController {
         claimService.businessApproval(claimNo);
         return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
     }
+
+    @PostMapping("start-progress/{claimNo}")
+    public ResponseEntity<String> startProgress(@PathVariable Long claimNo) throws HIASException {
+        claimService.startProgress(claimNo);
+        return new ResponseEntity<>(CommonConstant.START_PROGRESS_SUCCESSFULLY, HttpStatus.OK);
+    }
 }

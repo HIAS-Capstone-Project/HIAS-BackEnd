@@ -32,4 +32,6 @@ public interface ClaimService {
     ClaimResponseDTO cancelClaim(Long claimNo) throws HIASException;
 
     ClaimResponseDTO businessApproval(Long claimNo) throws HIASException;
+
+    ClaimResponseDTO startProgress(Long claimNo) throws HIASException;
 }

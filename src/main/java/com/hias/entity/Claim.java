@@ -81,6 +81,9 @@ public class Claim extends BaseEntity {
     @Column(name = "MEDICAL_APPRAISAL_BY")
     private Long medicalAppraisalBy;
 
+    @Column(name = "APPROVED_BY")
+    private Long approvedBy;
+
     @Column(name = "RECORD_SOURCE")
     @Convert(converter = RecordSourceConverter.class)
     private RecordSource recordSource;

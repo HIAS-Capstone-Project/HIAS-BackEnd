@@ -32,7 +32,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "and (c.isDeleted is null or c.isDeleted = false) and " +
             "e.isDeleted = false " +
             "where c.businessAppraisalDate is null and " +
-            "(c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).BUSINESS_APPROVED}) and " +
+            "(c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).BUSINESS_VERIFIED}) and " +
             "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).BA} " +
             "group by e.employeeNo " +
             "order by count(e) asc,e.modifiedOn desc")
@@ -41,14 +41,14 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("select e.employeeNo from Employee e " +
             "join Claim c on e.employeeNo = c.medicalAppraisalBy and c.isDeleted = false and e.isDeleted = false " +
             "where c.medicalAppraisalDate is null and " +
-            "c.statusCode <> :#{T(com.hias.constant.StatusCode).MEDICAL_APPROVED} and " +
+            "c.statusCode <> :#{T(com.hias.constant.StatusCode).MEDICAL_VERIFIED} and " +
             "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).MA} " +
             "group by e.employeeNo " +
             "order by count(e.employeeNo) asc,e.modifiedOn desc")
     Optional<Long> findMedicalAppraiserHasClaimAtLeast();
 
     @Query("select e.employeeNo from Employee e " +
-            "join Claim c on e.employeeNo = c.medicalAppraisalBy and c.isDeleted = false and e.isDeleted = false " +
+            "join Claim c on e.employeeNo = c.approvedBy and c.isDeleted = false and e.isDeleted = false " +
             "where c.approvedDate is null and " +
             "c.statusCode <> :#{T(com.hias.constant.StatusCode).APPROVED} and " +
             "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).HM} " +

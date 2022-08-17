@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,6 +60,17 @@ public class ClaimServiceImpl implements ClaimService {
     private final FireBaseUtils fireBaseUtils;
     private final MessageUtils messageUtils;
     private final ClaimValidator claimValidator;
+
+    private Map<StatusCode, StatusCode> nextStatusMap;
+
+    @PostConstruct
+    private void initNextStatusMap() {
+        nextStatusMap = new HashMap<>();
+        nextStatusMap.put(StatusCode.SUBMITTED, StatusCode.BUSINESS_VERIFYING);
+        nextStatusMap.put(StatusCode.BUSINESS_VERIFIED, StatusCode.MEDICAL_VERIFYING);
+        nextStatusMap.put(StatusCode.MEDICAL_VERIFIED, StatusCode.WAITING_FOR_APPROVAL);
+        nextStatusMap.put(StatusCode.APPROVED, StatusCode.PAYMENT_PROCESSING);
+    }
 
     @Override
     public List<ClaimResponseDTO> findAll() {
@@ -178,7 +190,6 @@ public class ClaimServiceImpl implements ClaimService {
         Optional<Long> employeeNo = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
         if (employeeNo.isPresent()) {
             claimSaved.setBusinessAppraisalBy(employeeNo.get());
-            claimSaved.setStatusCode(StatusCode.BUSINESS_VERIFYING);
             claimSaved = claimRepository.save(claimSaved);
         }
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
@@ -306,7 +317,7 @@ public class ClaimServiceImpl implements ClaimService {
             }
             claim.setStatusCode(StatusCode.CANCELED);
             claim.setCanceledDate(LocalDateTime.now());
-            claimRepository.save(claim);
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
     }
@@ -318,17 +329,28 @@ public class ClaimServiceImpl implements ClaimService {
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
         if (claimOptional.isPresent()) {
             Claim claim = claimOptional.get();
-            claim.setStatusCode(StatusCode.BUSINESS_APPROVED);
+            claim.setStatusCode(StatusCode.BUSINESS_VERIFIED);
             claim.setBusinessAppraisalDate(LocalDateTime.now());
 
             Optional<Long> employeeNo = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
             if (employeeNo.isPresent()) {
-                claim.setStatusCode(StatusCode.MEDICAL_VERIFYING);
                 claim.setMedicalAppraisalBy(employeeNo.get());
             }
-            claimRepository.save(claim);
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
+        return claimResponseDTO;
+    }
 
+    @Override
+    @Transactional
+    public ClaimResponseDTO startProgress(Long claimNo) throws HIASException {
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(nextStatusMap.get(claim.getStatusCode()));
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
         return claimResponseDTO;
     }
 
