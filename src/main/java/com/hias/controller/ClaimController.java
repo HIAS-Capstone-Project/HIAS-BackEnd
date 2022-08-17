@@ -62,7 +62,7 @@ public class ClaimController {
         return new ResponseEntity<>(CommonConstant.UPDATED_SUCCESSFULLY, HttpStatus.OK);
     }
 
-    @DeleteMapping("delete-by-claim-no/{claimNo}")
+    @DeleteMapping("delete/{claimNo}")
     public ResponseEntity<String> deleteByClaimNo(@PathVariable Long claimNo) {
         claimService.deleteByClaimNo(claimNo);
         return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
