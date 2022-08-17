@@ -17,4 +17,6 @@ public interface ChartService {
     ChartResponseDTO findClaimStatusChart(Long clientNo);
 
     ChartResponseDTO findPolicyByUsage(LocalDate startDate, LocalDate endDate);
+
+    ChartResponseDTO findBusinessSectorChart();
 }

@@ -181,4 +181,11 @@ public class ChartServiceImpl implements ChartService {
         return chartResponseDTO;
     }
 
+    @Override
+    public ChartResponseDTO findBusinessSectorChart() {
+        List<StatisticDTO> statisticDTOS = template.query(ChartQuery.BUSINESS_SECTOR, new StatisticsRowMapper());
+        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().chartName("Business sectors").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return chartResponseDTO;
+    }
+
 }

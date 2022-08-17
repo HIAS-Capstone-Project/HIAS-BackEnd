@@ -26,4 +26,8 @@ public class ChartQuery {
             "FROM HIAS.policy p INNER JOIN HIAS.member m ON p.policy_no = m.policy_no\n" +
             "WHERE 1 = 1 %s\n" +
             "GROUP BY p.policy_name";
+
+    public static final String BUSINESS_SECTOR = "SELECT bs.business_sector_name AS key, SUM(CASE WHEN cbs.client_no IS NULL THEN 0 ELSE 1 END) AS value\n" +
+            "FROM HIAS.BUSINESS_SECTOR bs LEFT OUTER JOIN HIAS.CLIENT_BUSINESS_SECTOR cbs ON bs.business_sector_no = cbs.business_sector_no\n" +
+            "GROUP BY key";
 }

@@ -88,4 +88,14 @@ public class ChartController {
         ChartResponseDTO chartResponseDTO = chartService.findPolicyByUsage(startDate, endDate);
         return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
     }
+
+    /*
+    just for admin, accountant, employee.
+    others can see all and filter by client
+    */
+    @GetMapping("business-sector")
+    public ResponseEntity<ChartResponseDTO> findBusinessSectorChart() {
+        ChartResponseDTO chartResponseDTO = chartService.findBusinessSectorChart();
+        return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
+    }
 }
