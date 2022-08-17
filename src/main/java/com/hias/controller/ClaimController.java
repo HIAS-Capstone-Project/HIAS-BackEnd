@@ -89,4 +89,10 @@ public class ClaimController {
         claimService.cancelClaim(claimNo);
         return new ResponseEntity<>(CommonConstant.CANCELED_SUCCESSFULLY, HttpStatus.OK);
     }
+
+    @PostMapping("business-approval/{claimNo}")
+    public ResponseEntity<String> businessApproval(@PathVariable Long claimNo) throws HIASException {
+        claimService.businessApproval(claimNo);
+        return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+    }
 }

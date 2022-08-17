@@ -157,6 +157,7 @@ public class ClaimServiceImpl implements ClaimService {
 
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.SUBMITTED);
+        claim.setSubmittedDate(LocalDateTime.now());
         claim.setRecordSource(RecordSource.M);
 
         Claim claimSaved = claimRepository.save(claim);
@@ -178,10 +179,8 @@ public class ClaimServiceImpl implements ClaimService {
         if (employeeNo.isPresent()) {
             claimSaved.setBusinessAppraisalBy(employeeNo.get());
             claimSaved.setStatusCode(StatusCode.BUSINESS_VERIFYING);
-            claimSaved.setSubmittedDate(LocalDateTime.now());
             claimSaved = claimRepository.save(claimSaved);
         }
-
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
         return claimResponseDTO;
     }
@@ -306,8 +305,30 @@ public class ClaimServiceImpl implements ClaimService {
                         HttpStatus.NOT_ACCEPTABLE);
             }
             claim.setStatusCode(StatusCode.CANCELED);
+            claim.setCanceledDate(LocalDateTime.now());
             claimRepository.save(claim);
         }
+        return claimResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO businessApproval(Long claimNo) throws HIASException {
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.BUSINESS_APPROVED);
+            claim.setBusinessExaminationDate(LocalDateTime.now());
+
+            Optional<Long> employeeNo = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
+            if (employeeNo.isPresent()) {
+                claim.setStatusCode(StatusCode.MEDICAL_VERIFYING);
+                claim.setMedicalAppraisalBy(employeeNo.get());
+            }
+            claimRepository.save(claim);
+        }
+
         return claimResponseDTO;
     }
 

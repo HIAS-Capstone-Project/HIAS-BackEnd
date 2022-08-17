@@ -8,6 +8,7 @@ public class CommonConstant {
     public static final String CREATED_SUCCESSFULLY = "Created Successfully.";
     public static final String SAVED_SUCCESSFULLY = "Saved Successfully.";
     public static final String CANCELED_SUCCESSFULLY = "Canceled Successfully.";
+    public static final String APPROVAL_SUCCESSFULLY = "Approval Successfully.";
     public static final String SUBMIT_SUCCESSFULLY = "Submit Successfully.";
     public static final String UPDATED_SUCCESSFULLY = "Update Successfully.";
     public static final String DELETED_SUCCESSFULLY = "Deleted Successfully.";

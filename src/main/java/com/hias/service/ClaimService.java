@@ -30,4 +30,6 @@ public interface ClaimService {
     ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
 
     ClaimResponseDTO cancelClaim(Long claimNo) throws HIASException;
+
+    ClaimResponseDTO businessApproval(Long claimNo) throws HIASException;
 }

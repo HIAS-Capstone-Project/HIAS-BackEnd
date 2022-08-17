@@ -54,6 +54,9 @@ public class Claim extends BaseEntity {
     @Column(name = "PAYMENT_DATE")
     private LocalDateTime paymentDate;
 
+    @Column(name = "CANCELED_DATE")
+    private LocalDateTime canceledDate;
+
     @Column(name = "REMARK")
     private String remark;
 

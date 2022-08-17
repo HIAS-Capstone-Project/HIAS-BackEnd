@@ -46,4 +46,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "group by e.employeeNo " +
             "order by count(e.employeeNo) asc,e.modifiedOn desc")
     Optional<Long> findMedicalAppraiserHasClaimAtLeast();
+
+    @Query("select e.employeeNo from Employee e " +
+            "join Claim c on e.employeeNo = c.medicalAppraisalBy and c.isDeleted = false and e.isDeleted = false " +
+            "where c.approvedDate is null and " +
+            "c.statusCode <> :#{T(com.hias.constant.StatusCode).APPROVED} and " +
+            "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).HM} " +
+            "group by e.employeeNo " +
+            "order by count(e.employeeNo) asc,e.modifiedOn desc")
+    Optional<Long> findApproverHasClaimAtLeast();
 }
