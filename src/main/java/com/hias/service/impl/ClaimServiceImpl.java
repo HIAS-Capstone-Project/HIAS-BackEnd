@@ -1,6 +1,7 @@
 package com.hias.service.impl;
 
 import com.hias.constant.*;
+import com.hias.entity.BenefitLicense;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
 import com.hias.entity.License;
@@ -158,19 +159,30 @@ public class ClaimServiceImpl implements ClaimService {
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setRecordSource(RecordSource.M);
 
-        Claim claimCreated = claimRepository.save(claim);
+        Claim claimSaved = claimRepository.save(claim);
+        Long claimNo = claimSubmitRequestDTO.getClaimNo();
+        Long claimNoSaved = claimSaved.getClaimNo();
 
-        processClaimDocuments(claimSubmitRequestDTO, files, claimCreated);
+        Long benefitNo = claimSubmitRequestDTO.getBenefitNo();
+        List<BenefitLicense> benefitLicenses = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+        List<License> licenses = benefitLicenses.stream().map(BenefitLicense::getLicense).collect(Collectors.toList());
+
+        initClaimDocumentsIfNeeded(claimSaved, claimNo, claimNoSaved, licenses);
+
+        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        Map<Long, ClaimDocument> claimDocumentMap = buildClaimDocumentMap(claimDocuments);
+
+        processClaimDocuments(claimSubmitRequestDTO, files, claimDocuments, claimDocumentMap);
 
         Optional<Long> employeeNo = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
         if (employeeNo.isPresent()) {
-            claimCreated.setBusinessAppraisalBy(employeeNo.get());
-            claimCreated.setStatusCode(StatusCode.BUSINESS_VERIFYING);
-            claimCreated.setSubmittedDate(LocalDateTime.now());
-            claimCreated = claimRepository.save(claimCreated);
+            claimSaved.setBusinessAppraisalBy(employeeNo.get());
+            claimSaved.setStatusCode(StatusCode.BUSINESS_VERIFYING);
+            claimSaved.setSubmittedDate(LocalDateTime.now());
+            claimSaved = claimRepository.save(claimSaved);
         }
 
-        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimCreated);
+        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
         return claimResponseDTO;
     }
 
@@ -187,12 +199,80 @@ public class ClaimServiceImpl implements ClaimService {
         claim.setRecordSource(RecordSource.M);
 
         Claim claimSaved = claimRepository.save(claim);
+        Long claimNo = claimSubmitRequestDTO.getClaimNo();
+        Long claimNoSaved = claimSaved.getClaimNo();
 
-        processClaimDocuments(claimSubmitRequestDTO, files, claimSaved);
+        Long benefitNo = claimSubmitRequestDTO.getBenefitNo();
+        List<BenefitLicense> benefitLicenses = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+        List<License> licenses = benefitLicenses.stream().map(BenefitLicense::getLicense).collect(Collectors.toList());
+
+        initClaimDocumentsIfNeeded(claimSaved, claimNo, claimNoSaved, licenses);
+
+        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        Map<Long, ClaimDocument> claimDocumentMap = buildClaimDocumentMap(claimDocuments);
+
+        processClaimDocuments(claimSubmitRequestDTO, files, claimDocuments, claimDocumentMap);
 
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
 
         return claimResponseDTO;
+    }
+
+    private static Map<Long, ClaimDocument> buildClaimDocumentMap(List<ClaimDocument> claimDocuments) {
+        Map<Long, ClaimDocument> claimDocumentMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(claimDocuments)) {
+            claimDocumentMap = claimDocuments
+                    .stream()
+                    .collect(Collectors.toMap(ClaimDocument::getLicenseNo, Function.identity()));
+            claimDocuments.clear();
+        }
+        return claimDocumentMap;
+    }
+
+    private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files,
+                                       List<ClaimDocument> claimDocuments,
+                                       Map<Long, ClaimDocument> claimDocumentMap) throws IOException {
+        List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
+        int size = Math.min(files.size(), licenseNos.size());
+
+        Long licenseNo;
+        MultipartFile file;
+        String originalFileName, fileName, extension;
+
+        for (int index = 0; index < size; index++) {
+            licenseNo = licenseNos.get(index);
+            file = files.get(index);
+            if (file != null) {
+                originalFileName = file.getOriginalFilename().trim();
+                fileName = originalFileName.replaceAll(CommonConstant.REGEX_FILE_EXTENSION, StringUtils.EMPTY);
+                extension = org.springframework.util.StringUtils.getFilenameExtension(originalFileName);
+                fileName = fileName + DateUtils.currentDateTimeAsString(DateConstant.DD_MM_YYYY_HH_MM_SS_SSS) + CommonConstant.DOT + extension;
+                fireBaseUtils.uploadFile(file, fileName);
+                ClaimDocument claimDocument = claimDocumentMap.get(licenseNo);
+                claimDocument.setPathFile(fileName);
+                claimDocument.setFileName(fileName);
+                claimDocument.setOriginalFileName(originalFileName);
+                claimDocument.setFileUrl(String.format(FireBaseConstant.FILE_URL, fileName));
+                claimDocuments.add(claimDocument);
+            }
+        }
+        claimDocumentRepository.saveAll(claimDocuments);
+    }
+
+    private void initClaimDocumentsIfNeeded(Claim claimSaved, Long claimNo, Long claimNoSaved, List<License> licenses) {
+        //init claim documents when create
+        if (claimNo == null) {
+            List<ClaimDocument> claimDocuments = new ArrayList<>();
+            for (License license : licenses) {
+                claimDocuments.add(ClaimDocument.builder()
+                        .claim(claimSaved)
+                        .claimNo(claimNoSaved)
+                        .license(license)
+                        .licenseNo(license.getLicenseNo())
+                        .build());
+            }
+            claimDocumentRepository.saveAll(claimDocuments);
+        }
     }
 
     private void validateDraftClaim(ClaimSubmitRequestDTO claimSubmitRequestDTO) throws HIASException {
@@ -211,58 +291,6 @@ public class ClaimServiceImpl implements ClaimService {
                     messageUtils.getMessage(ErrorMessageCode.INVALID_MEMBER_VISIT_DATE),
                     HttpStatus.NOT_ACCEPTABLE);
         }
-    }
-
-    private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files, Claim claimCreated) throws IOException {
-        Long claimNo = claimSubmitRequestDTO.getClaimNo();
-        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
-
-        Map<Long, ClaimDocument> claimDocumentMap = new HashMap<>();
-
-        if (CollectionUtils.isNotEmpty(claimDocuments)) {
-            claimDocumentMap = claimDocuments
-                    .stream()
-                    .collect(Collectors.toMap(ClaimDocument::getLicenseNo, Function.identity()));
-        }
-
-        String fileName, extension, originalFileName;
-        MultipartFile file;
-        List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
-        Long licenseNo, claimDocumentNo = null;
-        int size = Math.min(files.size(), licenseNos.size());
-        for (int index = 0; index < size; index++) {
-            licenseNo = licenseNos.get(index);
-            ClaimDocument claimDocument = claimDocumentMap.get(licenseNo);
-            if (claimDocument != null) {
-                claimDocumentNo = claimDocument.getClaimDocumentNo();
-            }
-
-            file = files.get(index);
-            originalFileName = file.getOriginalFilename().trim();
-            fileName = originalFileName.replaceAll(CommonConstant.REGEX_FILE_EXTENSION, StringUtils.EMPTY);
-            extension = org.springframework.util.StringUtils.getFilenameExtension(originalFileName);
-            fileName = fileName + DateUtils.currentDateTimeAsString(DateConstant.DD_MM_YYYY_HH_MM_SS_SSS) + CommonConstant.DOT + extension;
-            fireBaseUtils.uploadFile(file, fileName);
-
-            saveClaimDocumentForMember(claimCreated, originalFileName, fileName, claimDocumentNo, licenseNos, index);
-        }
-    }
-
-    private void saveClaimDocumentForMember(Claim claimCreated, String originalFileName, String fileName, Long claimDocumentNo, List<Long> licenseNos, int index) {
-        ClaimDocument claimDocument = new ClaimDocument();
-        if (claimDocumentNo != null) {
-            claimDocument.setClaimDocumentNo(claimDocumentNo);
-        }
-        claimDocument.setClaimNo(claimCreated.getClaimNo());
-        claimDocument.setClaim(claimCreated);
-        claimDocument.setClaimNo(claimCreated.getClaimNo());
-        claimDocument.setLicense(License.builder().licenseNo(licenseNos.get(index)).build());
-        claimDocument.setLicenseNo(licenseNos.get(index));
-        claimDocument.setPathFile(fileName);
-        claimDocument.setFileName(fileName);
-        claimDocument.setOriginalFileName(originalFileName);
-        claimDocument.setFileUrl(String.format(FireBaseConstant.FILE_URL, fileName));
-        claimDocumentRepository.save(claimDocument);
     }
 
     @Override

@@ -13,7 +13,7 @@ public class CommonConstant {
     public static final String DELETED_SUCCESSFULLY = "Deleted Successfully.";
     public static final String DASH = "-";
     public static final String DOT = ".";
-    public static final String REGEX_FILE_EXTENSION = "\\.(txt|xls|xlsx|docs|pdf)";
+    public static final String REGEX_FILE_EXTENSION = "\\.(txt|xls|xlsx|docs|pdf|png|jpg)";
 
 
 }
