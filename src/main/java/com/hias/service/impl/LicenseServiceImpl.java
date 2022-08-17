@@ -5,7 +5,7 @@ import com.hias.entity.License;
 import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.response.LicenseResponseDTO;
 import com.hias.repository.BenefitLiscenseRepository;
-import com.hias.repository.LiscenseRepository;
+import com.hias.repository.LicenseRepository;
 import com.hias.service.LicenseService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 public class LicenseServiceImpl implements LicenseService {
 
 
-    private final LiscenseRepository liscenseRepository;
+    private final LicenseRepository licenseRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
     private final LicenseResponseDTOMapper liscenseResponseDTOMapper;
 
     @Override
     public List<LicenseResponseDTO> findAll() {
         List<LicenseResponseDTO> licenseResponseDTOS = new ArrayList<>();
-        List<License> liscenses = liscenseRepository.findAllByIsDeletedIsFalse();
+        List<License> liscenses = licenseRepository.findAllByIsDeletedIsFalse();
         if (CollectionUtils.isNotEmpty(liscenses)) {
             licenseResponseDTOS = liscenseResponseDTOMapper.toDtoList(liscenses);
         }

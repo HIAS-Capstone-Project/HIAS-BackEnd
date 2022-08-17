@@ -44,6 +44,7 @@ public class BenefitServiceImpl implements BenefitService {
     private final BenefitItemRepository benefitItemRepository;
     private final PolicyCoverageRepository policyCoverageRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
+    private final LicenseRepository licenseRepository;
     private final MemberRepository memberRepository;
     private final BenefitItemResponseDTOMapper benefitItemResponseDTOMapper;
     private final LicenseResponseDTOMapper licenseResponseDTOMapper;
@@ -123,9 +124,23 @@ public class BenefitServiceImpl implements BenefitService {
 
         List<BenefitResponseDTO> benefitResponseDTOS = benefitResponseDTOMapper.toDtoList(benefits);
 
-        benefitResponseDTOS.forEach(b -> b.setBenefitItemNos(benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(b.getBenefitNo()).
-                stream().map(BenefitItem::getBenefitItemNo).collect(Collectors.toList())));
+        List<BenefitLicense> benefitLicenses;
+        List<License> licenses;
+        List<BenefitItem> benefitItems;
+        Long benefitNo;
+        for (BenefitResponseDTO benefitResponseDTO : benefitResponseDTOS) {
+            benefitNo = benefitResponseDTO.getBenefitNo();
 
+            //set benefit items
+            benefitItems = benefitItemRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+            benefitResponseDTO.setBenefitItemNos(benefitItems.stream().map(b -> b.getBenefitItemNo()).collect(Collectors.toList()));
+            benefitResponseDTO.setBenefitItemResponseDTOS(benefitItemResponseDTOMapper.toDtoList(benefitItems));
+
+            //set license
+            benefitLicenses = benefitLiscenseRepository.findByBenefitNoAndIsDeletedIsFalse(benefitNo);
+            licenses = benefitLicenses.stream().map(b -> b.getLicense()).collect(Collectors.toList());
+            benefitResponseDTO.setLicenseResponseDTOS(licenseResponseDTOMapper.toDtoList(licenses));
+        }
 
         return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
                 pageable,

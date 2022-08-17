@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LiscenseRepository extends JpaRepository<License, Long> {
+public interface LicenseRepository extends JpaRepository<License, Long> {
 
     List<License> findAllByIsDeletedIsFalse();
-
 }
