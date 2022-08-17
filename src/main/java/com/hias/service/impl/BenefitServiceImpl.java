@@ -276,6 +276,11 @@ public class BenefitServiceImpl implements BenefitService {
                     }
                 }
             }
+
+            //remove old licenses
+            savedBenefitLicenses.addAll(benefitLicenses.stream().filter(b -> !licenseNos.contains(b.getLicenseNo()) && !b.isDeleted())
+                    .peek(b -> b.setDeleted(Boolean.TRUE))
+                    .collect(Collectors.toList()));
         }
         benefitLiscenseRepository.saveAll(savedBenefitLicenses);
     }
