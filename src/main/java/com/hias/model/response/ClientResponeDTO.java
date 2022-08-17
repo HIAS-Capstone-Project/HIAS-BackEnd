@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +24,6 @@ public class ClientResponeDTO implements Serializable {
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
+
+    private List<Long> BusinessSectorNos = new ArrayList<>();
 }

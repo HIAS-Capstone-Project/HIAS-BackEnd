@@ -27,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class ClientServiceImpl implements ClientService {
     private final PolicyRepository policyRepository;
     private final PolicyCoverageRepository policyCoverageRepository;
     private final MemberRepository memberRepository;
+    private final ClientBusinessSectorRepository clientBusinessSectorRepository;
 
     @Override
     public List<ClientResponeDTO> getAll() {
@@ -90,6 +92,9 @@ public class ClientServiceImpl implements ClientService {
 
         List<ClientResponeDTO> clientResponeDTOS = clientResponeDTOMapper.toDtoList(clients);
 
+        clientResponeDTOS.forEach(p -> p.setBusinessSectorNos(clientBusinessSectorRepository.findAllByClientNoAndIsDeletedIsFalse(p.getClientNo()).
+                stream().map(ClientBusinessSector::getBusinessSectorNo).collect(Collectors.toList())));
+
         return new PagingResponseModel<>(new PageImpl<>(clientResponeDTOS,
                 pageable,
                 clientPage.getTotalElements()));
@@ -114,6 +119,12 @@ public class ClientServiceImpl implements ClientService {
                     .prefix(StringUtils.upperCase(corporateID) + CommonConstant.DASH)
                     .build());
         }
+        log.info("Created Client with ID: {}", client.getClientNo());
+        List<ClientBusinessSector> clientBusinessSectors = new ArrayList<>();
+        clientRequestDTO.getBusinessSectorNos().forEach(o -> clientBusinessSectors.add(ClientBusinessSector.builder().clientNo(client.getClientNo()).businessSectorNo(o).
+                client(Client.builder().clientNo(client.getClientNo()).build()).
+                businessSector(BusinessSector.builder().businessSectorNo(o).build()).build()));
+        clientBusinessSectorRepository.saveAllAndFlush(clientBusinessSectors);
         log.info("create client successfully");
         return clientResponeDTOMapper.toDto(client);
     }
@@ -126,7 +137,30 @@ public class ClientServiceImpl implements ClientService {
         ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
         if (optionalClient.isPresent()) {
             Client updatedClient = clientRequestDTOMapper.toEntity(clientRequestDTO);
+            List<ClientBusinessSector> clientBusinessSectors = clientBusinessSectorRepository.findAllByClientNo(updatedClient.getClientNo());
+            List<ClientBusinessSector> updatedClientBusinessSector = new ArrayList<>();
+            clientRequestDTO.getBusinessSectorNos().forEach(o -> {
+                if (clientBusinessSectors.stream().anyMatch(p -> Objects.equals(p.getBusinessSectorNo(), o) && p.isDeleted())) {
+                    updatedClientBusinessSector.add(clientBusinessSectors.stream().filter(p -> (Objects.equals(p.getBusinessSectorNo(), o))).
+                            peek(p -> p.setDeleted(false)).findFirst().get());
+                } else {
+                    if (clientBusinessSectors.stream().noneMatch(p -> Objects.equals(p.getBusinessSectorNo(), o))) {
+                        updatedClientBusinessSector.add(ClientBusinessSector.builder().clientNo(updatedClient.getClientNo()).businessSectorNo(o).
+                                client(Client.builder().clientNo(updatedClient.getClientNo()).build()).
+                                businessSector(BusinessSector.builder().businessSectorNo(o).build()).build());
+                    }
+                }
+            });
+            clientBusinessSectors.forEach(o -> {
+                if (clientRequestDTO.getBusinessSectorNos().stream().noneMatch(b -> Objects.equals(b, o.getBusinessSectorNo()))) {
+                    o.setDeleted(true);
+                    updatedClientBusinessSector.add(o);
+                }
+            });
             clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(updatedClient));
+            log.info("Updated Client");
+            clientBusinessSectorRepository.saveAllAndFlush(updatedClientBusinessSector);
+            log.info("Updated relevant business sectors in Client Business Sector");
         }
         return clientResponeDTO;
     }

@@ -1,5 +1,6 @@
 package com.hias.entity;
 
+import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(name = "BUSINESS_SECTOR", schema = "HIAS")
 @Getter
 @Setter
-public class BusinessSector {
+public class BusinessSector extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BUSINESS_SECTOR_NO")
