@@ -21,4 +21,9 @@ public class ChartQuery {
             "    WHERE 1 = 1 %s\n" +
             ")\n" +
             "GROUP BY c.status_code";
+
+    public static final String POLICY_BY_USAGE = "SELECT p.policy_name key, COUNT(m.member_no) value \n" +
+            "FROM HIAS.policy p INNER JOIN HIAS.member m ON p.policy_no = m.policy_no\n" +
+            "WHERE 1 = 1 %s\n" +
+            "GROUP BY p.policy_name";
 }

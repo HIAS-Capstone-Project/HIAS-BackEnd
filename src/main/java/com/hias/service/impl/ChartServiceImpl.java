@@ -168,5 +168,17 @@ public class ChartServiceImpl implements ChartService {
         return chartResponseDTO;
     }
 
+    @Override
+    public ChartResponseDTO findPolicyByUsage(LocalDate startDate, LocalDate endDate) {
+        String query = ChartQuery.POLICY_BY_USAGE;
+        if(startDate == null){
+            query = String.format(query, "");
+        } else {
+            query = String.format(query, String.format("AND m.start_date BETWEEN '%s' :: timestamp AND '%s' :: timestamp", startDate, endDate));
+        }
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().chartName("Policy usage").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return chartResponseDTO;
+    }
 
 }
