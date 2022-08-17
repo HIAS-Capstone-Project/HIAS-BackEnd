@@ -42,11 +42,11 @@ public class Claim extends BaseEntity {
     @Column(name = "SUBMITTED_DATE")
     private LocalDateTime submittedDate;
 
-    @Column(name = "MEDICAL_EXAMINATION_DATE")
-    private LocalDateTime medicalExaminationDate;
+    @Column(name = "MEDICAL_APPRAISAL_DATE")
+    private LocalDateTime medicalAppraisalDate;
 
-    @Column(name = "BUSINESS_EXAMINATION_DATE")
-    private LocalDateTime businessExaminationDate;
+    @Column(name = "BUSINESS_APPRAISAL_DATE")
+    private LocalDateTime businessAppraisalDate;
 
     @Column(name = "APPROVED_DATE")
     private LocalDateTime approvedDate;

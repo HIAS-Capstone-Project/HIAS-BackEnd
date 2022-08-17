@@ -31,7 +31,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "left join Claim c on e.employeeNo = c.businessAppraisalBy " +
             "and (c.isDeleted is null or c.isDeleted = false) and " +
             "e.isDeleted = false " +
-            "where c.businessExaminationDate is null and " +
+            "where c.businessAppraisalDate is null and " +
             "(c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).BUSINESS_APPROVED}) and " +
             "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).BA} " +
             "group by e.employeeNo " +
@@ -40,7 +40,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("select e.employeeNo from Employee e " +
             "join Claim c on e.employeeNo = c.medicalAppraisalBy and c.isDeleted = false and e.isDeleted = false " +
-            "where c.medicalExaminationDate is null and " +
+            "where c.medicalAppraisalDate is null and " +
             "c.statusCode <> :#{T(com.hias.constant.StatusCode).MEDICAL_APPROVED} and " +
             "e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).MA} " +
             "group by e.employeeNo " +

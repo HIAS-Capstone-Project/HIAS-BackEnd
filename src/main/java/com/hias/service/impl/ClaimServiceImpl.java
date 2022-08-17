@@ -319,7 +319,7 @@ public class ClaimServiceImpl implements ClaimService {
         if (claimOptional.isPresent()) {
             Claim claim = claimOptional.get();
             claim.setStatusCode(StatusCode.BUSINESS_APPROVED);
-            claim.setBusinessExaminationDate(LocalDateTime.now());
+            claim.setBusinessAppraisalDate(LocalDateTime.now());
 
             Optional<Long> employeeNo = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
             if (employeeNo.isPresent()) {
