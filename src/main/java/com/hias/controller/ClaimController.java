@@ -68,17 +68,17 @@ public class ClaimController {
         return new ResponseEntity<>(CommonConstant.DELETED_SUCCESSFULLY, HttpStatus.OK);
     }
 
-    @PostMapping("submit-by-member")
-    public ResponseEntity<String> submitByMember(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                                 @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
+    @PostMapping("submit")
+    public ResponseEntity<String> submit(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
+                                         @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
 
         claimService.submitForMember(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SUBMIT_SUCCESSFULLY, HttpStatus.OK);
     }
 
-    @PostMapping("save-draft-for-member")
-    public ResponseEntity<String> saveDraftForMember(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                                     @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
+    @PostMapping("save-draft")
+    public ResponseEntity<String> saveDraft(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
+                                            @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
 
         claimService.saveDraftForMember(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.OK);
