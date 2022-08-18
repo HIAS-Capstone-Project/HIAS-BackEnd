@@ -4,6 +4,7 @@ import com.hias.constant.CommonConstant;
 import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimPaymentRequestDTO;
+import com.hias.model.request.ClaimRejectRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -49,6 +50,39 @@ public class ClaimController {
                                                                                         direction = Sort.Direction.DESC)
                                                                         }) Pageable pageable) {
         return new ResponseEntity<>(claimService.search(searchValue, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("search-for-member")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> searchForMember(@RequestParam Long memberNo,
+                                                                                 @RequestParam(required = false) String searchValue,
+                                                                                 @PageableDefault(page = 0, size = 10)
+                                                                                 @SortDefault.SortDefaults({
+                                                                                         @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                                 direction = Sort.Direction.DESC)
+                                                                                 }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.searchForMember(memberNo, searchValue, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("search-for-service-provider")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> searchForServiceProvider(@RequestParam Long serviceProviderNo,
+                                                                                          @RequestParam(required = false) String searchValue,
+                                                                                          @PageableDefault(page = 0, size = 10)
+                                                                                          @SortDefault.SortDefaults({
+                                                                                                  @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                                          direction = Sort.Direction.DESC)
+                                                                                          }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.searchForServiceProvider(serviceProviderNo, searchValue, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("search-for-employee")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> searchForEmployee(@RequestParam Long employeeNo,
+                                                                                   @RequestParam(required = false) String searchValue,
+                                                                                   @PageableDefault(page = 0, size = 10)
+                                                                                   @SortDefault.SortDefaults({
+                                                                                           @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                                   direction = Sort.Direction.DESC)
+                                                                                   }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.searchForEmployee(employeeNo, searchValue, pageable), HttpStatus.OK);
     }
 
     @PostMapping("create")
@@ -117,11 +151,13 @@ public class ClaimController {
 
     @PostMapping("settle-claim")
     public ResponseEntity<String> settleClaim(@RequestBody ClaimPaymentRequestDTO claimPaymentRequestDTO) {
+        claimService.settleClaim(claimPaymentRequestDTO);
         return new ResponseEntity<>(CommonConstant.SETTLE_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("reject-claim")
-    public ResponseEntity<String> rejectClaim(@PathVariable Long claimNo) {
-        return new ResponseEntity<>(CommonConstant.SETTLE_SUCCESSFULLY, HttpStatus.OK);
+    public ResponseEntity<String> rejectClaim(@RequestBody ClaimRejectRequestDTO claimRejectRequestDTO) {
+        claimService.rejectClaim(claimRejectRequestDTO);
+        return new ResponseEntity<>(CommonConstant.REJECT_SUCCESSFULLY, HttpStatus.OK);
     }
 }

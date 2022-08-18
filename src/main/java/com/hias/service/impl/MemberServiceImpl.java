@@ -92,6 +92,32 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public PagingResponseModel<MemberResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Member> memberPage = memberRepository.findAllBySearchValueForClient(clientNo, searchValue, pageable);
+
+        if (!memberPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Member> members = memberPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", members.size(), searchValue);
+
+        List<MemberResponseDTO> memberResponseDTOS = memberResponseDTOMapper.toDtoList(members);
+
+        return new PagingResponseModel<>(new PageImpl<>(memberResponseDTOS,
+                pageable,
+                memberPage.getTotalElements()));
+    }
+
+    @Override
     public MemberResponseDTO searchByHealthCardNo(String healthCardNo, LocalDate visitDate) throws HIASException {
         List<Member> members = memberRepository.searchByHealthCardNo(healthCardNo, visitDate);
         if (CollectionUtils.isEmpty(members)) {

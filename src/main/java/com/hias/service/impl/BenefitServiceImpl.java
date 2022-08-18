@@ -253,35 +253,30 @@ public class BenefitServiceImpl implements BenefitService {
         }
         List<BenefitLicense> savedBenefitLicenses = new ArrayList<>();
         List<Long> licenseNos = benefitRequestDTO.getLicenseNos();
-        if (CollectionUtils.isEmpty(licenseNos)) {
-            savedBenefitLicenses = benefitLicenses.stream()
-                    .filter(b -> !b.isDeleted())
-                    .peek(b -> b.setDeleted(Boolean.TRUE))
-                    .collect(Collectors.toList());
-        } else {
-            for (Long licenseNo : licenseNos) {
-                BenefitLicense benefitLicense = benefitLicenseMap.get(licenseNo);
-                if (benefitLicense == null) {
-                    savedBenefitLicenses.add(BenefitLicense
-                            .builder()
-                            .benefitNo(benefitNo)
-                            .benefit(benefit)
-                            .licenseNo(licenseNo)
-                            .license(License.builder().licenseNo(licenseNo).build())
-                            .build());
-                } else {
-                    if (benefitLicense.isDeleted()) {
-                        benefitLicense.setDeleted(Boolean.FALSE);
-                        savedBenefitLicenses.add(benefitLicense);
-                    }
+
+        for (Long licenseNo : licenseNos) {
+            BenefitLicense benefitLicense = benefitLicenseMap.get(licenseNo);
+            if (benefitLicense == null) {
+                savedBenefitLicenses.add(BenefitLicense
+                        .builder()
+                        .benefitNo(benefitNo)
+                        .benefit(benefit)
+                        .licenseNo(licenseNo)
+                        .license(License.builder().licenseNo(licenseNo).build())
+                        .build());
+            } else {
+                if (benefitLicense.isDeleted()) {
+                    benefitLicense.setDeleted(Boolean.FALSE);
+                    savedBenefitLicenses.add(benefitLicense);
                 }
             }
-
-            //remove old licenses
-            savedBenefitLicenses.addAll(benefitLicenses.stream().filter(b -> !licenseNos.contains(b.getLicenseNo()) && !b.isDeleted())
-                    .peek(b -> b.setDeleted(Boolean.TRUE))
-                    .collect(Collectors.toList()));
         }
+
+        //remove old licenses
+        savedBenefitLicenses.addAll(benefitLicenses.stream().filter(b -> !licenseNos.contains(b.getLicenseNo()) && !b.isDeleted())
+                .peek(b -> b.setDeleted(Boolean.TRUE))
+                .collect(Collectors.toList()));
+
         benefitLiscenseRepository.saveAll(savedBenefitLicenses);
     }
 }

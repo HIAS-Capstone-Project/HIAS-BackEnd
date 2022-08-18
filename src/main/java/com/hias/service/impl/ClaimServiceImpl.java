@@ -12,12 +12,16 @@ import com.hias.mapper.response.ClaimDocumentResponseDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.request.ClaimPaymentRequestDTO;
+import com.hias.model.request.ClaimRejectRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimDocumentResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
-import com.hias.repository.*;
+import com.hias.repository.BenefitLiscenseRepository;
+import com.hias.repository.ClaimDocumentRepository;
+import com.hias.repository.ClaimRepository;
+import com.hias.repository.EmployeeRepository;
 import com.hias.service.ClaimService;
 import com.hias.utils.DateUtils;
 import com.hias.utils.FireBaseUtils;
@@ -50,7 +54,6 @@ public class ClaimServiceImpl implements ClaimService {
 
     private final ClaimRepository claimRepository;
     private final EmployeeRepository employeeRepository;
-    private final MemberRepository memberRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
@@ -112,6 +115,84 @@ public class ClaimServiceImpl implements ClaimService {
                 pageSize);
 
         Page<Claim> claimPage = claimRepository.findAllBySearchValue(searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
+    }
+
+    @Override
+    public PagingResponseModel<ClaimResponseDTO> searchForMember(Long memberNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValueForMember(memberNo, searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
+    }
+
+    @Override
+    public PagingResponseModel<ClaimResponseDTO> searchForServiceProvider(Long serviceProviderNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValueForServiceProvider(serviceProviderNo, searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
+    }
+
+    @Override
+    public PagingResponseModel<ClaimResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValueForEmployee(employeeNo, searchValue, pageable);
 
         if (!claimPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -397,8 +478,37 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
+    @Transactional
     public ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO) {
-        return null;
+        Long claimNo = claimPaymentRequestDTO.getClaimNo();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.SETTLED);
+            claim.setPaymentDate(LocalDateTime.now());
+            claim.setRemark(claimPaymentRequestDTO.getRemark());
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO rejectClaim(ClaimRejectRequestDTO claimRejectRequestDTO) {
+        Long claimNo = claimRejectRequestDTO.getClaimNo();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.REJECTED);
+            claim.setStatusReasonCode(claimRejectRequestDTO.getStatusReasonCode());
+            claim.setRejectedDate(LocalDateTime.now());
+            claim.setRemark(claimRejectRequestDTO.getRejectReason());
+            claim.setRejectReason(claimRejectRequestDTO.getRejectReason());
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
     }
 
 }

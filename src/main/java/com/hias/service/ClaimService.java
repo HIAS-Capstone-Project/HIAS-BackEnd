@@ -2,6 +2,7 @@ package com.hias.service;
 
 import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimPaymentRequestDTO;
+import com.hias.model.request.ClaimRejectRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -19,6 +20,12 @@ public interface ClaimService {
     ClaimResponseDTO viewDetail(Long claimNo);
 
     PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable);
+
+    PagingResponseModel<ClaimResponseDTO> searchForMember(Long memberNo, String searchValue, Pageable pageable);
+
+    PagingResponseModel<ClaimResponseDTO> searchForServiceProvider(Long memberNo, String searchValue, Pageable pageable);
+
+    PagingResponseModel<ClaimResponseDTO> searchForEmployee(Long memberNo, String searchValue, Pageable pageable);
 
     ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);
 
@@ -41,4 +48,6 @@ public interface ClaimService {
     ClaimResponseDTO approve(Long claimNo);
 
     ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO);
+
+    ClaimResponseDTO rejectClaim(ClaimRejectRequestDTO claimRejectRequestDTO);
 }
