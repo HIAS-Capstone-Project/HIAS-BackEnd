@@ -6,6 +6,7 @@ import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
 import com.hias.entity.HealthCardFormat;
 import com.hias.entity.Member;
+import com.hias.entity.Policy;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.MemberRequestDTOMapper;
 import com.hias.mapper.response.MemberResponseDTOMapper;
@@ -13,6 +14,7 @@ import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
 import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
+import com.hias.model.response.PolicyResponseDTO;
 import com.hias.repository.HealthCardFormatRepository;
 import com.hias.repository.MemberRepository;
 import com.hias.service.MemberService;
@@ -181,5 +183,18 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponseDTO findMemberByMemberNo(Long memberNo) {
         Optional<Member> member = memberRepository.findById(memberNo);
         return member.map(memberResponseDTOMapper::toDto).orElse(null);
+    }
+
+    @Override
+    public List<MemberResponseDTO> findAll() {
+        log.info("[getAll] get all member");
+        List<Member> memberList = memberRepository.findByIsDeletedIsFalse();
+        List<MemberResponseDTO> memberResponseDTOS = new ArrayList<>();
+        if (!org.springframework.util.CollectionUtils.isEmpty(memberList)) {
+            memberResponseDTOS = memberResponseDTOMapper.toDtoList(memberList);
+            log.info("[getAll] size of list member {}", memberResponseDTOS.size());
+
+        }
+        return memberResponseDTOS;
     }
 }

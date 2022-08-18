@@ -9,6 +9,7 @@ import com.hias.model.response.PagingResponseModel;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface MemberService {
     PagingResponse findMember(String key, Integer pageIndex, Integer pageSize, String[] sort);
@@ -26,4 +27,6 @@ public interface MemberService {
     MemberResponseDTO updateMember(MemberRequestDTO memberRequestDTO) throws HIASException;
 
     MemberResponseDTO findMemberByMemberNo(Long memberNo);
+
+    List<MemberResponseDTO> findAll();
 }

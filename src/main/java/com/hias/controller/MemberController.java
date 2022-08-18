@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/member/")
@@ -28,6 +29,11 @@ import java.time.LocalDate;
 public class MemberController {
 
     private final MemberService memberService;
+
+    @GetMapping("get-all")
+    public ResponseEntity<List<MemberResponseDTO>> getAll() {
+        return new ResponseEntity<>(memberService.findAll(), HttpStatus.OK);
+    }
 
     @GetMapping("list")
     public ResponseEntity findMember(@RequestParam(required = false) String key, @RequestParam(required = false) Integer pageSize, @RequestParam(required = false) Integer pageIndex, @RequestParam(required = false, defaultValue = "memberName,asc") String[] sort) {
