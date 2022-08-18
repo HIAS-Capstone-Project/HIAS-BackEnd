@@ -373,4 +373,23 @@ public class ClaimServiceImpl implements ClaimService {
         return claimResponseDTO;
     }
 
+    @Override
+    @Transactional
+    public ClaimResponseDTO approve(Long claimNo) {
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.APPROVED);
+            claim.setApprovedDate(LocalDateTime.now());
+
+            Optional<Long> employeeNo = employeeRepository.findAccountantHasClaimAtLeast();
+            if (employeeNo.isPresent()) {
+                claim.setPaidBy(employeeNo.get());
+            }
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
+    }
+
 }

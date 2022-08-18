@@ -7,4 +7,5 @@ public class EmploymentTypeConstant {
     public static final String BA = "BA";
     public static final String MA = "MA";
     public static final String HM = "HM";
+    public static final String ACC = "ACC";
 }

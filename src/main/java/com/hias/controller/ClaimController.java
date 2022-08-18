@@ -107,4 +107,10 @@ public class ClaimController {
         claimService.startProgress(claimNo);
         return new ResponseEntity<>(CommonConstant.START_PROGRESS_SUCCESSFULLY, HttpStatus.OK);
     }
+
+    @PostMapping("approve/{claimNo}")
+    public ResponseEntity<String> approve(@PathVariable Long claimNo) {
+        claimService.approve(claimNo);
+        return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+    }
 }

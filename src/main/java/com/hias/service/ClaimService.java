@@ -36,4 +36,6 @@ public interface ClaimService {
     ClaimResponseDTO medicalVerified(Long claimNo);
 
     ClaimResponseDTO startProgress(Long claimNo);
+
+    ClaimResponseDTO approve(Long claimNo);
 }
