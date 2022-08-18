@@ -36,6 +36,8 @@ public class ClaimResponseDTO implements Serializable {
     private Long medicalAppraisalBy;
     private StatusCode statusCode;
     private RecordSource recordSource;
+    private LocalDateTime createdOn;
+    private LocalDateTime modifiedOn;
 
     private List<ClaimDocumentResponseDTO> claimDocumentResponseDTOS;
 }
