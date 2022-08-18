@@ -41,4 +41,6 @@ public interface ClaimService {
     ClaimResponseDTO approve(Long claimNo);
 
     ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO);
+
+    ClaimResponseDTO reject(Long claimNo);
 }

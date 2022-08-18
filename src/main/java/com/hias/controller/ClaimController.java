@@ -117,11 +117,12 @@ public class ClaimController {
 
     @PostMapping("settle-claim")
     public ResponseEntity<String> settleClaim(@RequestBody ClaimPaymentRequestDTO claimPaymentRequestDTO) {
+        claimService.settleClaim(claimPaymentRequestDTO);
         return new ResponseEntity<>(CommonConstant.SETTLE_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("reject-claim")
     public ResponseEntity<String> rejectClaim(@PathVariable Long claimNo) {
-        return new ResponseEntity<>(CommonConstant.SETTLE_SUCCESSFULLY, HttpStatus.OK);
+        return new ResponseEntity<>(CommonConstant.REJECT_SUCCESSFULLY, HttpStatus.OK);
     }
 }

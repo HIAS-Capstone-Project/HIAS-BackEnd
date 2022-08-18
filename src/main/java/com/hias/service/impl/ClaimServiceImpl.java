@@ -397,7 +397,23 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
+    @Transactional
     public ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO) {
+        Long claimNo = claimPaymentRequestDTO.getClaimNo();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.SETTLED);
+            claim.setPaymentDate(LocalDateTime.now());
+            claim.setRemark(claimPaymentRequestDTO.getRemark());
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
+    }
+
+    @Override
+    public ClaimResponseDTO reject(Long claimNo) {
         return null;
     }
 

@@ -57,6 +57,9 @@ public class Claim extends BaseEntity {
     @Column(name = "CANCELED_DATE")
     private LocalDateTime canceledDate;
 
+    @Column(name = "REJECTED_DATE")
+    private LocalDateTime rejectedDate;
+
     @Column(name = "REMARK")
     private String remark;
 
@@ -68,6 +71,9 @@ public class Claim extends BaseEntity {
 
     @Column(name = "CLAIM_AMOUNT")
     private BigDecimal claimAmount;
+
+    @Column(name = "PAYMENT_AMOUNT")
+    private BigDecimal paymentAmount;
 
     @Column(name = "SERVICE_PROVIDER_NO")
     private Long serviceProviderNo;
