@@ -30,7 +30,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("get-all")
+    @GetMapping("find-all")
     public ResponseEntity<List<MemberResponseDTO>> getAll() {
         return new ResponseEntity<>(memberService.findAll(), HttpStatus.OK);
     }
