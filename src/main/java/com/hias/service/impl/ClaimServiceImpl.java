@@ -11,6 +11,7 @@ import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.ClaimDocumentResponseDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.mapper.response.LicenseResponseDTOMapper;
+import com.hias.model.request.ClaimPaymentRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimDocumentResponseDTO;
@@ -182,7 +183,7 @@ public class ClaimServiceImpl implements ClaimService {
 
         initClaimDocumentsIfNeeded(claimSaved, claimNo, claimNoSaved, licenses);
 
-        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNoSaved);
         Map<Long, ClaimDocument> claimDocumentMap = buildClaimDocumentMap(claimDocuments);
 
         processClaimDocuments(claimSubmitRequestDTO, files, claimDocuments, claimDocumentMap);
@@ -208,7 +209,7 @@ public class ClaimServiceImpl implements ClaimService {
         claim.setStatusCode(StatusCode.DRAFT);
         claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ? RecordSource.M : RecordSource.SVP);
 
-        Claim claimSaved = claimRepository.save(claim);
+        Claim claimSaved = claimRepository.saveAndFlush(claim);
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
         Long claimNoSaved = claimSaved.getClaimNo();
 
@@ -218,7 +219,7 @@ public class ClaimServiceImpl implements ClaimService {
 
         initClaimDocumentsIfNeeded(claimSaved, claimNo, claimNoSaved, licenses);
 
-        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNoSaved);
         Map<Long, ClaimDocument> claimDocumentMap = buildClaimDocumentMap(claimDocuments);
 
         processClaimDocuments(claimSubmitRequestDTO, files, claimDocuments, claimDocumentMap);
@@ -286,6 +287,9 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     private void validateDraftClaim(ClaimSubmitRequestDTO claimSubmitRequestDTO) throws HIASException {
+        if (claimSubmitRequestDTO.getClaimNo() == null) {
+            return;
+        }
         if (!claimValidator.isDraftClaim(claimSubmitRequestDTO.getClaimNo())) {
             throw HIASException.buildHIASException(
                     messageUtils.getMessage(ErrorMessageCode.NOT_DRAFT_CLAIM),
@@ -390,6 +394,11 @@ public class ClaimServiceImpl implements ClaimService {
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    @Override
+    public ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO) {
+        return null;
     }
 
 }

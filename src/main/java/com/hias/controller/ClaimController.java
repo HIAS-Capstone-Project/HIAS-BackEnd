@@ -3,6 +3,7 @@ package com.hias.controller;
 import com.hias.constant.CommonConstant;
 import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
+import com.hias.model.request.ClaimPaymentRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -112,5 +113,15 @@ public class ClaimController {
     public ResponseEntity<String> approve(@PathVariable Long claimNo) {
         claimService.approve(claimNo);
         return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+    }
+
+    @PostMapping("settle-claim")
+    public ResponseEntity<String> settleClaim(@RequestBody ClaimPaymentRequestDTO claimPaymentRequestDTO) {
+        return new ResponseEntity<>(CommonConstant.SETTLE_SUCCESSFULLY, HttpStatus.OK);
+    }
+
+    @PostMapping("reject-claim")
+    public ResponseEntity<String> rejectClaim(@PathVariable Long claimNo) {
+        return new ResponseEntity<>(CommonConstant.SETTLE_SUCCESSFULLY, HttpStatus.OK);
     }
 }

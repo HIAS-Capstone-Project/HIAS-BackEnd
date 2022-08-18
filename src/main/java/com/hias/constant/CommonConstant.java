@@ -10,12 +10,13 @@ public class CommonConstant {
     public static final String CANCELED_SUCCESSFULLY = "Canceled Successfully.";
     public static final String APPROVAL_SUCCESSFULLY = "Approval Successfully.";
     public static final String START_PROGRESS_SUCCESSFULLY = "Start Progress Successfully.";
+    public static final String SETTLE_SUCCESSFULLY = "Settle Progress Successfully.";
     public static final String SUBMIT_SUCCESSFULLY = "Submit Successfully.";
     public static final String UPDATED_SUCCESSFULLY = "Update Successfully.";
     public static final String DELETED_SUCCESSFULLY = "Deleted Successfully.";
     public static final String DASH = "-";
     public static final String DOT = ".";
-    public static final String REGEX_FILE_EXTENSION = "\\.(txt|xls|xlsx|docs|pdf|png|jpg)";
+    public static final String REGEX_FILE_EXTENSION = "\\.(txt|xls|xlsx|docs|pdf|png|jpg|JPG)";
 
 
 }

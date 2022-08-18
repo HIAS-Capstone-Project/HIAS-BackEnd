@@ -84,7 +84,7 @@ public class Claim extends BaseEntity {
     @Column(name = "APPROVED_BY")
     private Long approvedBy;
 
-    @Column(name = "paid_by")
+    @Column(name = "PAID_BY")
     private Long paidBy;
 
     @Column(name = "RECORD_SOURCE")

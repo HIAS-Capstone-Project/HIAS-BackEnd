@@ -1,6 +1,7 @@
 package com.hias.service;
 
 import com.hias.exception.HIASException;
+import com.hias.model.request.ClaimPaymentRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -38,4 +39,6 @@ public interface ClaimService {
     ClaimResponseDTO startProgress(Long claimNo);
 
     ClaimResponseDTO approve(Long claimNo);
+
+    ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO);
 }
