@@ -19,6 +19,7 @@ import java.util.List;
 public class BusinessSectorServiceImpl implements BusinessSectorService {
     private final BusinessSectorRepository businessSectorRepository;
     private final BusinessSectorResponseDTOMapper businessSectorResponseDTOMapper;
+
     @Override
     public List<BusinessSectorResponseDTO> findAll() {
         List<BusinessSectorResponseDTO> businessSectorResponseDTOS = new ArrayList<>();

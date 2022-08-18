@@ -52,6 +52,39 @@ public class ClaimController {
         return new ResponseEntity<>(claimService.search(searchValue, pageable), HttpStatus.OK);
     }
 
+    @GetMapping("search-for-member")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> searchForMember(@RequestParam Long memberNo,
+                                                                                 @RequestParam(required = false) String searchValue,
+                                                                                 @PageableDefault(page = 0, size = 10)
+                                                                                 @SortDefault.SortDefaults({
+                                                                                         @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                                 direction = Sort.Direction.DESC)
+                                                                                 }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.searchForMember(memberNo, searchValue, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("search-for-service-provider")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> searchForServiceProvider(@RequestParam Long serviceProviderNo,
+                                                                                          @RequestParam(required = false) String searchValue,
+                                                                                          @PageableDefault(page = 0, size = 10)
+                                                                                          @SortDefault.SortDefaults({
+                                                                                                  @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                                          direction = Sort.Direction.DESC)
+                                                                                          }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.searchForServiceProvider(serviceProviderNo, searchValue, pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("search-for-employee")
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> searchForEmployee(@RequestParam Long employeeNo,
+                                                                                   @RequestParam(required = false) String searchValue,
+                                                                                   @PageableDefault(page = 0, size = 10)
+                                                                                   @SortDefault.SortDefaults({
+                                                                                           @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                                   direction = Sort.Direction.DESC)
+                                                                                   }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.searchForEmployee(employeeNo, searchValue, pageable), HttpStatus.OK);
+    }
+
     @PostMapping("create")
     public ResponseEntity<String> create(@RequestBody ClaimRequestDTO claimRequestDTO) {
         claimService.create(claimRequestDTO);

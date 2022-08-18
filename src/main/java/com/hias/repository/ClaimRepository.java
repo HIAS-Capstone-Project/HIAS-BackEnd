@@ -25,4 +25,37 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
             "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Claim> findAllBySearchValue(String searchValue, Pageable pageable);
+
+    @Query("select c from Claim c " +
+            "where c.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(c.claimID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and  c.memberNo = :memberNo")
+    Page<Claim> findAllBySearchValueForMember(Long memberNo, String searchValue, Pageable pageable);
+
+    @Query("select c from Claim c " +
+            "where c.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(c.claimID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and  c.serviceProviderNo = :serviceProviderNo")
+    Page<Claim> findAllBySearchValueForServiceProvider(Long serviceProviderNo, String searchValue, Pageable pageable);
+
+    @Query("select c from Claim c " +
+            "where c.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(c.claimID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and  (c.businessAppraisalBy = :employeeNo " +
+            "or c.medicalAppraisalBy = :employeeNo " +
+            "or c.approvedBy = :employeeNo " +
+            "or c.paidBy = :employeeNo)")
+    Page<Claim> findAllBySearchValueForEmployee(Long employeeNo, String searchValue, Pageable pageable);
 }

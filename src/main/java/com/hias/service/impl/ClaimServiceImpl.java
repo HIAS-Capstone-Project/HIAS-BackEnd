@@ -133,6 +133,63 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
+    public PagingResponseModel<ClaimResponseDTO> searchForMember(Long memberNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValueForMember(memberNo, searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
+    }
+
+    @Override
+    public PagingResponseModel<ClaimResponseDTO> searchForServiceProvider(Long serviceProviderNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValueForServiceProvider(serviceProviderNo, searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
+    }
+
+    @Override
+    public PagingResponseModel<ClaimResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable) {
+        return null;
+    }
+
+    @Override
     @Transactional
     public ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO) {
         Claim claim = claimRequestDTOMapper.toEntity(claimRequestDTO);
