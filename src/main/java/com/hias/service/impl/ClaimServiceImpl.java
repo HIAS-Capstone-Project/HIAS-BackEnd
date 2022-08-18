@@ -186,7 +186,28 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     public PagingResponseModel<ClaimResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable) {
-        return null;
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Claim> claimPage = claimRepository.findAllBySearchValueForEmployee(employeeNo, searchValue, pageable);
+
+        if (!claimPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Claim> claims = claimPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
+
+        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+
+        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
+                pageable,
+                claimPage.getTotalElements()));
     }
 
     @Override
