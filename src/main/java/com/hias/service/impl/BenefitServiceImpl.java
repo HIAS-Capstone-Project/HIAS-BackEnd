@@ -253,7 +253,7 @@ public class BenefitServiceImpl implements BenefitService {
         }
         List<BenefitLicense> savedBenefitLicenses = new ArrayList<>();
         List<Long> licenseNos = benefitRequestDTO.getLicenseNos();
-        
+
         for (Long licenseNo : licenseNos) {
             BenefitLicense benefitLicense = benefitLicenseMap.get(licenseNo);
             if (benefitLicense == null) {

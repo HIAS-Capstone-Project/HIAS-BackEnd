@@ -35,6 +35,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "or lower(m.memberName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Member> findAllBySearchValue(String searchValue, Pageable pageable);
 
+    @Query("select m from Member m " +
+            "where m.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(m.staffID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(m.memberName) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and m.clientNo = :clientNo")
+    Page<Member> findAllBySearchValueForClient(Long clientNo, String searchValue, Pageable pageable);
+
     Optional<Member> findByMemberNoAndIsDeletedIsFalse(Long memberNo);
 
 }

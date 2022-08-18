@@ -44,6 +44,19 @@ public class MemberController {
         return new ResponseEntity<>(memberService.search(searchValue, pageable), HttpStatus.OK);
     }
 
+    @GetMapping("search-for-client")
+    public ResponseEntity<PagingResponseModel<MemberResponseDTO>> searchForClient(
+            @RequestParam Long clientNo,
+            @RequestParam(required = false) String searchValue,
+            @PageableDefault(page = 0, size = 10)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                            direction = Sort.Direction.DESC)
+            }) Pageable pageable) {
+
+        return new ResponseEntity<>(memberService.searchForClient(clientNo, searchValue, pageable), HttpStatus.OK);
+    }
+
     @GetMapping("search-by-health-card-no")
     public ResponseEntity<MemberResponseDTO> searchByHealthCardNo(@RequestParam String healthCardNo,
                                                                   @RequestParam
