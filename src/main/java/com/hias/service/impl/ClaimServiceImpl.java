@@ -163,14 +163,14 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
+    public ClaimResponseDTO submit(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
 
         validateVisitDate(claimSubmitRequestDTO);
 
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setSubmittedDate(LocalDateTime.now());
-        claim.setRecordSource(RecordSource.M);
+        claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ? RecordSource.M : RecordSource.SVP);
 
         Claim claimSaved = claimRepository.save(claim);
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
@@ -198,7 +198,7 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
+    public ClaimResponseDTO saveDraft(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
 
         validateDraftClaim(claimSubmitRequestDTO);
 
@@ -206,7 +206,7 @@ public class ClaimServiceImpl implements ClaimService {
 
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.DRAFT);
-        claim.setRecordSource(RecordSource.M);
+        claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ? RecordSource.M : RecordSource.SVP);
 
         Claim claimSaved = claimRepository.save(claim);
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
@@ -324,7 +324,7 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO businessApproval(Long claimNo) throws HIASException {
+    public ClaimResponseDTO businessVerified(Long claimNo) {
         Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
         if (claimOptional.isPresent()) {
@@ -343,7 +343,26 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO startProgress(Long claimNo) throws HIASException {
+    public ClaimResponseDTO medicalVerified(Long claimNo) {
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.MEDICAL_VERIFIED);
+            claim.setMedicalAppraisalDate(LocalDateTime.now());
+
+            Optional<Long> employeeNo = employeeRepository.findApproverHasClaimAtLeast();
+            if (employeeNo.isPresent()) {
+                claim.setApprovedBy(employeeNo.get());
+            }
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO startProgress(Long claimNo) {
         Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
         if (claimOptional.isPresent()) {

@@ -72,7 +72,7 @@ public class ClaimController {
     public ResponseEntity<String> submit(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
                                          @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
 
-        claimService.submitForMember(claimSubmitRequestDTO, documents);
+        claimService.submit(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SUBMIT_SUCCESSFULLY, HttpStatus.OK);
     }
 
@@ -80,7 +80,7 @@ public class ClaimController {
     public ResponseEntity<String> saveDraft(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
                                             @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
 
-        claimService.saveDraftForMember(claimSubmitRequestDTO, documents);
+        claimService.saveDraft(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.OK);
     }
 
@@ -90,14 +90,20 @@ public class ClaimController {
         return new ResponseEntity<>(CommonConstant.CANCELED_SUCCESSFULLY, HttpStatus.OK);
     }
 
-    @PostMapping("business-approval/{claimNo}")
-    public ResponseEntity<String> businessApproval(@PathVariable Long claimNo) throws HIASException {
-        claimService.businessApproval(claimNo);
+    @PostMapping("business-verified/{claimNo}")
+    public ResponseEntity<String> businessVerified(@PathVariable Long claimNo) {
+        claimService.businessVerified(claimNo);
+        return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+    }
+
+    @PostMapping("medical-verified/{claimNo}")
+    public ResponseEntity<String> medicalVerified(@PathVariable Long claimNo) {
+        claimService.medicalVerified(claimNo);
         return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("start-progress/{claimNo}")
-    public ResponseEntity<String> startProgress(@PathVariable Long claimNo) throws HIASException {
+    public ResponseEntity<String> startProgress(@PathVariable Long claimNo) {
         claimService.startProgress(claimNo);
         return new ResponseEntity<>(CommonConstant.START_PROGRESS_SUCCESSFULLY, HttpStatus.OK);
     }

@@ -25,13 +25,15 @@ public interface ClaimService {
 
     ClaimResponseDTO deleteByClaimNo(Long claimNo);
 
-    ClaimResponseDTO submitForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
+    ClaimResponseDTO submit(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
 
-    ClaimResponseDTO saveDraftForMember(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
+    ClaimResponseDTO saveDraft(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;
 
     ClaimResponseDTO cancelClaim(Long claimNo) throws HIASException;
 
-    ClaimResponseDTO businessApproval(Long claimNo) throws HIASException;
+    ClaimResponseDTO businessVerified(Long claimNo);
 
-    ClaimResponseDTO startProgress(Long claimNo) throws HIASException;
+    ClaimResponseDTO medicalVerified(Long claimNo);
+
+    ClaimResponseDTO startProgress(Long claimNo);
 }
