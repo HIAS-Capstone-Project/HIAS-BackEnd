@@ -69,6 +69,9 @@ public class Claim extends BaseEntity {
     @Column(name = "MEDICAL_ADDRESS")
     private String medicalAddress;
 
+    @Column(name = "REJECT_REASON")
+    private String rejectReason;
+
     @Column(name = "CLAIM_AMOUNT")
     private BigDecimal claimAmount;
 

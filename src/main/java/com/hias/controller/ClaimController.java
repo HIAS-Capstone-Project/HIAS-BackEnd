@@ -4,6 +4,7 @@ import com.hias.constant.CommonConstant;
 import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.ClaimPaymentRequestDTO;
+import com.hias.model.request.ClaimRejectRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
@@ -122,7 +123,8 @@ public class ClaimController {
     }
 
     @PostMapping("reject-claim")
-    public ResponseEntity<String> rejectClaim(@PathVariable Long claimNo) {
+    public ResponseEntity<String> rejectClaim(@RequestBody ClaimRejectRequestDTO claimRejectRequestDTO) {
+        claimService.rejectClaim(claimRejectRequestDTO);
         return new ResponseEntity<>(CommonConstant.REJECT_SUCCESSFULLY, HttpStatus.OK);
     }
 }

@@ -1,9 +1,7 @@
 package com.hias.service.impl;
 
-import com.hias.entity.BenefitItem;
 import com.hias.entity.BusinessSector;
 import com.hias.mapper.response.BusinessSectorResponseDTOMapper;
-import com.hias.model.response.BenefitItemResponseDTO;
 import com.hias.model.response.BusinessSectorResponseDTO;
 import com.hias.repository.BusinessSectorRepository;
 import com.hias.service.BusinessSectorService;

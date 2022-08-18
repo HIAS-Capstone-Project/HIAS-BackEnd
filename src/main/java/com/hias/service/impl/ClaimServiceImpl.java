@@ -12,12 +12,16 @@ import com.hias.mapper.response.ClaimDocumentResponseDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.mapper.response.LicenseResponseDTOMapper;
 import com.hias.model.request.ClaimPaymentRequestDTO;
+import com.hias.model.request.ClaimRejectRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimDocumentResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
-import com.hias.repository.*;
+import com.hias.repository.BenefitLiscenseRepository;
+import com.hias.repository.ClaimDocumentRepository;
+import com.hias.repository.ClaimRepository;
+import com.hias.repository.EmployeeRepository;
 import com.hias.service.ClaimService;
 import com.hias.utils.DateUtils;
 import com.hias.utils.FireBaseUtils;
@@ -50,7 +54,6 @@ public class ClaimServiceImpl implements ClaimService {
 
     private final ClaimRepository claimRepository;
     private final EmployeeRepository employeeRepository;
-    private final MemberRepository memberRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
@@ -413,8 +416,21 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
-    public ClaimResponseDTO reject(Long claimNo) {
-        return null;
+    @Transactional
+    public ClaimResponseDTO rejectClaim(ClaimRejectRequestDTO claimRejectRequestDTO) {
+        Long claimNo = claimRejectRequestDTO.getClaimNo();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.REJECTED);
+            claim.setStatusReasonCode(claimRejectRequestDTO.getStatusReasonCode());
+            claim.setRejectedDate(LocalDateTime.now());
+            claim.setRemark(claimRejectRequestDTO.getRejectReason());
+            claim.setRejectReason(claimRejectRequestDTO.getRejectReason());
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
     }
 
 }
