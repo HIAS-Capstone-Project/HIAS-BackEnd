@@ -85,6 +85,35 @@ public class PolicySerivceImpl implements PolicyService {
     }
 
     @Override
+    public PagingResponseModel<PolicyResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Policy> policyPage = policyRepository.findAllBySearchValueForClientNo(clientNo, searchValue, pageable);
+
+        if (!policyPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Policy> policies = policyPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", policies.size(), searchValue);
+
+        List<PolicyResponseDTO> policyResponseDTOS = policyResponseDTOMapper.toDtoList(policies);
+
+        policyResponseDTOS.forEach(p -> p.setBenefitNos(policyCoverageRepository.findAllByPolicyNoAndIsDeletedIsFalse(p.getPolicyNo()).
+                stream().map(PolicyCoverage::getBenefitNo).collect(Collectors.toList())));
+
+        return new PagingResponseModel<>(new PageImpl<>(policyResponseDTOS,
+                pageable,
+                policyPage.getTotalElements()));
+    }
+
+    @Override
     public PolicyResponseDTO getDetail(Long policyNo) {
         log.info("[getDetail] get policy detail");
         Optional<Policy> policy = policyRepository.findByPolicyNoAndIsDeletedIsFalse(policyNo);
