@@ -12,6 +12,7 @@ public interface ClaimSubmitRequestDTOMapper extends EntityMapper<ClaimSubmitReq
 
     @Override
     @Mapping(source = "memberNo", target = "member.memberNo")
+    @Mapping(source = "benefitNo", target = "benefit.benefitNo")
 //    @Mapping(source = "benefitItemNo", target = "benefitItem.benefitItemNo")
     Claim toEntity(ClaimSubmitRequestDTO dto);
 }
