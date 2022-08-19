@@ -8,7 +8,7 @@ import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
-import com.hias.model.response.ClientResponeDTO;
+import com.hias.model.response.ClientResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.*;
 import com.hias.service.ClientService;
@@ -47,32 +47,32 @@ public class ClientServiceImpl implements ClientService {
     private final ClientBusinessSectorRepository clientBusinessSectorRepository;
 
     @Override
-    public List<ClientResponeDTO> getAll() {
+    public List<ClientResponseDTO> getAll() {
         log.info("[getAll] Start get all clients.");
-        List<ClientResponeDTO> clientResponeDTOList = new ArrayList<>();
+        List<ClientResponseDTO> clientResponseDTOList = new ArrayList<>();
 
         List<Client> clients = clientRepository.findByIsDeletedIsFalse();
 
         if (!CollectionUtils.isEmpty(clients)) {
             log.info("[getAll] Size of clients : {}.", clients.size());
-            clientResponeDTOList = clientResponeDTOMapper.toDtoList(clients);
+            clientResponseDTOList = clientResponeDTOMapper.toDtoList(clients);
         }
-        return clientResponeDTOList;
+        return clientResponseDTOList;
     }
 
     @Override
-    public ClientResponeDTO getDetail(Long clientNo) {
+    public ClientResponseDTO getDetail(Long clientNo) {
         log.info("[getDetail] start get detail client");
-        ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
+        ClientResponseDTO clientResponseDTO = new ClientResponseDTO();
         Optional<Client> optionalClient = clientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
         if (optionalClient.isPresent()) {
-            clientResponeDTO = clientResponeDTOMapper.toDto(optionalClient.get());
+            clientResponseDTO = clientResponeDTOMapper.toDto(optionalClient.get());
         }
-        return clientResponeDTO;
+        return clientResponseDTO;
     }
 
     @Override
-    public PagingResponseModel<ClientResponeDTO> search(String searchValue, Pageable pageable) {
+    public PagingResponseModel<ClientResponseDTO> search(String searchValue, Pageable pageable) {
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
 
@@ -90,19 +90,48 @@ public class ClientServiceImpl implements ClientService {
 
         log.info("[search] Found {} elements match with value : {}.", clients.size());
 
-        List<ClientResponeDTO> clientResponeDTOS = clientResponeDTOMapper.toDtoList(clients);
+        List<ClientResponseDTO> clientResponseDTOS = clientResponeDTOMapper.toDtoList(clients);
 
-        clientResponeDTOS.forEach(p -> p.setBusinessSectorNos(clientBusinessSectorRepository.findAllByClientNoAndIsDeletedIsFalse(p.getClientNo()).
+        clientResponseDTOS.forEach(p -> p.setBusinessSectorNos(clientBusinessSectorRepository.findAllByClientNoAndIsDeletedIsFalse(p.getClientNo()).
                 stream().map(ClientBusinessSector::getBusinessSectorNo).collect(Collectors.toList())));
 
-        return new PagingResponseModel<>(new PageImpl<>(clientResponeDTOS,
+        return new PagingResponseModel<>(new PageImpl<>(clientResponseDTOS,
+                pageable,
+                clientPage.getTotalElements()));
+    }
+
+    @Override
+    public PagingResponseModel<ClientResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
+                pageSize);
+
+        Page<Client> clientPage = clientRepository.findAllBySearchValueForEmployee(employeeNo, searchValue, pageable);
+
+        if (!clientPage.hasContent()) {
+            log.info("[search] Could not found any element match with value : {}", searchValue);
+            return new PagingResponseModel<>(null);
+        }
+
+        List<Client> clients = clientPage.getContent();
+
+        log.info("[search] Found {} elements match with value : {}.", clients.size());
+
+        List<ClientResponseDTO> clientResponseDTOS = clientResponeDTOMapper.toDtoList(clients);
+
+        clientResponseDTOS.forEach(p -> p.setBusinessSectorNos(clientBusinessSectorRepository.findAllByClientNoAndIsDeletedIsFalse(p.getClientNo()).
+                stream().map(ClientBusinessSector::getBusinessSectorNo).collect(Collectors.toList())));
+
+        return new PagingResponseModel<>(new PageImpl<>(clientResponseDTOS,
                 pageable,
                 clientPage.getTotalElements()));
     }
 
     @Override
     @Transactional
-    public ClientResponeDTO create(ClientRequestDTO clientRequestDTO) throws HIASException {
+    public ClientResponseDTO create(ClientRequestDTO clientRequestDTO) throws HIASException {
         String corporateID = clientRequestDTO.getCorporateID();
         if (clientValidator.isCorporateIDExistance(corporateID)) {
             throw HIASException.buildHIASException(FieldNameConstant.CORPORATE_ID,
@@ -131,10 +160,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientResponeDTO update(ClientRequestDTO clientRequestDTO) {
+    public ClientResponseDTO update(ClientRequestDTO clientRequestDTO) {
         log.info("[updateClient] update client");
         Optional<Client> optionalClient = clientRepository.findByClientNoAndIsDeletedIsFalse(clientRequestDTO.getClientNo());
-        ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
+        ClientResponseDTO clientResponseDTO = new ClientResponseDTO();
         if (optionalClient.isPresent()) {
             Client updatedClient = clientRequestDTOMapper.toEntity(clientRequestDTO);
             List<ClientBusinessSector> clientBusinessSectors = clientBusinessSectorRepository.findAllByClientNo(updatedClient.getClientNo());
@@ -157,20 +186,20 @@ public class ClientServiceImpl implements ClientService {
                     updatedClientBusinessSector.add(o);
                 }
             });
-            clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(updatedClient));
+            clientResponseDTO = clientResponeDTOMapper.toDto(clientRepository.save(updatedClient));
             log.info("Updated Client");
             clientBusinessSectorRepository.saveAllAndFlush(updatedClientBusinessSector);
             log.info("Updated relevant business sectors in Client Business Sector");
         }
-        return clientResponeDTO;
+        return clientResponseDTO;
     }
 
     @Override
     @Transactional
-    public ClientResponeDTO delete(Long clientNo) {
+    public ClientResponseDTO delete(Long clientNo) {
         log.info("[deleteClient] start delete client {}", clientNo);
         Optional<Client> optionalClient = clientRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
-        ClientResponeDTO clientResponeDTO = new ClientResponeDTO();
+        ClientResponseDTO clientResponseDTO = new ClientResponseDTO();
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
             if (!client.isDeleted()) {
@@ -211,14 +240,14 @@ public class ClientServiceImpl implements ClientService {
                     healthCardFormatRepository.saveAll(healthCardFormatList);
                 }
                 client.setDeleted(true);
-                clientResponeDTO = clientResponeDTOMapper.toDto(clientRepository.save(client));
+                clientResponseDTO = clientResponeDTOMapper.toDto(clientRepository.save(client));
             }
         }
-        return clientResponeDTO;
+        return clientResponseDTO;
     }
 
     @Override
-    public List<ClientResponeDTO> findByEmployeeNo(Long employeeNo) {
+    public List<ClientResponseDTO> findByEmployeeNo(Long employeeNo) {
         return employeeClientRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo).
                 stream().map(o -> getDetail(o.getClientNo())).collect(Collectors.toList());
     }
