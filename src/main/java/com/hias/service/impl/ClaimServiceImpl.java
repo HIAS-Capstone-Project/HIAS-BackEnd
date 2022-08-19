@@ -163,9 +163,13 @@ public class ClaimServiceImpl implements ClaimService {
         log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
 
         List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
+        Member member;
         for (Claim claim : claims) {
+            member = claim.getMember();
             ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
             claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
+            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
+            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
             claimResponseDTOS.add(claimResponseDTO);
         }
 
@@ -193,7 +197,16 @@ public class ClaimServiceImpl implements ClaimService {
 
         log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
 
-        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
+        Member member;
+        for (Claim claim : claims) {
+            member = claim.getMember();
+            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
+            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
+            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
+            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
+            claimResponseDTOS.add(claimResponseDTO);
+        }
 
         return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
                 pageable,
@@ -219,7 +232,16 @@ public class ClaimServiceImpl implements ClaimService {
 
         log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
 
-        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
+        Member member;
+        for (Claim claim : claims) {
+            member = claim.getMember();
+            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
+            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
+            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
+            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
+            claimResponseDTOS.add(claimResponseDTO);
+        }
 
         return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
                 pageable,
@@ -245,7 +267,16 @@ public class ClaimServiceImpl implements ClaimService {
 
         log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
 
-        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
+        Member member;
+        for (Claim claim : claims) {
+            member = claim.getMember();
+            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
+            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
+            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
+            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
+            claimResponseDTOS.add(claimResponseDTO);
+        }
 
         return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
                 pageable,
