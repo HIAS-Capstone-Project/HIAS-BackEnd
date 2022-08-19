@@ -1,16 +1,11 @@
 package com.hias.service.impl;
 
 import com.hias.constant.*;
-import com.hias.entity.BenefitLicense;
-import com.hias.entity.Claim;
-import com.hias.entity.ClaimDocument;
-import com.hias.entity.License;
+import com.hias.entity.*;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
-import com.hias.mapper.response.ClaimDocumentResponseDTOMapper;
-import com.hias.mapper.response.ClaimResponseDTOMapper;
-import com.hias.mapper.response.LicenseResponseDTOMapper;
+import com.hias.mapper.response.*;
 import com.hias.model.request.ClaimPaymentRequestDTO;
 import com.hias.model.request.ClaimRejectRequestDTO;
 import com.hias.model.request.ClaimRequestDTO;
@@ -18,10 +13,7 @@ import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimDocumentResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
-import com.hias.repository.BenefitLiscenseRepository;
-import com.hias.repository.ClaimDocumentRepository;
-import com.hias.repository.ClaimRepository;
-import com.hias.repository.EmployeeRepository;
+import com.hias.repository.*;
 import com.hias.service.ClaimService;
 import com.hias.utils.DateUtils;
 import com.hias.utils.FireBaseUtils;
@@ -56,11 +48,18 @@ public class ClaimServiceImpl implements ClaimService {
     private final EmployeeRepository employeeRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
+    private final ServiceProviderRepository serviceProviderRepository;
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
     private final ClaimResponseDTOMapper claimResponseDTOMapper;
     private final ClaimDocumentResponseDTOMapper claimDocumentResponseDTOMapper;
     private final LicenseResponseDTOMapper licenseResponseDTOMapper;
+    private final MemberResponseDTOMapper memberResponseDTOMapper;
+    private final ClientResponeDTOMapper clientResponeDTOMapper;
+    private final PolicyResponseDTOMapper policyResponseDTOMapper;
+    private final BenefitResponseDTOMapper benefitResponseDTOMapper;
+    private final ServiceProviderResponseDTOMapper serviceProviderResponseDTOMapper;
+    private final EmployeeResponseDTOMapper employeeResponseDTOMapper;
     private final FireBaseUtils fireBaseUtils;
     private final MessageUtils messageUtils;
     private final ClaimValidator claimValidator;
@@ -87,7 +86,8 @@ public class ClaimServiceImpl implements ClaimService {
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
         Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
         if (claimOptional.isPresent()) {
-            claimResponseDTO = claimResponseDTOMapper.toDto(claimOptional.get());
+            Claim claim = claimOptional.get();
+            claimResponseDTO = claimResponseDTOMapper.toDto(claim);
             List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
             if (CollectionUtils.isNotEmpty(claimDocuments)) {
                 List<ClaimDocumentResponseDTO> claimDocumentResponseDTOS = new ArrayList<>();
@@ -101,6 +101,43 @@ public class ClaimServiceImpl implements ClaimService {
                 }
                 claimResponseDTO.setClaimDocumentResponseDTOS(claimDocumentResponseDTOS);
             }
+            Member member = claim.getMember();
+            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
+            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
+            claimResponseDTO.setPolicyResponseDTO(policyResponseDTOMapper.toDto(member.getPolicy()));
+            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
+
+            Long serviceProviderNo = claim.getServiceProviderNo();
+            if (serviceProviderNo != null) {
+                claimResponseDTO.setServiceProviderResponseDTO(
+                        serviceProviderResponseDTOMapper.toDto(
+                                serviceProviderRepository.findByServiceProviderNoAndIsDeletedIsFalse(serviceProviderNo).get()));
+            }
+
+            Long businessAppraisalBy = claim.getBusinessAppraisalBy();
+            if (businessAppraisalBy != null) {
+                claimResponseDTO.setBusinessAppraisal(employeeResponseDTOMapper
+                        .toDto(employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(businessAppraisalBy).get()));
+            }
+
+            Long medicalAppraisalBy = claim.getMedicalAppraisalBy();
+            if (medicalAppraisalBy != null) {
+                claimResponseDTO.setMedicalAppraisal(employeeResponseDTOMapper
+                        .toDto(employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(medicalAppraisalBy).get()));
+            }
+
+            Long approvedBy = claim.getApprovedBy();
+            if (approvedBy != null) {
+                claimResponseDTO.setApprover(employeeResponseDTOMapper
+                        .toDto(employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(approvedBy).get()));
+            }
+
+            Long paidBy = claim.getPaidBy();
+            if (paidBy != null) {
+                claimResponseDTO.setAccountant(employeeResponseDTOMapper
+                        .toDto(employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(paidBy).get()));
+            }
+
         }
         return claimResponseDTO;
     }
@@ -125,7 +162,12 @@ public class ClaimServiceImpl implements ClaimService {
 
         log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
 
-        List<ClaimResponseDTO> claimResponseDTOS = claimResponseDTOMapper.toDtoList(claims);
+        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
+        for (Claim claim : claims) {
+            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
+            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
+            claimResponseDTOS.add(claimResponseDTO);
+        }
 
         return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
                 pageable,

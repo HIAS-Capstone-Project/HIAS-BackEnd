@@ -28,7 +28,9 @@ public class ClaimResponseDTO implements Serializable {
     private String remark;
     private String medicalAddress;
     private String description;
+    private String rejectReason;
     private BigDecimal claimAmount;
+    private BigDecimal paymentAmount;
     private Long serviceProviderNo;
     private Long memberNo;
     private Long benefitNo;
@@ -38,6 +40,16 @@ public class ClaimResponseDTO implements Serializable {
     private RecordSource recordSource;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
+
+    private MemberResponseDTO memberResponseDTO;
+    private ClientResponseDTO clientResponseDTO;
+    private PolicyResponseDTO policyResponseDTO;
+    private BenefitResponseDTO benefitResponseDTO;
+    private ServiceProviderResponseDTO serviceProviderResponseDTO;
+    private EmployeeResponseDTO businessAppraisal;
+    private EmployeeResponseDTO medicalAppraisal;
+    private EmployeeResponseDTO approver;
+    private EmployeeResponseDTO accountant;
 
     private List<ClaimDocumentResponseDTO> claimDocumentResponseDTOS;
 }
