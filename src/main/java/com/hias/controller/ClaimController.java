@@ -128,13 +128,13 @@ public class ClaimController {
     @PostMapping("business-verified/{claimNo}")
     public ResponseEntity<String> businessVerified(@PathVariable Long claimNo) {
         claimService.businessVerified(claimNo);
-        return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+        return new ResponseEntity<>(CommonConstant.APPROVE_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("medical-verified/{claimNo}")
     public ResponseEntity<String> medicalVerified(@PathVariable Long claimNo) {
         claimService.medicalVerified(claimNo);
-        return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+        return new ResponseEntity<>(CommonConstant.APPROVE_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("start-progress/{claimNo}")
@@ -146,7 +146,7 @@ public class ClaimController {
     @PostMapping("approve/{claimNo}")
     public ResponseEntity<String> approve(@PathVariable Long claimNo) {
         claimService.approve(claimNo);
-        return new ResponseEntity<>(CommonConstant.APPROVAL_SUCCESSFULLY, HttpStatus.OK);
+        return new ResponseEntity<>(CommonConstant.APPROVE_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("settle-claim")

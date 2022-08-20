@@ -26,4 +26,12 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "or lower(c.corporateID) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.clientName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Client> findAllBySearchValue(String searchValue, Pageable pageable);
+
+    @Query("select c from Client c join EmployeeClient ec on c.clientNo = ec.clientNo " +
+            "where c.isDeleted = false and ec.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(c.corporateID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.clientName) like concat('%',lower(trim(:searchValue)),'%'))" +
+            "and ec.employeeNo = :employeeNo")
+    Page<Client> findAllBySearchValueForEmployee(Long employeeNo, String searchValue, Pageable pageable);
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class ClientResponeDTO implements Serializable {
+public class ClientResponseDTO implements Serializable {
 
     private Long clientNo;
     private String corporateID;

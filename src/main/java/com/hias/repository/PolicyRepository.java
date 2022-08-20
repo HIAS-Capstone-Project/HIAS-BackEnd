@@ -27,5 +27,13 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
             "or lower(p.policyCode) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(p.policyName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Policy> findAllBySearchValue(String searchValue, Pageable pageable);
+
+    @Query("select p from Policy p " +
+            "where p.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(p.policyCode) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(p.policyName) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and p.clientNo = :clientNo")
+    Page<Policy> findAllBySearchValueForClientNo(Long clientNo, String searchValue, Pageable pageable);
 }
 

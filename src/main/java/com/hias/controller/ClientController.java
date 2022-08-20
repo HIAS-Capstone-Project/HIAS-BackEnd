@@ -3,7 +3,7 @@ package com.hias.controller;
 import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
 import com.hias.model.request.ClientRequestDTO;
-import com.hias.model.response.ClientResponeDTO;
+import com.hias.model.response.ClientResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.service.ClientService;
 import lombok.AllArgsConstructor;
@@ -27,42 +27,55 @@ public class ClientController {
     private final ClientService clientService;
 
     @GetMapping("get-all")
-    public ResponseEntity<List<ClientResponeDTO>> getAll() {
+    public ResponseEntity<List<ClientResponseDTO>> getAll() {
         return new ResponseEntity<>(clientService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("client-detail")
-    public ResponseEntity<ClientResponeDTO> getDetail(@RequestParam Long clientNo) {
+    public ResponseEntity<ClientResponseDTO> getDetail(@RequestParam Long clientNo) {
         return new ResponseEntity<>(clientService.getDetail(clientNo), HttpStatus.OK);
     }
 
     @GetMapping("search")
-    public ResponseEntity<PagingResponseModel<ClientResponeDTO>> search(@RequestParam(required = false) String searchValue,
-                                                                        @PageableDefault(page = 0, size = 10)
-                                                                        @SortDefault.SortDefaults({
-                                                                                @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
-                                                                                        direction = Sort.Direction.DESC)
-                                                                        }) Pageable pageable) {
+    public ResponseEntity<PagingResponseModel<ClientResponseDTO>> search(@RequestParam(required = false) String searchValue,
+                                                                         @PageableDefault(page = 0, size = 10)
+                                                                         @SortDefault.SortDefaults({
+                                                                                 @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                                                                                         direction = Sort.Direction.DESC)
+                                                                         }) Pageable pageable) {
         return new ResponseEntity<>(clientService.search(searchValue, pageable), HttpStatus.OK);
     }
 
+    @GetMapping("search-for-employee")
+    public ResponseEntity<PagingResponseModel<ClientResponseDTO>> searchForEmployee(
+            @RequestParam Long employeeNo,
+            @RequestParam(required = false) String searchValue,
+            @PageableDefault(page = 0, size = 10)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                            direction = Sort.Direction.DESC)
+            }) Pageable pageable) {
+
+        return new ResponseEntity<>(clientService.searchForEmployee(employeeNo, searchValue, pageable), HttpStatus.OK);
+    }
+
     @PostMapping("create")
-    public ResponseEntity<ClientResponeDTO> create(@RequestBody ClientRequestDTO clientRequestDTO) throws HIASException {
+    public ResponseEntity<ClientResponseDTO> create(@RequestBody ClientRequestDTO clientRequestDTO) throws HIASException {
         return new ResponseEntity<>(clientService.create(clientRequestDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("update")
-    public ResponseEntity<ClientResponeDTO> update(@RequestBody ClientRequestDTO clientRequestDTO) {
+    public ResponseEntity<ClientResponseDTO> update(@RequestBody ClientRequestDTO clientRequestDTO) {
         return new ResponseEntity<>(clientService.update(clientRequestDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<ClientResponeDTO> delete(@RequestParam Long clientNo) {
+    public ResponseEntity<ClientResponseDTO> delete(@RequestParam Long clientNo) {
         return new ResponseEntity<>(clientService.delete(clientNo), HttpStatus.OK);
     }
 
     @GetMapping("find-by-employee-no")
-    public ResponseEntity<List<ClientResponeDTO>> findByEmployeeNo(@RequestParam Long employeeNo) {
+    public ResponseEntity<List<ClientResponseDTO>> findByEmployeeNo(@RequestParam Long employeeNo) {
         return new ResponseEntity<>(clientService.findByEmployeeNo(employeeNo), HttpStatus.OK);
     }
 }
