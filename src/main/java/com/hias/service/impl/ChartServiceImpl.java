@@ -188,4 +188,18 @@ public class ChartServiceImpl implements ChartService {
         return chartResponseDTO;
     }
 
+    @Override
+    public ChartResponseDTO findClaimBySpecialStatus(LocalDate startDate, LocalDate endDate) {
+        String query = ChartQuery.APR_VIO_REJ_LEG;
+        if (startDate == null) {
+            query = String.format(query, "", "");
+        } else {
+            query = String.format(query, String.format("AND c.rejected_date BETWEEN '%s' AND '%s'", startDate, endDate),
+                    String.format("AND c.approved_date BETWEEN '%s' AND '%s'", startDate, endDate));
+        }
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().chartName("Claim with status: Approve, Legal Reject, Violation").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return chartResponseDTO;
+    }
+
 }

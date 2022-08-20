@@ -19,4 +19,6 @@ public interface ChartService {
     ChartResponseDTO findPolicyByUsage(LocalDate startDate, LocalDate endDate);
 
     ChartResponseDTO findBusinessSectorChart();
+
+    ChartResponseDTO findClaimBySpecialStatus(LocalDate startDate, LocalDate endDate);
 }

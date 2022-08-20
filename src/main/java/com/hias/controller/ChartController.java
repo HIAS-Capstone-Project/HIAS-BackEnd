@@ -69,7 +69,7 @@ public class ChartController {
     employees only see claims belonging to member belonging to client that they are in charge of
     others can see all and filter by client
     */
-    @GetMapping("claim-by-status")
+    @GetMapping("claim-by-all-status")
     public ResponseEntity<ChartResponseDTO> findClaimByStatus(@RequestParam(required = false) Long clientNo) {
         ChartResponseDTO chartResponseDTO = chartService.findClaimStatusChart(clientNo);
         return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
@@ -96,6 +96,20 @@ public class ChartController {
     @GetMapping("business-sector")
     public ResponseEntity<ChartResponseDTO> findBusinessSectorChart() {
         ChartResponseDTO chartResponseDTO = chartService.findBusinessSectorChart();
+        return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
+    }
+
+    /*
+    just for admin, accountant, employee
+    others can see all and filter by time
+    localDate format: yyyy-MM-dd
+    */
+    @GetMapping("claim-by-special-status")
+    public ResponseEntity<ChartResponseDTO> findClaimByStatus(@RequestParam(required = false)
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                              @RequestParam(required = false)
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        ChartResponseDTO chartResponseDTO = chartService.findClaimBySpecialStatus(startDate, endDate);
         return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
     }
 }

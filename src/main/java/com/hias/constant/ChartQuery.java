@@ -30,4 +30,16 @@ public class ChartQuery {
     public static final String BUSINESS_SECTOR = "SELECT bs.business_sector_name AS key, SUM(CASE WHEN cbs.client_no IS NULL THEN 0 ELSE 1 END) AS value\n" +
             "FROM HIAS.BUSINESS_SECTOR bs LEFT OUTER JOIN HIAS.CLIENT_BUSINESS_SECTOR cbs ON bs.business_sector_no = cbs.business_sector_no\n" +
             "GROUP BY key";
+
+    public static final String APR_VIO_REJ_LEG = "SELECT (CASE WHEN c.status_reason_code LIKE 'RE001' THEN 'Lack of lisence' ELSE 'Violation' END) AS key, \n" +
+            "    COUNT(c.claim_no) AS value\n" +
+            "FROM HIAS.CLAIM c\n" +
+            "WHERE c.status_code = 'REJ' %s \n" +
+            "GROUP BY c.status_reason_code\n" +
+            "UNION\n" +
+            "SELECT 'Approve' AS key, \n" +
+            "    COUNT(c.claim_no) AS value\n" +
+            "FROM HIAS.CLAIM c\n" +
+            "WHERE c.status_code = 'APR' %s\n" +
+            "GROUP BY c.status_code";
 }
