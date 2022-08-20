@@ -16,4 +16,5 @@ public class ChartResponseDTO {
     private List<StatisticDTO> statistics = new ArrayList<>();
     private String chartType;
     private String chartName;
+    private String[] roles;
 }
