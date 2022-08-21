@@ -19,4 +19,13 @@ public enum RoleEnum {
     ROLE_ACCOUNTANT("ROLE_ACCOUNTANT");
 
     private String name;
+
+    public static RoleEnum findByString(String name) {
+        for (RoleEnum roleEnum : RoleEnum.values()) {
+            if (roleEnum.getName().equalsIgnoreCase(name)) {
+                return roleEnum;
+            }
+        }
+        return null;
+    }
 }

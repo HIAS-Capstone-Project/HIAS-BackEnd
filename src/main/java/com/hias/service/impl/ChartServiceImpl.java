@@ -12,7 +12,6 @@ import com.hias.security.dto.UserDetail;
 import com.hias.service.ChartService;
 import com.hias.service.ClientService;
 import com.hias.service.EmployeeService;
-import com.hias.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
