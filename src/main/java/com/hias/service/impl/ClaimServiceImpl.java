@@ -300,6 +300,11 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
+    public ClaimResponseDTO update(ClaimSubmitRequestDTO claimSubmitRequestDTO) {
+        return null;
+    }
+
+    @Override
     @Transactional
     public ClaimResponseDTO deleteByClaimNo(Long claimNo) {
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
@@ -340,7 +345,7 @@ public class ClaimServiceImpl implements ClaimService {
         List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNoSaved);
         Map<Long, ClaimDocument> claimDocumentMap = buildClaimDocumentMap(claimDocuments);
 
-        processClaimDocuments(claimSubmitRequestDTO, files, claimDocuments, claimDocumentMap);
+        processClaimDocuments(claimSubmitRequestDTO, files, claimDocumentMap);
 
         Optional<Long> employeeNo = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
         if (employeeNo.isPresent()) {
@@ -376,7 +381,7 @@ public class ClaimServiceImpl implements ClaimService {
         List<ClaimDocument> claimDocuments = claimDocumentRepository.findByClaimNoAndIsDeletedIsFalse(claimNoSaved);
         Map<Long, ClaimDocument> claimDocumentMap = buildClaimDocumentMap(claimDocuments);
 
-        processClaimDocuments(claimSubmitRequestDTO, files, claimDocuments, claimDocumentMap);
+        processClaimDocuments(claimSubmitRequestDTO, files, claimDocumentMap);
 
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
 
@@ -395,8 +400,8 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files,
-                                       List<ClaimDocument> claimDocuments,
                                        Map<Long, ClaimDocument> claimDocumentMap) throws IOException {
+        List<ClaimDocument> claimDocuments = new ArrayList<>();
         List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
         int size = Math.min(files.size(), licenseNos.size());
 

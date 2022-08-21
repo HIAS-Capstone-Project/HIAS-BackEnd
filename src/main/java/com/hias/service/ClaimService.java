@@ -31,6 +31,8 @@ public interface ClaimService {
 
     ClaimResponseDTO update(ClaimRequestDTO claimRequestDTO);
 
+    ClaimResponseDTO update(ClaimSubmitRequestDTO claimSubmitRequestDTO);
+
     ClaimResponseDTO deleteByClaimNo(Long claimNo);
 
     ClaimResponseDTO submit(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException;

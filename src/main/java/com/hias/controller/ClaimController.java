@@ -105,7 +105,7 @@ public class ClaimController {
 
     @PostMapping("submit")
     public ResponseEntity<String> submit(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                         @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
+                                         @RequestPart(required = false) List<MultipartFile> documents) throws IOException, HIASException {
 
         claimService.submit(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SUBMIT_SUCCESSFULLY, HttpStatus.OK);
@@ -113,7 +113,7 @@ public class ClaimController {
 
     @PostMapping("save-draft")
     public ResponseEntity<String> saveDraft(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                            @RequestPart List<MultipartFile> documents) throws IOException, HIASException {
+                                            @RequestPart(required = false) List<MultipartFile> documents) throws IOException, HIASException {
 
         claimService.saveDraft(claimSubmitRequestDTO, documents);
         return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.OK);
