@@ -45,7 +45,7 @@ public class Member extends BaseEntity {
     @Column(name = "DOB")
     private LocalDate dob;
 
-    @Column(name = "HEALTH_CARD_NO", unique = true, insertable = false, updatable = false)
+    @Column(name = "HEALTH_CARD_NO", unique = true)
     private String healthCardNo;
 
     @Column(name = "GENDER")

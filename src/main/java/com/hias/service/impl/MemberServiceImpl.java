@@ -175,7 +175,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.save(memberRequestDTOMapper.toEntity(memberRequestDTO));
         //create healcard no
         Long memberNo = member.getMemberNo();
-        log.info("[createMember] Start create heathcardNo for member : {}", memberNo);
+        log.info("[createMember] Start create healthCardNo for member : {}", memberNo);
         List<HealthCardFormat> healthCardFormats = healthCardFormatRepository.findByClientNoAndIsDeletedIsFalse(clientNo);
         if (CollectionUtils.isNotEmpty(healthCardFormats)) {
             member.setHealthCardNo(healthCardFormats.get(0).getPrefix() + memberNo);
@@ -189,15 +189,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberResponseDTO updateMember(MemberRequestDTO memberRequestDTO) throws HIASException {
+    public MemberResponseDTO updateMember(MemberRequestDTO memberRequestDTO) {
         MemberResponseDTO memberResponseDTO = new MemberResponseDTO();
         Long memberNo = memberRequestDTO.getMemberNo();
         Optional<Member> memberOptional = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
         if (!memberOptional.isPresent()) {
             log.info("[updateMember] Cannot found member with memberNo : {} in the system.", memberNo);
         } else {
-            Member member = memberRequestDTOMapper.toEntity(memberRequestDTO);
-            memberResponseDTO = memberResponseDTOMapper.toDto(memberRepository.save(member));
+            Member member = memberOptional.get();
+            Member memberUpdated = memberRequestDTOMapper.toEntity(memberRequestDTO);
+            memberUpdated.setHealthCardNo(member.getHealthCardNo());
+            memberResponseDTO = memberResponseDTOMapper.toDto(memberRepository.save(memberUpdated));
             log.info("[update] Updated member with memberNo : {} in the system.", memberNo);
         }
         return memberResponseDTO;
