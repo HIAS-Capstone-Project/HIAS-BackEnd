@@ -402,6 +402,9 @@ public class ClaimServiceImpl implements ClaimService {
     private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files,
                                        Map<Long, ClaimDocument> claimDocumentMap) throws IOException {
         List<ClaimDocument> claimDocuments = new ArrayList<>();
+        if (files == null) {
+            files = new ArrayList<>();
+        }
         List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
         int size = Math.min(files.size(), licenseNos.size());
 
