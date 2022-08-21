@@ -6,6 +6,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -31,5 +32,5 @@ public class ClaimSubmitRequestDTO implements Serializable {
     private Long serviceProviderNo;
     private Long memberNo;
     private Long benefitNo;
-    private List<Long> licenseNos;
+    private List<Long> licenseNos = new ArrayList<>();
 }

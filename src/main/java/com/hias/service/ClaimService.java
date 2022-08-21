@@ -21,12 +21,6 @@ public interface ClaimService {
 
     PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable);
 
-    PagingResponseModel<ClaimResponseDTO> searchForMember(Long memberNo, String searchValue, Pageable pageable);
-
-    PagingResponseModel<ClaimResponseDTO> searchForServiceProvider(Long memberNo, String searchValue, Pageable pageable);
-
-    PagingResponseModel<ClaimResponseDTO> searchForEmployee(Long memberNo, String searchValue, Pageable pageable);
-
     ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);
 
     ClaimResponseDTO update(ClaimRequestDTO claimRequestDTO);

@@ -14,6 +14,7 @@ import com.hias.model.response.ClaimDocumentResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.*;
+import com.hias.security.dto.UserDetail;
 import com.hias.service.ClaimService;
 import com.hias.utils.DateUtils;
 import com.hias.utils.FireBaseUtils;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -151,7 +153,7 @@ public class ClaimServiceImpl implements ClaimService {
         log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
                 pageSize);
 
-        Page<Claim> claimPage = claimRepository.findAllBySearchValue(searchValue, pageable);
+        Page<Claim> claimPage = this.buildClaimPageByRole(searchValue, pageable);
 
         if (!claimPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -178,109 +180,32 @@ public class ClaimServiceImpl implements ClaimService {
                 claimPage.getTotalElements()));
     }
 
-    @Override
-    public PagingResponseModel<ClaimResponseDTO> searchForMember(Long memberNo, String searchValue, Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-
-        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
-                pageSize);
-
-        Page<Claim> claimPage = claimRepository.findAllBySearchValueForMember(memberNo, searchValue, pageable);
-
-        if (!claimPage.hasContent()) {
-            log.info("[search] Could not found any element match with value : {}", searchValue);
-            return new PagingResponseModel<>(null);
+    private Page<Claim> buildClaimPageByRole(String searchValue, Pageable pageable) {
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoleEnum roleEnum = null;
+        Long primaryKey = null;
+        if (userDetail != null) {
+            roleEnum = RoleEnum.findByString(userDetail.getRoles().get(0));
+            primaryKey = userDetail.getPrimaryKey();
         }
-
-        List<Claim> claims = claimPage.getContent();
-
-        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
-
-        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
-        Member member;
-        for (Claim claim : claims) {
-            member = claim.getMember();
-            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
-            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
-            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
-            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
-            claimResponseDTOS.add(claimResponseDTO);
+        Page<Claim> claimPage = null;
+        if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
+            claimPage = claimRepository.findAllBySearchValue(searchValue, pageable);
         }
-
-        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
-                pageable,
-                claimPage.getTotalElements()));
-    }
-
-    @Override
-    public PagingResponseModel<ClaimResponseDTO> searchForServiceProvider(Long serviceProviderNo, String searchValue, Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-
-        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
-                pageSize);
-
-        Page<Claim> claimPage = claimRepository.findAllBySearchValueForServiceProvider(serviceProviderNo, searchValue, pageable);
-
-        if (!claimPage.hasContent()) {
-            log.info("[search] Could not found any element match with value : {}", searchValue);
-            return new PagingResponseModel<>(null);
+        if (RoleEnum.ROLE_MEMBER.equals(roleEnum)) {
+            claimPage = claimRepository.findAllBySearchValueForMember(primaryKey, searchValue, pageable);
         }
-
-        List<Claim> claims = claimPage.getContent();
-
-        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
-
-        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
-        Member member;
-        for (Claim claim : claims) {
-            member = claim.getMember();
-            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
-            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
-            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
-            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
-            claimResponseDTOS.add(claimResponseDTO);
+        if (Arrays.asList(RoleEnum.ROLE_BUSINESS_APPRAISER,
+                        RoleEnum.ROLE_MEDICAL_APPRAISER,
+                        RoleEnum.ROLE_ACCOUNTANT,
+                        RoleEnum.ROLE_HEALTH_MODERATOR)
+                .contains(roleEnum)) {
+            claimPage = claimRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, pageable);
         }
-
-        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
-                pageable,
-                claimPage.getTotalElements()));
-    }
-
-    @Override
-    public PagingResponseModel<ClaimResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-
-        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
-                pageSize);
-
-        Page<Claim> claimPage = claimRepository.findAllBySearchValueForEmployee(employeeNo, searchValue, pageable);
-
-        if (!claimPage.hasContent()) {
-            log.info("[search] Could not found any element match with value : {}", searchValue);
-            return new PagingResponseModel<>(null);
+        if (RoleEnum.ROLE_SERVICE_PROVIDER.equals(roleEnum)) {
+            claimPage = claimRepository.findAllBySearchValueForServiceProvider(primaryKey, searchValue, pageable);
         }
-
-        List<Claim> claims = claimPage.getContent();
-
-        log.info("[search] Found {} elements match with value : {}.", claims.size(), searchValue);
-
-        List<ClaimResponseDTO> claimResponseDTOS = new ArrayList<>();
-        Member member;
-        for (Claim claim : claims) {
-            member = claim.getMember();
-            ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claim);
-            claimResponseDTO.setBenefitResponseDTO(benefitResponseDTOMapper.toDto(claim.getBenefit()));
-            claimResponseDTO.setMemberResponseDTO(memberResponseDTOMapper.toDto(member));
-            claimResponseDTO.setClientResponseDTO(clientResponeDTOMapper.toDto(member.getClient()));
-            claimResponseDTOS.add(claimResponseDTO);
-        }
-
-        return new PagingResponseModel<>(new PageImpl<>(claimResponseDTOS,
-                pageable,
-                claimPage.getTotalElements()));
+        return claimPage;
     }
 
     @Override
@@ -402,6 +327,9 @@ public class ClaimServiceImpl implements ClaimService {
     private void processClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files,
                                        Map<Long, ClaimDocument> claimDocumentMap) throws IOException {
         List<ClaimDocument> claimDocuments = new ArrayList<>();
+        if (files == null) {
+            files = new ArrayList<>();
+        }
         List<Long> licenseNos = claimSubmitRequestDTO.getLicenseNos();
         int size = Math.min(files.size(), licenseNos.size());
 

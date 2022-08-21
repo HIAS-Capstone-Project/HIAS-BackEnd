@@ -16,9 +16,9 @@ public enum RecordSource {
     private String value;
 
     public static RecordSource findByString(String code) {
-        for (RecordSource statusCode : RecordSource.values()) {
-            if (statusCode.getCode().equalsIgnoreCase(code)) {
-                return statusCode;
+        for (RecordSource recordSource : RecordSource.values()) {
+            if (recordSource.getCode().equalsIgnoreCase(code)) {
+                return recordSource;
             }
         }
         return null;
