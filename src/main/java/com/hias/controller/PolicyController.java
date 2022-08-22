@@ -41,18 +41,6 @@ public class PolicyController {
         return new ResponseEntity<>(policyService.search(searchValue, pageable), HttpStatus.OK);
     }
 
-    @GetMapping("search-for-client")
-    public ResponseEntity<PagingResponseModel<PolicyResponseDTO>> searchForClient(
-            @RequestParam Long clientNo,
-            @RequestParam(required = false) String searchValue,
-            @PageableDefault(page = 0, size = 10)
-            @SortDefault.SortDefaults({
-                    @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
-                            direction = Sort.Direction.DESC)
-            }) Pageable pageable) {
-        return new ResponseEntity<>(policyService.searchForClient(clientNo, searchValue, pageable), HttpStatus.OK);
-    }
-
     @GetMapping("policy-detail")
     public ResponseEntity<PolicyResponseDTO> getDetail(@RequestParam Long policyNo) {
         return new ResponseEntity<>(policyService.getDetail(policyNo), HttpStatus.OK);

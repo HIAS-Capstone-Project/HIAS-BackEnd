@@ -4,6 +4,7 @@ package com.hias.service.impl;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Employee;
+import com.hias.entity.EmployeeClient;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.EmployeeRequestDTOMapper;
 import com.hias.mapper.response.EmployeeResponseDTOMapper;
@@ -11,6 +12,7 @@ import com.hias.model.request.EmployeeRequestDTO;
 import com.hias.model.response.EmployeeResponseDTO;
 import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
+import com.hias.repository.EmployeeClientRepository;
 import com.hias.repository.EmployeeRepository;
 import com.hias.service.EmployeeService;
 import com.hias.utilities.DirectionUtils;
@@ -40,6 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeValidator employeeValidator;
 
     private final MessageUtils messageUtils;
+    private final EmployeeClientRepository employeeClientRepository;
 
     @Override
 
@@ -101,11 +104,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void deleteEmployeeByEmployeeNo(Long employeeNo) throws HIASException {
-        Optional<Employee> employee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo);
-        if (employee.isPresent()) {
-            Employee employee1 = employee.get();
-            employee1.setDeleted(Boolean.TRUE);
-            employeeRepository.save(employee1);
+        Optional<Employee> employeeOptional = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo);
+        if (employeeOptional.isPresent()) {
+            Employee employee = employeeOptional.get();
+            List<EmployeeClient> employeeClients = employeeClientRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo);
+            if(CollectionUtils.isNotEmpty(employeeClients)){
+                for (EmployeeClient employeeClient: employeeClients) {
+                    employeeClient.setDeleted(true);
+                }
+                employeeClientRepository.saveAll(employeeClients);
+            }
+            employee.setDeleted(Boolean.TRUE);
+            employeeRepository.save(employee);
             log.info("[delete] Delete employee with employeeNo: {}", employeeNo);
         } else {
             throw HIASException.buildHIASException("Employee not found", HttpStatus.NOT_FOUND);

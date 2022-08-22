@@ -13,8 +13,6 @@ public interface PolicyService {
 
     PagingResponseModel<PolicyResponseDTO> search(String searchValue, Pageable pageable);
 
-    PagingResponseModel<PolicyResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable);
-
     PolicyResponseDTO getDetail(Long policyNo);
 
     PolicyResponseDTO create(PolicyRequestDTO policyRequestDTO) throws HIASException;

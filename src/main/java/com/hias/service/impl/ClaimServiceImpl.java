@@ -239,7 +239,6 @@ public class ClaimServiceImpl implements ClaimService {
             log.info("[deleteByBenefitNo] Cannot found claim with claimNo : {} in the system.", claimNo);
         } else {
             Claim claim = claimOptional.get();
-
             claim.setDeleted(Boolean.TRUE);
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
             log.info("[deleteByBenefitNo] Delete claim with claimNo : {} in the system.", claimNo);
@@ -293,7 +292,7 @@ public class ClaimServiceImpl implements ClaimService {
         claim.setStatusCode(StatusCode.DRAFT);
         claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ? RecordSource.M : RecordSource.SVP);
 
-        Claim claimSaved = claimRepository.saveAndFlush(claim);
+        Claim claimSaved = claimRepository.save(claim);
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
         Long claimNoSaved = claimSaved.getClaimNo();
 
