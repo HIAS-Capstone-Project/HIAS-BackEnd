@@ -13,7 +13,7 @@ public class ChartQuery {
             "FROM ages\n" +
             "WHERE age >= 30 AND age <= 50\n" +
             "UNION ALL\n" +
-            "SELECT 'Greater than 50' AS key, age AS value, client_no\n" +
+            "SELECT 'Greater Than 50' AS key, age AS value, client_no\n" +
             "FROM ages\n" +
             "WHERE age > 50) t\n" +
             "WHERE 1 = 1 %s\n" +
