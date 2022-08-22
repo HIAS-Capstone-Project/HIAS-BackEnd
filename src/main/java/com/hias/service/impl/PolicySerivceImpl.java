@@ -3,6 +3,7 @@ package com.hias.service.impl;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
 import com.hias.entity.Benefit;
+import com.hias.entity.Member;
 import com.hias.entity.Policy;
 import com.hias.entity.PolicyCoverage;
 import com.hias.exception.HIASException;
@@ -11,6 +12,7 @@ import com.hias.mapper.response.PolicyResponseDTOMapper;
 import com.hias.model.request.PolicyRequestDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.model.response.PolicyResponseDTO;
+import com.hias.repository.MemberRepository;
 import com.hias.repository.PolicyCoverageRepository;
 import com.hias.repository.PolicyRepository;
 import com.hias.service.PolicyService;
@@ -41,6 +43,7 @@ public class PolicySerivceImpl implements PolicyService {
     private final PolicyRequestDTOMapper policyRequestDTOMapper;
     private final PolicyValidator policyValidator;
     private final PolicyCoverageRepository policyCoverageRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public List<PolicyResponseDTO> getAll() {
@@ -193,6 +196,20 @@ public class PolicySerivceImpl implements PolicyService {
         PolicyResponseDTO policyResponseDTO = new PolicyResponseDTO();
         if (optionalPolicy.isPresent()) {
             Policy policy = optionalPolicy.get();
+            List<Member> memberList = memberRepository.findMemberByPolicyNoAndIsDeletedIsFalse(policyNo);
+            List<PolicyCoverage> policyCoverageList = policyCoverageRepository.findAllByPolicyNo(policyNo);
+            if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(memberList)){
+                for (PolicyCoverage policyCoverage: policyCoverageList) {
+                    policyCoverage.setDeleted(true);
+                }
+                 policyCoverageRepository.saveAll(policyCoverageList);
+            }
+            if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(memberList)){
+                for (Member member: memberList) {
+                    member.setDeleted(true);
+                }
+                memberRepository.saveAll(memberList);
+            }
             policy.setDeleted(true);
             policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(policy));
         }
