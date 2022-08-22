@@ -46,19 +46,6 @@ public class ClientController {
         return new ResponseEntity<>(clientService.search(searchValue, pageable), HttpStatus.OK);
     }
 
-    @GetMapping("search-for-employee")
-    public ResponseEntity<PagingResponseModel<ClientResponseDTO>> searchForEmployee(
-            @RequestParam Long employeeNo,
-            @RequestParam(required = false) String searchValue,
-            @PageableDefault(page = 0, size = 10)
-            @SortDefault.SortDefaults({
-                    @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
-                            direction = Sort.Direction.DESC)
-            }) Pageable pageable) {
-
-        return new ResponseEntity<>(clientService.searchForEmployee(employeeNo, searchValue, pageable), HttpStatus.OK);
-    }
-
     @PostMapping("create")
     public ResponseEntity<ClientResponseDTO> create(@RequestBody ClientRequestDTO clientRequestDTO) throws HIASException {
         return new ResponseEntity<>(clientService.create(clientRequestDTO), HttpStatus.CREATED);
