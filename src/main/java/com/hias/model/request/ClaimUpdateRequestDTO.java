@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class ClaimUpdateRequestDTO implements Serializable {
+    private Long claimNo;
     private Long businessAppraisalBy;
     private Long medicalAppraisalBy;
     private Long approvedBy;

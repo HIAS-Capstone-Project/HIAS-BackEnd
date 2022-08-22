@@ -6,10 +6,7 @@ import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClaimRequestDTOMapper;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.*;
-import com.hias.model.request.ClaimPaymentRequestDTO;
-import com.hias.model.request.ClaimRejectRequestDTO;
-import com.hias.model.request.ClaimRequestDTO;
-import com.hias.model.request.ClaimSubmitRequestDTO;
+import com.hias.model.request.*;
 import com.hias.model.response.ClaimDocumentResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
@@ -218,15 +215,19 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     @Transactional
-    public ClaimResponseDTO update(ClaimRequestDTO claimRequestDTO) {
-        Claim claim = claimRequestDTOMapper.toEntity(claimRequestDTO);
-        ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+    public ClaimResponseDTO update(ClaimUpdateRequestDTO claimUpdateRequestDTO) {
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        Long claimNo = claimUpdateRequestDTO.getClaimNo();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        if (claimOptional.isPresent()) {
+            Claim claimUpdated = claimOptional.get();
+            claimUpdated.setBusinessAppraisalBy(claimUpdateRequestDTO.getBusinessAppraisalBy());
+            claimUpdated.setMedicalAppraisalBy(claimUpdateRequestDTO.getMedicalAppraisalBy());
+            claimUpdated.setApprovedBy(claimUpdateRequestDTO.getApprovedBy());
+            claimUpdated.setPaidBy(claimUpdateRequestDTO.getPaidBy());
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claimUpdated));
+        }
         return claimResponseDTO;
-    }
-
-    @Override
-    public ClaimResponseDTO update(ClaimSubmitRequestDTO claimSubmitRequestDTO) {
-        return null;
     }
 
     @Override
