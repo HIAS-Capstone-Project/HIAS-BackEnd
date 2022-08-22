@@ -1,6 +1,24 @@
 package com.hias.constant;
 
 public class ChartQuery {
+
+    public static final String MEMBER_AGE_CHART_QUERY = "SELECT t.key, COUNT(t.value) AS value from(\n" +
+            "WITH ages AS (SELECT DATE_PART('year', NOW()::date) - DATE_PART('year', m.dob::date) AS age, m.client_no\n" +
+            "FROM HIAS.member m)\n" +
+            "SELECT 'Under 30' AS key, age AS value, client_no\n" +
+            "FROM ages\n" +
+            "WHERE age < 30 \n" +
+            "UNION ALL\n" +
+            "SELECT 'Between 30 And 50' AS key, age AS value, client_no\n" +
+            "FROM ages\n" +
+            "WHERE age >= 30 AND age <= 50\n" +
+            "UNION ALL\n" +
+            "SELECT 'Greater than 50' AS key, age AS value, client_no\n" +
+            "FROM ages\n" +
+            "WHERE age > 50) t\n" +
+            "WHERE 1 = 1 %s\n" +
+            "GROUP BY key";
+
     public static final String MEMBER_LOCATION_CHART_QUERY = "SELECT province_name key, COUNT(member_name) value " +
             "FROM HIAS.DISTRICT d INNER JOIN HIAS.PROVINCE p ON d.province_no = p.province_no " +
             "INNER JOIN HIAS.MEMBER m ON d.district_no = m.district_no " +

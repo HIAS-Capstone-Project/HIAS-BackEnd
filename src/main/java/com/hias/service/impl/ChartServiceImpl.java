@@ -33,26 +33,22 @@ public class ChartServiceImpl implements ChartService {
 
     @Override
     public ChartResponseDTO findMemberAgeChart(Long clientNo) {
+        String query = ChartQuery.MEMBER_AGE_CHART_QUERY;
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
         log.info("[findMemberAgeChart] role: {}", role);
-        List<Member> memberList;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
-            memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(userDetail.getPrimaryKey());
+            query = String.format(query, String.format("AND t.client_no = %s", userDetail.getPrimaryKey()));
         } else {
             if (clientNo != null) {
-                memberList = memberRepository.findMemberByClientNoAndIsDeletedIsFalse(clientNo);
+                query = String.format(query, String.format("AND t.client_no = %s", clientNo));
             } else {
-                memberList = memberRepository.findByIsDeletedIsFalse();
+                query = String.format(query, "");
             }
         }
-        List<StatisticDTO> statistics = new ArrayList<>();
-        statistics.add(new StatisticDTO("under 30", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() < 30).count()));
-        statistics.add(new StatisticDTO("greater than 50", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() > 50).count()));
-        statistics.add(new StatisticDTO("between 30 and 50", memberList.stream().filter(o -> LocalDate.now().minusYears(o.getDob().getYear()).getYear() >= 30 &&
-                LocalDate.now().minusYears(o.getDob().getYear()).getYear() <= 50).count()));
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        return ChartResponseDTO.builder().chartName("Member age chart").chartType(ChartConstant.PIE_CHART).statistics(statistics).roles(roles).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Member age chart").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
