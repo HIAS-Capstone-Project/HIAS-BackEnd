@@ -16,8 +16,6 @@ public interface MemberService {
 
     PagingResponseModel<MemberResponseDTO> search(String searchValue, Pageable pageable);
 
-    PagingResponseModel<MemberResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable);
-
     MemberResponseDTO searchByHealthCardNo(String searchValue, LocalDate visitDate) throws HIASException;
 
     void deleteMemberByMemberNo(Long memberNo) throws Exception;

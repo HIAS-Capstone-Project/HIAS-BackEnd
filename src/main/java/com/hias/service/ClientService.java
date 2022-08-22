@@ -20,7 +20,7 @@ public interface ClientService {
 
     ClientResponseDTO update(ClientRequestDTO clientRequestDTO);
 
-    ClientResponseDTO delete(Long clienNo);
+    ClientResponseDTO delete(Long clientNo);
 
     List<ClientResponseDTO> findByEmployeeNo(Long employeeNo);
 }
