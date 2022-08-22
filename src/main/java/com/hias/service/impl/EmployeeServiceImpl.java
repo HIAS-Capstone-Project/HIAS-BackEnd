@@ -18,6 +18,7 @@ import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.EmployeeValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -85,6 +86,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         return new PagingResponseModel<>(new PageImpl<>(employeeResponseDTOS,
                 pageable,
                 employeePage.getTotalElements()));
+    }
+
+    @Override
+    public List<EmployeeResponseDTO> findByEmploymentTypeCode(String employmentTypeCode) {
+        List<Employee> employees = employeeRepository.findByEmploymentTypeCode(employmentTypeCode);
+        List<EmployeeResponseDTO> employeeResponseDTOS = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(employees)) {
+            employeeResponseDTOS = employeeResponseDTOMapper.toDtoList(employees);
+        }
+        return employeeResponseDTOS;
     }
 
     @Override

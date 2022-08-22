@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/employee/")
 @AllArgsConstructor
@@ -41,6 +43,12 @@ public class EmployeeController {
                                                                            }) Pageable pageable) {
         return new ResponseEntity<>(employeeService.search(searchValue, pageable), HttpStatus.OK);
     }
+
+    @GetMapping("find-by-employment-type-code")
+    public ResponseEntity<List<EmployeeResponseDTO>> search(@RequestParam String employmentTypeCode) {
+        return new ResponseEntity<>(employeeService.findByEmploymentTypeCode(employmentTypeCode), HttpStatus.OK);
+    }
+
 
     @DeleteMapping("delete")
     public ResponseEntity<String> deleteEmployee(@RequestParam Long employeeNo) throws HIASException {

@@ -66,4 +66,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "group by e.employeeNo " +
             "order by count(e.employeeNo) asc,e.modifiedOn desc")
     List<Long> findAccountantHasClaimAtLeast();
+
+    @Query("select e from Employee e where e.isDeleted = false " +
+            "and e.employmentType.employmentTypeCode = :employmentTypeCode")
+    List<Employee> findByEmploymentTypeCode(String employmentTypeCode);
 }
