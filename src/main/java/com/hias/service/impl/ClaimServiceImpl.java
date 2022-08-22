@@ -272,9 +272,10 @@ public class ClaimServiceImpl implements ClaimService {
 
         processClaimDocuments(claimSubmitRequestDTO, files, claimDocumentMap);
 
-        Optional<Long> employeeNo = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
-        if (employeeNo.isPresent()) {
-            claimSaved.setBusinessAppraisalBy(employeeNo.get());
+
+        List<Long> employeeNos = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
+        if (CollectionUtils.isNotEmpty(employeeNos)) {
+            claimSaved.setBusinessAppraisalBy(employeeNos.get(0));
             claimSaved = claimRepository.save(claimSaved);
         }
         ClaimResponseDTO claimResponseDTO = claimResponseDTOMapper.toDto(claimSaved);
@@ -421,9 +422,9 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.BUSINESS_VERIFIED);
             claim.setBusinessAppraisalDate(LocalDateTime.now());
 
-            Optional<Long> employeeNo = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
-            if (employeeNo.isPresent()) {
-                claim.setMedicalAppraisalBy(employeeNo.get());
+            List<Long> employeeNos = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
+            if (CollectionUtils.isNotEmpty(employeeNos)) {
+                claim.setMedicalAppraisalBy(employeeNos.get(0));
                 claimRepository.save(claim);
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
@@ -441,9 +442,9 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.MEDICAL_VERIFIED);
             claim.setMedicalAppraisalDate(LocalDateTime.now());
 
-            Optional<Long> employeeNo = employeeRepository.findApproverHasClaimAtLeast();
-            if (employeeNo.isPresent()) {
-                claim.setApprovedBy(employeeNo.get());
+            List<Long> employeeNos = employeeRepository.findApproverHasClaimAtLeast();
+            if (CollectionUtils.isNotEmpty(employeeNos)) {
+                claim.setApprovedBy(employeeNos.get(0));
                 claimRepository.save(claim);
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
@@ -474,9 +475,9 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.APPROVED);
             claim.setApprovedDate(LocalDateTime.now());
 
-            Optional<Long> employeeNo = employeeRepository.findAccountantHasClaimAtLeast();
-            if (employeeNo.isPresent()) {
-                claim.setPaidBy(employeeNo.get());
+            List<Long> employeeNos = employeeRepository.findAccountantHasClaimAtLeast();
+            if (CollectionUtils.isNotEmpty(employeeNos)) {
+                claim.setPaidBy(employeeNos.get(0));
                 claimRepository.save(claim);
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
