@@ -292,7 +292,7 @@ public class ClaimServiceImpl implements ClaimService {
         claim.setStatusCode(StatusCode.DRAFT);
         claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ? RecordSource.M : RecordSource.SVP);
 
-        Claim claimSaved = claimRepository.saveAndFlush(claim);
+        Claim claimSaved = claimRepository.save(claim);
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
         Long claimNoSaved = claimSaved.getClaimNo();
 

@@ -3,6 +3,7 @@ package com.hias.model.request;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,5 +18,6 @@ public class ClientRequestDTO implements Serializable {
     private String email;
     private String phoneNumber;
     private String address;
-    private List<Long> businessSectorNos;
+    private List<Long> businessSectorNos = new ArrayList<>();
+    private List<Long> employeeNos = new ArrayList<>();
 }
