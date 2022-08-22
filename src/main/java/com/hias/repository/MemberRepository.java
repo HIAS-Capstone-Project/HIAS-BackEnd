@@ -43,6 +43,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "and m.clientNo = :clientNo")
     Page<Member> findAllBySearchValueForClient(Long clientNo, String searchValue, Pageable pageable);
 
+    @Query("select m from Member m join EmployeeClient ec on ec.clientNo = m.clientNo " +
+            "where m.isDeleted = false and ec.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(m.staffID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(m.memberName) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and ec.employeeNo = :employeeNo")
+    Page<Member> findAllBySearchValueForEmployee(Long employeeNo, String searchValue, Pageable pageable);
+
     Optional<Member> findByMemberNoAndIsDeletedIsFalse(Long memberNo);
 
 }

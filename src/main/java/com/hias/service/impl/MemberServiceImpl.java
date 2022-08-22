@@ -4,6 +4,7 @@ package com.hias.service.impl;
 import com.hias.constant.DateConstant;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.constant.RoleEnum;
 import com.hias.entity.HealthCardFormat;
 import com.hias.entity.Member;
 import com.hias.exception.HIASException;
@@ -15,6 +16,7 @@ import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.HealthCardFormatRepository;
 import com.hias.repository.MemberRepository;
+import com.hias.security.dto.UserDetail;
 import com.hias.service.MemberService;
 import com.hias.utilities.DirectionUtils;
 import com.hias.utils.DateUtils;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,7 +74,7 @@ public class MemberServiceImpl implements MemberService {
         log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
                 pageSize);
 
-        Page<Member> memberPage = memberRepository.findAllBySearchValue(searchValue, pageable);
+        Page<Member> memberPage = this.buildMemberPageByRole(searchValue, pageable);
 
         if (!memberPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -89,30 +92,27 @@ public class MemberServiceImpl implements MemberService {
                 memberPage.getTotalElements()));
     }
 
-    @Override
-    public PagingResponseModel<MemberResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-
-        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
-                pageSize);
-
-        Page<Member> memberPage = memberRepository.findAllBySearchValueForClient(clientNo, searchValue, pageable);
-
-        if (!memberPage.hasContent()) {
-            log.info("[search] Could not found any element match with value : {}", searchValue);
-            return new PagingResponseModel<>(null);
+    private Page<Member> buildMemberPageByRole(String searchValue, Pageable pageable) {
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoleEnum roleEnum = null;
+        Long primaryKey = null;
+        if (userDetail != null) {
+            roleEnum = RoleEnum.findByString(userDetail.getRoles().get(0));
+            primaryKey = userDetail.getPrimaryKey();
         }
-
-        List<Member> members = memberPage.getContent();
-
-        log.info("[search] Found {} elements match with value : {}.", members.size(), searchValue);
-
-        List<MemberResponseDTO> memberResponseDTOS = memberResponseDTOMapper.toDtoList(members);
-
-        return new PagingResponseModel<>(new PageImpl<>(memberResponseDTOS,
-                pageable,
-                memberPage.getTotalElements()));
+        Page<Member> memberPage = Page.empty();
+        if (roleEnum == null || Arrays.asList(RoleEnum.ROLE_SYSTEM_ADMIN, RoleEnum.ROLE_HEALTH_MODERATOR,
+                        RoleEnum.ROLE_BUSINESS_APPRAISER, RoleEnum.ROLE_MEDICAL_APPRAISER, RoleEnum.ROLE_ACCOUNTANT)
+                .contains(roleEnum)) {
+            memberPage = memberRepository.findAllBySearchValue(searchValue, pageable);
+        }
+        if (Arrays.asList(RoleEnum.ROLE_BUSINESS_EMPLOYEE).contains(roleEnum)) {
+            memberPage = memberRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, pageable);
+        }
+        if (RoleEnum.ROLE_CLIENT.equals(roleEnum)) {
+            memberPage = memberRepository.findAllBySearchValueForClient(primaryKey, searchValue, pageable);
+        }
+        return memberPage;
     }
 
     @Override
