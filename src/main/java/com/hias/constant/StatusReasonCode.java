@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 public enum StatusReasonCode {
 
     RE001("RE001", "License is not enough."),
-    RE002("RE002", "License is invalid.");
+    RE002("RE002", "License is invalid."),
+    RE003("RE003", "Other.");
 
     private String code;
     private String value;

@@ -84,6 +84,12 @@ public class PolicySerivceImpl implements PolicyService {
                 policyPage.getTotalElements()));
     }
 
+    private Page<Policy> buildPolicyPageByRole(String searchValue, Pageable pageable) {
+        Page<Policy> policyPage = Page.empty();
+
+        return policyPage;
+    }
+
     @Override
     public PagingResponseModel<PolicyResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable) {
         int pageNumber = pageable.getPageNumber();
