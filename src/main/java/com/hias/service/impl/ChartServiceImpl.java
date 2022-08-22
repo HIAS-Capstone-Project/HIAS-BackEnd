@@ -70,7 +70,7 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        return ChartResponseDTO.builder().roles(roles).chartName("Member location chart").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Member location chart").chartType(ChartConstant.BAR_CHART).statistics(statisticDTOS).build();
     }
 
     @Override

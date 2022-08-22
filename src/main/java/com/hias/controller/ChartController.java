@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.List;
 
 
 @RestController
@@ -91,8 +90,7 @@ public class ChartController {
     }
 
     /*
-    just for admin, accountant, employee.
-    others can see all and filter by client
+    just for admin, accountant, employee
     */
     @GetMapping("business-sector")
     public ResponseEntity<ChartResponseDTO> findBusinessSectorChart() {
