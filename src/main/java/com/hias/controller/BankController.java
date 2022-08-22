@@ -1,7 +1,10 @@
 package com.hias.controller;
 
 
-import com.hias.entity.*;
+import com.hias.entity.District;
+import com.hias.entity.Province;
+import com.hias.entity.TempDis;
+import com.hias.entity.TempPro;
 import com.hias.model.response.BankResponseDTO;
 import com.hias.repository.DistrictRepository;
 import com.hias.repository.ProvinceRepository;
@@ -16,9 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -44,9 +46,9 @@ public class BankController {
         TempPro[] list = restTemplate.getForObject(url, TempPro[].class);
         Province province;
         List<District> districts = new ArrayList<>();
-        for(TempPro tp: list) {
+        for (TempPro tp : list) {
             province = provinceRepository.save(Province.builder().provinceName(tp.getName()).build());
-            for(TempDis td: tp.getDistricts()){
+            for (TempDis td : tp.getDistricts()) {
                 districts.add(District.builder().
                         provinceNo(province.getProvinceNo()).province(Province.builder().provinceNo(province.getProvinceNo()).build()).districtName(td.getName()).build());
             }

@@ -3,6 +3,7 @@ package com.hias.service.impl;
 import com.hias.constant.CommonConstant;
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.constant.RoleEnum;
 import com.hias.entity.*;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
@@ -11,6 +12,7 @@ import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.*;
+import com.hias.security.dto.UserDetail;
 import com.hias.service.ClientService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.ClientValidator;
@@ -21,14 +23,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,7 +79,7 @@ public class ClientServiceImpl implements ClientService {
         log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
                 pageSize);
 
-        Page<Client> clientPage = clientRepository.findAllBySearchValue(searchValue, pageable);
+        Page<Client> clientPage = this.buildClientPageByRole(searchValue, pageable);
 
         if (!clientPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -98,6 +98,28 @@ public class ClientServiceImpl implements ClientService {
         return new PagingResponseModel<>(new PageImpl<>(clientResponseDTOS,
                 pageable,
                 clientPage.getTotalElements()));
+    }
+
+    private Page<Client> buildClientPageByRole(String searchValue, Pageable pageable) {
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoleEnum roleEnum = null;
+        Long primaryKey = null;
+        if (userDetail != null) {
+            roleEnum = RoleEnum.findByString(userDetail.getRoles().get(0));
+            primaryKey = userDetail.getPrimaryKey();
+        }
+        Page<Client> clientPage = Page.empty();
+        if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
+            clientPage = clientRepository.findAllBySearchValue(searchValue, pageable);
+        }
+        if (Arrays.asList(RoleEnum.ROLE_BUSINESS_EMPLOYEE,
+                        RoleEnum.ROLE_MEDICAL_APPRAISER,
+                        RoleEnum.ROLE_ACCOUNTANT,
+                        RoleEnum.ROLE_HEALTH_MODERATOR)
+                .contains(roleEnum)) {
+            clientPage = clientRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, pageable);
+        }
+        return clientPage;
     }
 
     @Override

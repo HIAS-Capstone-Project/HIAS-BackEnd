@@ -424,6 +424,7 @@ public class ClaimServiceImpl implements ClaimService {
             Optional<Long> employeeNo = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
             if (employeeNo.isPresent()) {
                 claim.setMedicalAppraisalBy(employeeNo.get());
+                claimRepository.save(claim);
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
@@ -443,6 +444,7 @@ public class ClaimServiceImpl implements ClaimService {
             Optional<Long> employeeNo = employeeRepository.findApproverHasClaimAtLeast();
             if (employeeNo.isPresent()) {
                 claim.setApprovedBy(employeeNo.get());
+                claimRepository.save(claim);
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
@@ -475,6 +477,7 @@ public class ClaimServiceImpl implements ClaimService {
             Optional<Long> employeeNo = employeeRepository.findAccountantHasClaimAtLeast();
             if (employeeNo.isPresent()) {
                 claim.setPaidBy(employeeNo.get());
+                claimRepository.save(claim);
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }

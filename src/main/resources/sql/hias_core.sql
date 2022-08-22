@@ -512,115 +512,160 @@ CREATE TABLE HIAS.CLIENT_BUSINESS_SECTOR
 
 
 ------------------------------------------------INSERT DATA---------------------------------------------------
-******BUSINESS_SECTOR********
+*
+*****BUSINESS_SECTOR********
 TRUNCATE TABLE HIAS.business_sector RESTART IDENTITY CASCADE;
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Giáo dục');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Y tế');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Công nghệ');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Đầu tư');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Xuất nhập khẩu');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Thực phẩm');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Thời trang');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Ô tô');
-INSERT INTO HIAS.business_sector(business_sector_name) VALUES ('Bank');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Giáo dục');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Y tế');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Công nghệ');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Đầu tư');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Xuất nhập khẩu');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Thực phẩm');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Thời trang');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Ô tô');
+INSERT INTO HIAS.business_sector(business_sector_name)
+VALUES ('Bank');
 
 
-**********CLIENT**********
+*
+*********CLIENT**********
 TRUNCATE TABLE HIAS.client RESTART IDENTITY CASCADE;
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('Fsoft', '12345', 'fsoft@gmail.com', '0904111111', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('FEdu', '23456', 'fedu@gmail.com', '0904222222', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('FTele', '34567', 'ftele@gmail.com', '0904333333', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('FRetail', '45678', 'fretail@gmail.com', '0904444444', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('Vinfast', '56789', 'vinfast@gmail.com', '0904555555', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('Vinhome', '67891', 'vinhome@gmail.com', '0904666666', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('Vinsmart', '78910', 'vinsmart@gmail.com', '0904777777', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('HAGL', '891011', 'hagl@gmail.com', '0904888888', 'Buôn Ma Thuật', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('Gucci', '910111', 'gucci@gmail.com', '0904999999', 'Hồ Chí Minh', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('VinEdu', '101112', 'vinedu@gmail.com', '0904101010', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('Viettel', '111213', 'viettel@gmail.com', '0904121212', 'Hà Nội', 'ACT');
-INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code) VALUES
-    ('TPBank', '121314', 'tpbank@gmail.com', '0904131313', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('Fsoft', '12345', 'fsoft@gmail.com', '0904111111', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('FEdu', '23456', 'fedu@gmail.com', '0904222222', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('FTele', '34567', 'ftele@gmail.com', '0904333333', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('FRetail', '45678', 'fretail@gmail.com', '0904444444', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('Vinfast', '56789', 'vinfast@gmail.com', '0904555555', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('Vinhome', '67891', 'vinhome@gmail.com', '0904666666', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('Vinsmart', '78910', 'vinsmart@gmail.com', '0904777777', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('HAGL', '891011', 'hagl@gmail.com', '0904888888', 'Buôn Ma Thuật', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('Gucci', '910111', 'gucci@gmail.com', '0904999999', 'Hồ Chí Minh', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('VinEdu', '101112', 'vinedu@gmail.com', '0904101010', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('Viettel', '111213', 'viettel@gmail.com', '0904121212', 'Hà Nội', 'ACT');
+INSERT INTO HIAS.client(client_name, corporate_id, email, phone_number, address, status_code)
+VALUES ('TPBank', '121314', 'tpbank@gmail.com', '0904131313', 'Hà Nội', 'ACT');
 
 
-*********HEALTH_CARD_FORMAT**********************
+*
+********HEALTH_CARD_FORMAT**********************
 TRUNCATE TABLE HIAS.health_card_format RESTART IDENTITY CASCADE;
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('12345-', 1);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('23456-', 2);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('34567-', 3);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('45678-', 4);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('56789-', 5);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('67891-', 6);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('78910-', 7);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('891011-', 8);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('910111-', 9);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('101112-', 10);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('111213-', 11);
-INSERT INTO HIAS.health_card_format(prefix, client_no) VALUES
-    ('121314-', 12);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('12345-', 1);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('23456-', 2);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('34567-', 3);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('45678-', 4);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('56789-', 5);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('67891-', 6);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('78910-', 7);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('891011-', 8);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('910111-', 9);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('101112-', 10);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('111213-', 11);
+INSERT INTO HIAS.health_card_format(prefix, client_no)
+VALUES ('121314-', 12);
 
 
-********CLIENT_BUSINESS_SECTOR****************
+*
+*******CLIENT_BUSINESS_SECTOR****************
 TRUNCATE TABLE HIAS.client_business_sector RESTART IDENTITY CASCADE;
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (1, 3);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (2, 1);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (3, 3);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (4, 7);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (5, 8);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (6, 6);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (7, 3);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (8, 3);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (9, 6);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (10, 7);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (11, 3);
-INSERT INTO HIAS.client_business_sector (client_no, business_sector_no) VALUES (12, 9);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (1, 3);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (2, 1);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (3, 3);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (4, 7);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (5, 8);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (6, 6);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (7, 3);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (8, 3);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (9, 6);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (10, 7);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (11, 3);
+INSERT INTO HIAS.client_business_sector (client_no, business_sector_no)
+VALUES (12, 9);
 
 
-******SERVICE_PROVIDER*************************
+*
+*****SERVICE_PROVIDER*************************
 TRUNCATE TABLE HIAS.service_provider RESTART IDENTITY CASCADE;
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
 VALUES ('sp_123456', 'Bạch Mai', 'bachmai@gmail.com', 'Hà Nội', '0908111111', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
 VALUES ('sp_234567', 'Thủ Đức', 'thuduc@gmail.com', 'Hà Nội', '0908222222', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
 VALUES ('sp_345678', 'Thể Thao', 'thethao@gmail.com', 'Hà Nội', '0908333333', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
 VALUES ('sp_456789', 'Chợ Rẫy', 'choray@gmail.com', 'Hồ Chí Minh', '0908444444', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
 VALUES ('sp_567891', 'C Đà Nẵng', 'cdanang@gmail.com', 'Đà Nẵng', '0908555555', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_678910', 'Châm Cứu Trung Uơng', 'chamcuutrunguong@gmail.com', 'Hà Nội', '0908666666', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_789101', 'Đa Khoa TW Cần Thơ', 'twcantho@gmail.com', 'Cần Thơ', '0908777777', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_891011', 'Đa Khoa TW Thái Nguyên', 'twthainguyen@gmail.com', 'Thái Nguyên', '0908888888', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_910111', 'Trung Ương Huế', 'trunguonghue@gmail.com', 'Huế', '0908999999', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_101112', 'Răng Hàm Mặt TW TP. Hồ Chí Minh', 'twhcm@gmail.com', 'Hồ Chí Minh', '0908101010', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_111213', 'Tâm thần Trung ương 1', 'tamthantrunguong1@gmail.com', 'Hồ Chí Minh', '0908121212', '2020-01-01', '2025-01-01', 'ACT');
-INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date, end_date, status_code)
-VALUES ('sp_121314', 'Việt Nam - Cuba Đồng Hới', 'vncb@gmail.com', 'Đồng Hới', '0908131313', '2020-01-01', '2025-01-01', 'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_678910', 'Châm Cứu Trung Uơng', 'chamcuutrunguong@gmail.com', 'Hà Nội', '0908666666', '2020-01-01',
+        '2025-01-01', 'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_789101', 'Đa Khoa TW Cần Thơ', 'twcantho@gmail.com', 'Cần Thơ', '0908777777', '2020-01-01', '2025-01-01',
+        'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_891011', 'Đa Khoa TW Thái Nguyên', 'twthainguyen@gmail.com', 'Thái Nguyên', '0908888888', '2020-01-01',
+        '2025-01-01', 'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_910111', 'Trung Ương Huế', 'trunguonghue@gmail.com', 'Huế', '0908999999', '2020-01-01', '2025-01-01',
+        'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_101112', 'Răng Hàm Mặt TW TP. Hồ Chí Minh', 'twhcm@gmail.com', 'Hồ Chí Minh', '0908101010', '2020-01-01',
+        '2025-01-01', 'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_111213', 'Tâm thần Trung ương 1', 'tamthantrunguong1@gmail.com', 'Hồ Chí Minh', '0908121212', '2020-01-01',
+        '2025-01-01', 'ACT');
+INSERT INTO HIAS.service_provider (service_provider_id, service_provider_name, email, address, phone_number, start_date,
+                                   end_date, status_code)
+VALUES ('sp_121314', 'Việt Nam - Cuba Đồng Hới', 'vncb@gmail.com', 'Đồng Hới', '0908131313', '2020-01-01', '2025-01-01',
+        'ACT');
 
