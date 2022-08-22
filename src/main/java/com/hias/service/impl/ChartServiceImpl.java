@@ -6,6 +6,8 @@ import com.hias.constant.RoleEnum;
 import com.hias.entity.Member;
 import com.hias.mapper.StatisticsRowMapper;
 import com.hias.model.response.ChartResponseDTO;
+import com.hias.model.response.LineChartResponseDTO;
+import com.hias.model.response.SingleLineChartResponseDTO;
 import com.hias.model.response.StatisticDTO;
 import com.hias.repository.MemberRepository;
 import com.hias.security.dto.UserDetail;
@@ -94,10 +96,10 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<ChartResponseDTO> findMemberOnboardChart(Long[] clientNos) {
-        List<ChartResponseDTO> list = new ArrayList<>();
+    public LineChartResponseDTO findMemberOnboardChart(Long[] clientNos) {
+        List<SingleLineChartResponseDTO> list = new ArrayList<>();
         List<StatisticDTO> statisticDTOS;
-        ChartResponseDTO chartResponseDTO;
+        SingleLineChartResponseDTO singleLineChartResponseDTO;
         String query = ChartQuery.MEMBER_ONBOARD_CHART_QUERY;
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
@@ -107,24 +109,24 @@ public class ChartServiceImpl implements ChartService {
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             tempQue = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
             statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
-            chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName(clientService.getDetail(userDetail.getPrimaryKey()).getClientName()).chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();
-            list.add(chartResponseDTO);
+            singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName(clientService.getDetail(userDetail.getPrimaryKey()).getClientName()).statistics(statisticDTOS).build();
+            list.add(singleLineChartResponseDTO);
         } else {
             if (clientNos != null) {
                 for (Long clientNo : clientNos) {
                     tempQue = String.format(query, String.format("AND m.client_no = %s", clientNo));
                     statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
-                    chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName(clientService.getDetail(clientNo).getClientName()).chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();
-                    list.add(chartResponseDTO);
+                    singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName(clientService.getDetail(clientNo).getClientName()).statistics(statisticDTOS).build();
+                    list.add(singleLineChartResponseDTO);
                 }
             } else {
                 tempQue = String.format(query, "");
                 statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
-                chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName("All members").chartType(ChartConstant.LINE_CHART).statistics(statisticDTOS).build();
-                list.add(chartResponseDTO);
+                singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName("All members").statistics(statisticDTOS).build();
+                list.add(singleLineChartResponseDTO);
             }
         }
-        return list;
+        return LineChartResponseDTO.builder().roles(roles).chartType(ChartConstant.LINE_CHART).lines(list).build();
     }
 
     @Override

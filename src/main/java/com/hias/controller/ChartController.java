@@ -1,6 +1,7 @@
 package com.hias.controller;
 
 import com.hias.model.response.ChartResponseDTO;
+import com.hias.model.response.LineChartResponseDTO;
 import com.hias.service.ChartService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,8 +59,8 @@ public class ChartController {
     others can see all and filter by client
     */
     @GetMapping("member-by-onboard-year")
-    public ResponseEntity<List<ChartResponseDTO>> findMemberByOnboardYear(@RequestParam(required = false) Long[] clientNos) {
-        List<ChartResponseDTO> chartResponseDTOs = chartService.findMemberOnboardChart(clientNos);
+    public ResponseEntity<LineChartResponseDTO> findMemberByOnboardYear(@RequestParam(required = false) Long[] clientNos) {
+        LineChartResponseDTO chartResponseDTOs = chartService.findMemberOnboardChart(clientNos);
         return new ResponseEntity<>(chartResponseDTOs, HttpStatus.OK);
     }
 
