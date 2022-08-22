@@ -133,7 +133,7 @@ public class PolicySerivceImpl implements PolicyService {
         policyRequestDTO.getBenefitNos().forEach(o -> policyCoverages.add(PolicyCoverage.builder().policyNo(policy.getPolicyNo()).benefitNo(o).
                 policy(Policy.builder().policyNo(policy.getPolicyNo()).build()).
                 benefit(Benefit.builder().benefitNo(o).build()).build()));
-        policyCoverageRepository.saveAllAndFlush(policyCoverages);
+        policyCoverageRepository.saveAll(policyCoverages);
         return policyResponseDTOMapper.toDto(policy);
     }
 
@@ -166,7 +166,7 @@ public class PolicySerivceImpl implements PolicyService {
             });
             policyResponseDTO = policyResponseDTOMapper.toDto(policyRepository.save(updatedPolicy));
             log.info("Updated Policy");
-            policyCoverageRepository.saveAllAndFlush(updatedPolicyCoverage);
+            policyCoverageRepository.saveAll(updatedPolicyCoverage);
             log.info("Updated relevant benefits in Policy Coverage");
         }
         return policyResponseDTO;
