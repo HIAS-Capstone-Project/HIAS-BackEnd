@@ -112,43 +112,10 @@ public class ClientServiceImpl implements ClientService {
         if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
             clientPage = clientRepository.findAllBySearchValue(searchValue, pageable);
         }
-        if (Arrays.asList(RoleEnum.ROLE_BUSINESS_EMPLOYEE,
-                        RoleEnum.ROLE_MEDICAL_APPRAISER,
-                        RoleEnum.ROLE_ACCOUNTANT,
-                        RoleEnum.ROLE_HEALTH_MODERATOR)
-                .contains(roleEnum)) {
+        if (Arrays.asList(RoleEnum.ROLE_BUSINESS_EMPLOYEE).contains(roleEnum)) {
             clientPage = clientRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, pageable);
         }
         return clientPage;
-    }
-
-    @Override
-    public PagingResponseModel<ClientResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-
-        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
-                pageSize);
-
-        Page<Client> clientPage = clientRepository.findAllBySearchValueForEmployee(employeeNo, searchValue, pageable);
-
-        if (!clientPage.hasContent()) {
-            log.info("[search] Could not found any element match with value : {}", searchValue);
-            return new PagingResponseModel<>(null);
-        }
-
-        List<Client> clients = clientPage.getContent();
-
-        log.info("[search] Found {} elements match with value : {}.", clients.size());
-
-        List<ClientResponseDTO> clientResponseDTOS = clientResponeDTOMapper.toDtoList(clients);
-
-        clientResponseDTOS.forEach(p -> p.setBusinessSectorNos(clientBusinessSectorRepository.findAllByClientNoAndIsDeletedIsFalse(p.getClientNo()).
-                stream().map(ClientBusinessSector::getBusinessSectorNo).collect(Collectors.toList())));
-
-        return new PagingResponseModel<>(new PageImpl<>(clientResponseDTOS,
-                pageable,
-                clientPage.getTotalElements()));
     }
 
     @Override

@@ -16,8 +16,6 @@ public interface ClientService {
 
     PagingResponseModel<ClientResponseDTO> search(String searchValue, Pageable pageable);
 
-    PagingResponseModel<ClientResponseDTO> searchForEmployee(Long employeeNo, String searchValue, Pageable pageable);
-
     ClientResponseDTO create(ClientRequestDTO clientRequestDTO) throws HIASException;
 
     ClientResponseDTO update(ClientRequestDTO clientRequestDTO);

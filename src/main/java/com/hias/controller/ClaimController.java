@@ -3,10 +3,7 @@ package com.hias.controller;
 import com.hias.constant.CommonConstant;
 import com.hias.constant.FieldNameConstant;
 import com.hias.exception.HIASException;
-import com.hias.model.request.ClaimPaymentRequestDTO;
-import com.hias.model.request.ClaimRejectRequestDTO;
-import com.hias.model.request.ClaimRequestDTO;
-import com.hias.model.request.ClaimSubmitRequestDTO;
+import com.hias.model.request.*;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.service.ClaimService;
@@ -59,8 +56,8 @@ public class ClaimController {
     }
 
     @PutMapping("update")
-    public ResponseEntity<String> update(@RequestBody ClaimRequestDTO claimRequestDTO) {
-        claimService.update(claimRequestDTO);
+    public ResponseEntity<String> update(@RequestBody ClaimUpdateRequestDTO claimUpdateRequestDTO) {
+        claimService.update(claimUpdateRequestDTO);
         return new ResponseEntity<>(CommonConstant.UPDATED_SUCCESSFULLY, HttpStatus.OK);
     }
 

@@ -1,10 +1,7 @@
 package com.hias.service;
 
 import com.hias.exception.HIASException;
-import com.hias.model.request.ClaimPaymentRequestDTO;
-import com.hias.model.request.ClaimRejectRequestDTO;
-import com.hias.model.request.ClaimRequestDTO;
-import com.hias.model.request.ClaimSubmitRequestDTO;
+import com.hias.model.request.*;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +20,7 @@ public interface ClaimService {
 
     ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);
 
-    ClaimResponseDTO update(ClaimRequestDTO claimRequestDTO);
-
-    ClaimResponseDTO update(ClaimSubmitRequestDTO claimSubmitRequestDTO);
+    ClaimResponseDTO update(ClaimUpdateRequestDTO claimRequestDTO);
 
     ClaimResponseDTO deleteByClaimNo(Long claimNo);
 
