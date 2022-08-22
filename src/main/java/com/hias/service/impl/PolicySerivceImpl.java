@@ -2,6 +2,7 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.constant.RoleEnum;
 import com.hias.entity.Benefit;
 import com.hias.entity.Policy;
 import com.hias.entity.PolicyCoverage;
@@ -13,6 +14,7 @@ import com.hias.model.response.PagingResponseModel;
 import com.hias.model.response.PolicyResponseDTO;
 import com.hias.repository.PolicyCoverageRepository;
 import com.hias.repository.PolicyRepository;
+import com.hias.security.dto.UserDetail;
 import com.hias.service.PolicyService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.PolicyValidator;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -63,7 +66,7 @@ public class PolicySerivceImpl implements PolicyService {
         log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
                 pageSize);
 
-        Page<Policy> policyPage = policyRepository.findAllBySearchValue(searchValue, pageable);
+        Page<Policy> policyPage = this.buildPolicyPageByRole(searchValue, pageable);
 
         if (!policyPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -85,38 +88,21 @@ public class PolicySerivceImpl implements PolicyService {
     }
 
     private Page<Policy> buildPolicyPageByRole(String searchValue, Pageable pageable) {
-        Page<Policy> policyPage = Page.empty();
-
-        return policyPage;
-    }
-
-    @Override
-    public PagingResponseModel<PolicyResponseDTO> searchForClient(Long clientNo, String searchValue, Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-
-        log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
-                pageSize);
-
-        Page<Policy> policyPage = policyRepository.findAllBySearchValueForClientNo(clientNo, searchValue, pageable);
-
-        if (!policyPage.hasContent()) {
-            log.info("[search] Could not found any element match with value : {}", searchValue);
-            return new PagingResponseModel<>(null);
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoleEnum roleEnum = null;
+        Long primaryKey = null;
+        if (userDetail != null) {
+            roleEnum = RoleEnum.findByString(userDetail.getRoles().get(0));
+            primaryKey = userDetail.getPrimaryKey();
         }
-
-        List<Policy> policies = policyPage.getContent();
-
-        log.info("[search] Found {} elements match with value : {}.", policies.size(), searchValue);
-
-        List<PolicyResponseDTO> policyResponseDTOS = policyResponseDTOMapper.toDtoList(policies);
-
-        policyResponseDTOS.forEach(p -> p.setBenefitNos(policyCoverageRepository.findAllByPolicyNoAndIsDeletedIsFalse(p.getPolicyNo()).
-                stream().map(PolicyCoverage::getBenefitNo).collect(Collectors.toList())));
-
-        return new PagingResponseModel<>(new PageImpl<>(policyResponseDTOS,
-                pageable,
-                policyPage.getTotalElements()));
+        Page<Policy> policyPage = Page.empty();
+        if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
+            policyPage = policyRepository.findAllBySearchValue(searchValue, pageable);
+        }
+        if (RoleEnum.ROLE_CLIENT.equals(roleEnum)) {
+            policyPage = policyRepository.findAllBySearchValueForClientNo(primaryKey, searchValue, pageable);
+        }
+        return policyPage;
     }
 
     @Override

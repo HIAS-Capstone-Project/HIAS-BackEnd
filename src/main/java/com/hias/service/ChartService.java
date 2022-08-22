@@ -4,7 +4,6 @@ import com.hias.model.response.ChartResponseDTO;
 import com.hias.model.response.LineChartResponseDTO;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public interface ChartService {
     ChartResponseDTO findMemberAgeChart(Long clientNo);

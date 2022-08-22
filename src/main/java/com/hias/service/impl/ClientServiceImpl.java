@@ -143,6 +143,16 @@ public class ClientServiceImpl implements ClientService {
                 client(Client.builder().clientNo(client.getClientNo()).build()).
                 businessSector(BusinessSector.builder().businessSectorNo(o).build()).build()));
         clientBusinessSectorRepository.saveAllAndFlush(clientBusinessSectors);
+
+        List<Long> employeeNos = clientRequestDTO.getEmployeeNos();
+        if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(employeeNos)) {
+            List<EmployeeClient> employeeClients = new ArrayList<>();
+            employeeNos.forEach(employeeNo -> employeeClients.add(EmployeeClient.builder()
+                    .employee(Employee.builder().employeeNo(employeeNo).build())
+                    .client(client)
+                    .build()));
+            employeeClientRepository.saveAll(employeeClients);
+        }
         log.info("create client successfully");
         return clientResponeDTOMapper.toDto(client);
     }
