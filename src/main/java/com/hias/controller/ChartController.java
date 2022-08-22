@@ -2,6 +2,7 @@ package com.hias.controller;
 
 import com.hias.model.response.ChartResponseDTO;
 import com.hias.model.response.LineChartResponseDTO;
+import com.hias.model.response.StatisticDTO;
 import com.hias.service.ChartService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -22,6 +24,12 @@ import java.time.LocalDate;
 @Slf4j
 public class ChartController {
     private ChartService chartService;
+
+    @GetMapping("find-all")
+    public ResponseEntity<List<StatisticDTO>> findAll(@RequestParam(required = false) Long clientNo) {
+        List<StatisticDTO> statisticDTOS = chartService.findAll();
+        return new ResponseEntity<>(statisticDTOS, HttpStatus.OK);
+    }
 
     /* just for admin, accountant, employee, client. c
     client only sees their members,
