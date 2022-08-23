@@ -55,7 +55,7 @@ public class ChartQuery {
             "WHERE c.status_code = 'REJ' %s \n" +
             "GROUP BY c.status_reason_code\n" +
             "UNION\n" +
-            "SELECT 'Approve' AS key, \n" +
+            "SELECT 'Settle' AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
             "WHERE c.status_code = 'SET' %s\n" +
