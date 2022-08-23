@@ -58,7 +58,7 @@ public class ChartQuery {
             "SELECT 'Approve' AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
-            "WHERE c.status_code = 'APR' %s\n" +
+            "WHERE c.status_code = 'SET' %s\n" +
             "GROUP BY c.status_code";
 
     public static final String FIND_ALL_STATISTICS = "SELECT 'member' AS key, COUNT(*) AS value FROM HIAS.member\n" +
