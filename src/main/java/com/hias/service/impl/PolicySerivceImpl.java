@@ -184,14 +184,14 @@ public class PolicySerivceImpl implements PolicyService {
             Policy policy = optionalPolicy.get();
             List<Member> memberList = memberRepository.findMemberByPolicyNoAndIsDeletedIsFalse(policyNo);
             List<PolicyCoverage> policyCoverageList = policyCoverageRepository.findAllByPolicyNo(policyNo);
-            if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(memberList)){
-                for (PolicyCoverage policyCoverage: policyCoverageList) {
+            if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(memberList)) {
+                for (PolicyCoverage policyCoverage : policyCoverageList) {
                     policyCoverage.setDeleted(true);
                 }
-                 policyCoverageRepository.saveAll(policyCoverageList);
+                policyCoverageRepository.saveAll(policyCoverageList);
             }
-            if(org.apache.commons.collections4.CollectionUtils.isNotEmpty(memberList)){
-                for (Member member: memberList) {
+            if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(memberList)) {
+                for (Member member : memberList) {
                     member.setDeleted(true);
                 }
                 memberRepository.saveAll(memberList);

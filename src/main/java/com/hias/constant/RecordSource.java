@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public enum RecordSource {
 
     public static RecordSource findByString(String code) {
         for (RecordSource recordSource : RecordSource.values()) {
-            if (recordSource.getCode().equalsIgnoreCase(code)) {
+            if (recordSource.getCode().equalsIgnoreCase(StringUtils.trim(code))) {
                 return recordSource;
             }
         }

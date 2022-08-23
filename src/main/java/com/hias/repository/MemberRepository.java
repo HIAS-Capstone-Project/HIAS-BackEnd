@@ -19,6 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByIsDeletedIsFalse();
 
     List<Member> findMemberByClientNoAndIsDeletedIsFalse(Long clientNo);
+
     List<Member> findMemberByPolicyNoAndIsDeletedIsFalse(Long clientNo);
 
     List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);

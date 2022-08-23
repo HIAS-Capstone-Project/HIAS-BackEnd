@@ -108,8 +108,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeOptional.isPresent()) {
             Employee employee = employeeOptional.get();
             List<EmployeeClient> employeeClients = employeeClientRepository.findByEmployeeNoAndIsDeletedIsFalse(employeeNo);
-            if(CollectionUtils.isNotEmpty(employeeClients)){
-                for (EmployeeClient employeeClient: employeeClients) {
+            if (CollectionUtils.isNotEmpty(employeeClients)) {
+                for (EmployeeClient employeeClient : employeeClients) {
                     employeeClient.setDeleted(true);
                 }
                 employeeClientRepository.saveAll(employeeClients);
