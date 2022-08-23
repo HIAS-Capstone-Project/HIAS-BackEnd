@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -224,7 +225,9 @@ public class ChartServiceImpl implements ChartService {
         } else {
             query = ChartQuery.FIND_ALL_STATISTICS;
         }
-        return template.query(query, new StatisticsRowMapper());
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        Collections.sort(statisticDTOS);
+        return statisticDTOS;
     }
 
 }
