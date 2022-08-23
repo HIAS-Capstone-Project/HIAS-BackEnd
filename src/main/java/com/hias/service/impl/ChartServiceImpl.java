@@ -209,4 +209,22 @@ public class ChartServiceImpl implements ChartService {
         return chartResponseDTO;
     }
 
+    @Override
+    public List<StatisticDTO> findAll() {
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = userDetail.getRoles().get(0);
+        String query;
+        Long id = userDetail.getPrimaryKey();
+        if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
+            log.info("{findAll} ROLE_CLIENT");
+            query = String.format(ChartQuery.FIND_ALL_STATISTICS_ROLE_CLIENT, id, id, id, id);
+        } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)) {
+            log.info("{findAll} ROLE_BUSINESS_EMPLOYEE");
+            query = String.format(ChartQuery.FIND_ALL_STATISTICS_ROLE_EMP, id, id, id, id);
+        } else {
+            query = ChartQuery.FIND_ALL_STATISTICS;
+        }
+        return template.query(query, new StatisticsRowMapper());
+    }
+
 }

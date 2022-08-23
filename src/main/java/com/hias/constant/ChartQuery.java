@@ -60,4 +60,58 @@ public class ChartQuery {
             "FROM HIAS.CLAIM c\n" +
             "WHERE c.status_code = 'APR' %s\n" +
             "GROUP BY c.status_code";
+
+    public static final String FIND_ALL_STATISTICS = "SELECT 'member' AS key, COUNT(*) AS value FROM HIAS.member\n" +
+            "UNION\n" +
+            "SELECT 'claim', COUNT(*) FROM HIAS.claim\n" +
+            "UNION\n" +
+            "SELECT 'policy', COUNT(*) FROM HIAS.policy\n" +
+            "UNION\n" +
+            "SELECT 'business_sector', COUNT(*) FROM HIAS.business_sector";
+
+    public static final String FIND_ALL_STATISTICS_ROLE_EMP = "SELECT 'policy' AS key, COUNT(DISTINCT(m.policy_no)) AS value FROM HIAS.member m\n" +
+            "WHERE m.client_no IN(\n" +
+            "           SELECT ec.client_no\n" +
+            "           FROM HIAS.employee_client ec\n" +
+            "           WHERE ec.employee_no = %s)\n" +
+            "UNION\n" +
+            "SELECT 'member', COUNT(m.member_no) FROM HIAS.member m\n" +
+            "WHERE m.client_no IN(\n" +
+            "           SELECT ec.client_no\n" +
+            "           FROM HIAS.employee_client ec\n" +
+            "           WHERE ec.employee_no = %s)\n" +
+            "UNION         \n" +
+            "SELECT 'claim', COUNT(c.claim_no) FROM HIAS.claim c\n" +
+            "WHERE c.member_no IN (\n" +
+            "    SELECT m.member_no FROM HIAS.member m\n" +
+            "           WHERE m.client_no IN(\n" +
+            "           SELECT ec.client_no\n" +
+            "           FROM HIAS.employee_client ec\n" +
+            "           WHERE ec.employee_no =%s)\n" +
+            ")\n" +
+            "UNION\n" +
+            "SELECT 'business_sector', COUNT(c.business_sector_no) FROM HIAS.client_business_sector c\n" +
+            "WHERE c.client_no IN(\n" +
+            "           SELECT ec.client_no\n" +
+            "           FROM HIAS.employee_client ec\n" +
+            "           WHERE ec.employee_no = %s)";
+
+    public static final String FIND_ALL_STATISTICS_ROLE_CLIENT = "SELECT 'member' AS key, COUNT(*) AS value \n" +
+            "FROM HIAS.member m\n" +
+            "WHERE m.client_no = %s\n" +
+            "UNION\n" +
+            "SELECT 'policy', COUNT(DISTINCT(m.policy_no)) \n" +
+            "FROM HIAS.member m\n" +
+            "WHERE m.client_no = %s\n" +
+            "UNION\n" +
+            "SELECT 'claim', COUNT(c.claim_no) \n" +
+            "FROM HIAS.claim c\n" +
+            "WHERE c.member_no IN (\n" +
+            "    SELECT m.member_no \n" +
+            "    FROM HIAS.member m\n" +
+            "    WHERE m.client_no = %s )\n" +
+            "UNION                \n" +
+            "SELECT 'business_sector', COUNT(c.business_sector_no) \n" +
+            "FROM HIAS.client_business_sector c\n" +
+            "WHERE c.client_no = %s";
 }
