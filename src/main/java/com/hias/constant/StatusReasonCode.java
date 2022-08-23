@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public enum StatusReasonCode {
 
     public static StatusReasonCode findByString(String code) {
         for (StatusReasonCode statusReasonCode : StatusReasonCode.values()) {
-            if (statusReasonCode.getCode().equalsIgnoreCase(code)) {
+            if (statusReasonCode.getCode().equalsIgnoreCase(StringUtils.trim(code))) {
                 return statusReasonCode;
             }
         }
