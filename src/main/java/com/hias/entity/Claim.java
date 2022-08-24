@@ -60,6 +60,9 @@ public class Claim extends BaseEntity {
     @Column(name = "REJECTED_DATE")
     private LocalDateTime rejectedDate;
 
+    @Column(name = "RETURN_DATE")
+    private LocalDateTime returnDate;
+
     @Column(name = "REMARK")
     private String remark;
 
@@ -71,6 +74,9 @@ public class Claim extends BaseEntity {
 
     @Column(name = "REJECT_REASON")
     private String rejectReason;
+
+    @Column(name = "RETURN_REASON")
+    private String returnReason;
 
     @Column(name = "CLAIM_AMOUNT")
     private BigDecimal claimAmount;

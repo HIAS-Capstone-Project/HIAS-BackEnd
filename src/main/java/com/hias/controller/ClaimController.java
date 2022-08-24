@@ -124,8 +124,8 @@ public class ClaimController {
     }
 
     @PostMapping("return-claim")
-    public ResponseEntity<String> returnClaim(@RequestBody ClaimPaymentRequestDTO claimPaymentRequestDTO) {
-        claimService.settleClaim(claimPaymentRequestDTO);
+    public ResponseEntity<String> returnClaim(@RequestBody ClaimReturnRequestDTO claimReturnRequestDTO) {
+        claimService.returnClaim(claimReturnRequestDTO);
         return new ResponseEntity<>(CommonConstant.RETURNED_SUCCESSFULLY, HttpStatus.OK);
     }
 }

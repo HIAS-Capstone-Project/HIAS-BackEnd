@@ -4,6 +4,7 @@ import com.hias.constant.RecordSource;
 import com.hias.constant.StatusCode;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
+import com.hias.entity.License;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
 import com.hias.model.request.ClaimDocumentRequestDTO;
@@ -107,12 +108,12 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
 
             for (int index = 0; index < size; index++) {
                 ClaimDocument claimDocument = new ClaimDocument();
-                claimDocument.setLicenseNo(licenseNo);
+                claimDocument.setLicense(License.builder().licenseNo(licenseNo).build());
                 claimDocument.setFileName(fileNames.get(index));
                 claimDocument.setOriginalFileName(fileNames.get(index));
                 claimDocument.setPathFile(fileNames.get(index));
                 claimDocument.setFileUrl(fileUrls.get(index));
-                claimDocument.setClaimNo(claimNoSaved);
+                claimDocument.setClaim(Claim.builder().claimNo(claimNoSaved).build());
                 claimDocuments.add(claimDocument);
             }
         }
