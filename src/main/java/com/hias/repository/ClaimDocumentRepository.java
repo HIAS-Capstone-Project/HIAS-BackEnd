@@ -10,4 +10,6 @@ import java.util.List;
 public interface ClaimDocumentRepository extends JpaRepository<ClaimDocument, Long> {
 
     List<ClaimDocument> findByClaimNoAndIsDeletedIsFalse(Long claimNo);
+
+    void deleteByClaimNoAndIsDeletedIsFalse(Long claimNo);
 }

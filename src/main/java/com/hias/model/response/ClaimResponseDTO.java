@@ -29,6 +29,7 @@ public class ClaimResponseDTO implements Serializable {
     private String medicalAddress;
     private String description;
     private String rejectReason;
+    private String returnReason;
     private BigDecimal claimAmount;
     private BigDecimal paymentAmount;
     private Long serviceProviderNo;

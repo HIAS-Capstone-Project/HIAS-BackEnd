@@ -250,8 +250,6 @@ public class ClaimServiceImpl implements ClaimService {
     @Transactional
     public ClaimResponseDTO submit(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
 
-        validateDraftClaim(claimSubmitRequestDTO);
-
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setSubmittedDate(LocalDateTime.now());
@@ -285,8 +283,6 @@ public class ClaimServiceImpl implements ClaimService {
     @Override
     @Transactional
     public ClaimResponseDTO saveDraft(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
-
-        validateDraftClaim(claimSubmitRequestDTO);
 
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.DRAFT);
@@ -422,10 +418,11 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.BUSINESS_VERIFIED);
             claim.setBusinessAppraisalDate(LocalDateTime.now());
 
-            List<Long> employeeNos = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
-            if (CollectionUtils.isNotEmpty(employeeNos)) {
-                claim.setMedicalAppraisalBy(employeeNos.get(0));
-                claimRepository.save(claim);
+            if (claim.getMedicalAppraisalBy() == null) {
+                List<Long> employeeNos = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
+                if (CollectionUtils.isNotEmpty(employeeNos)) {
+                    claim.setMedicalAppraisalBy(employeeNos.get(0));
+                }
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
@@ -442,10 +439,11 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.MEDICAL_VERIFIED);
             claim.setMedicalAppraisalDate(LocalDateTime.now());
 
-            List<Long> employeeNos = employeeRepository.findApproverHasClaimAtLeast();
-            if (CollectionUtils.isNotEmpty(employeeNos)) {
-                claim.setApprovedBy(employeeNos.get(0));
-                claimRepository.save(claim);
+            if (claim.getApprovedBy() == null) {
+                List<Long> employeeNos = employeeRepository.findApproverHasClaimAtLeast();
+                if (CollectionUtils.isNotEmpty(employeeNos)) {
+                    claim.setApprovedBy(employeeNos.get(0));
+                }
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
@@ -475,10 +473,11 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.APPROVED);
             claim.setApprovedDate(LocalDateTime.now());
 
-            List<Long> employeeNos = employeeRepository.findAccountantHasClaimAtLeast();
-            if (CollectionUtils.isNotEmpty(employeeNos)) {
-                claim.setPaidBy(employeeNos.get(0));
-                claimRepository.save(claim);
+            if (claim.getPaidBy() == null) {
+                List<Long> employeeNos = employeeRepository.findAccountantHasClaimAtLeast();
+                if (CollectionUtils.isNotEmpty(employeeNos)) {
+                    claim.setPaidBy(employeeNos.get(0));
+                }
             }
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
@@ -514,6 +513,24 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setRejectedDate(LocalDateTime.now());
             claim.setRemark(claimRejectRequestDTO.getRejectReason());
             claim.setRejectReason(claimRejectRequestDTO.getRejectReason());
+            claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
+        }
+        return claimResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public ClaimResponseDTO returnClaim(ClaimReturnRequestDTO claimReturnRequestDTO) {
+        Long claimNo = claimReturnRequestDTO.getClaimNo();
+        Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+        if (claimOptional.isPresent()) {
+            Claim claim = claimOptional.get();
+            claim.setStatusCode(StatusCode.RETURN);
+            claim.setStatusReasonCode(claimReturnRequestDTO.getReturnReasonCode());
+            claim.setReturnDate(LocalDateTime.now());
+            claim.setRemark(claimReturnRequestDTO.getReturnReason());
+            claim.setReturnReason(claimReturnRequestDTO.getReturnReason());
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;

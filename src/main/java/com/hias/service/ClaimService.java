@@ -41,4 +41,6 @@ public interface ClaimService {
     ClaimResponseDTO settleClaim(ClaimPaymentRequestDTO claimPaymentRequestDTO);
 
     ClaimResponseDTO rejectClaim(ClaimRejectRequestDTO claimRejectRequestDTO);
+
+    ClaimResponseDTO returnClaim(ClaimReturnRequestDTO claimReturnRequestDTO);
 }

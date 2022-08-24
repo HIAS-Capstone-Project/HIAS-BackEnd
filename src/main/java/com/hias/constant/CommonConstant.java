@@ -15,6 +15,7 @@ public class CommonConstant {
     public static final String SUBMIT_SUCCESSFULLY = "Submit Successfully.";
     public static final String UPDATED_SUCCESSFULLY = "Update Successfully.";
     public static final String DELETED_SUCCESSFULLY = "Deleted Successfully.";
+    public static final String RETURNED_SUCCESSFULLY = "Returned Successfully.";
     public static final String DASH = "-";
     public static final String DOT = ".";
     public static final String REGEX_FILE_EXTENSION = "\\.(txt|xls|xlsx|docs|pdf|png|jpg|JPG)";
