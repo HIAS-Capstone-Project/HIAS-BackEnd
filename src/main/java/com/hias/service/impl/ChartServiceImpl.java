@@ -256,13 +256,13 @@ public class ChartServiceImpl implements ChartService {
         } else {
             if (clientNo != null) {
                 roleCondition = String.format("AND m.client_no = %s", clientNo);
-                chartName = String.format("Payment statistics for to client: %s", clientService.getDetail(clientNo).getClientName());
+                chartName = String.format("Payment statistics for client: %s", clientService.getDetail(clientNo).getClientName());
             } else {
                 roleCondition = "";
                 chartName = "Payment statistics";
             }
         }
-        if(year == null) {
+        if (year == null) {
             log.info("Filter by year");
             selectedField = "yyyy";
             lastCondition = "GROUP BY to_char(c.payment_date,'yyyy')";
@@ -274,14 +274,14 @@ public class ChartServiceImpl implements ChartService {
         query = String.format(query, selectedField, roleCondition, lastCondition);
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        if(year != null && "quarter".equalsIgnoreCase(timeFilterBy)){
+        if (year != null && "quarter".equalsIgnoreCase(timeFilterBy)) {
             log.info("Filter by quarter in year {}", year);
             List<StatisticDTO> newStatisticDTOList = new ArrayList<>();
             long tempValue;
-            for (int i = 1; i<=4; i++) {
+            for (int i = 1; i <= 4; i++) {
                 tempValue = 0;
-                for (StatisticDTO statisticDTO: statisticDTOS) {
-                    if(Integer.parseInt(statisticDTO.getKey()) > 3*(i - 1) && Integer.parseInt(statisticDTO.getKey()) <= 3*i){
+                for (StatisticDTO statisticDTO : statisticDTOS) {
+                    if (Integer.parseInt(statisticDTO.getKey()) > 3 * (i - 1) && Integer.parseInt(statisticDTO.getKey()) <= 3 * i) {
                         tempValue += statisticDTO.getValue();
                     }
                 }
