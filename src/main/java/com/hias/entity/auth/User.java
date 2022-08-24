@@ -40,6 +40,12 @@ public class User extends BaseEntity {
     @Column(name = "SERVICE_PROVIDER_NO")
     private Long serviceProviderNo;
 
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Column(name = "PHONE_NUMBER")
+    private String phoneNumber;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<UserRole> userRoleList;
 }

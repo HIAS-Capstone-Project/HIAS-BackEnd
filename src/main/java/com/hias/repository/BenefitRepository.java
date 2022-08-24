@@ -25,4 +25,25 @@ public interface BenefitRepository extends JpaRepository<Benefit, Long> {
             "or lower(b.benefitCode) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(b.benefitName) like concat('%',lower(trim(:searchValue)),'%'))")
     Page<Benefit> findAllBySearchValue(String searchValue, Pageable pageable);
+
+    @Query("select b from Benefit b join PolicyCoverage pc on pc.benefitNo = b.benefitNo " +
+            "where b.isDeleted = false " +
+            "and pc.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(b.benefitCode) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(b.benefitName) like concat('%',lower(trim(:searchValue)),'%'))" +
+            "and pc.policy.clientNo = :clientNo")
+    Page<Benefit> findAllBySearchValueForClient(Long clientNo, String searchValue, Pageable pageable);
+
+    @Query("select b from Benefit b " +
+            "join PolicyCoverage pc on pc.benefitNo = b.benefitNo " +
+            "join Member m on m.policyNo = pc.policyNo " +
+            "where b.isDeleted = false " +
+            "and pc.isDeleted = false " +
+            "and m.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(b.benefitCode) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(b.benefitName) like concat('%',lower(trim(:searchValue)),'%'))" +
+            "and m.memberNo = :memberNo")
+    Page<Benefit> findAllBySearchValueForMember(Long memberNo, String searchValue, Pageable pageable);
 }
