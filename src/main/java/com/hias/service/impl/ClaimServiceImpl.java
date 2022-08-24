@@ -250,8 +250,6 @@ public class ClaimServiceImpl implements ClaimService {
     @Transactional
     public ClaimResponseDTO submit(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
 
-        validateDraftClaim(claimSubmitRequestDTO);
-
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setSubmittedDate(LocalDateTime.now());
@@ -285,8 +283,6 @@ public class ClaimServiceImpl implements ClaimService {
     @Override
     @Transactional
     public ClaimResponseDTO saveDraft(ClaimSubmitRequestDTO claimSubmitRequestDTO, List<MultipartFile> files) throws IOException, HIASException {
-
-        validateDraftClaim(claimSubmitRequestDTO);
 
         Claim claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
         claim.setStatusCode(StatusCode.DRAFT);

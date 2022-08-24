@@ -15,6 +15,6 @@ public class StatisticDTO implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        return this.key.compareTo(((StatisticDTO)o).getKey());
+        return this.key.compareTo(((StatisticDTO) o).getKey());
     }
 }

@@ -7,6 +7,7 @@ import com.hias.model.request.*;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.service.ClaimService;
+import com.hias.service.ClaimServiceV2;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +17,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,6 +27,7 @@ import java.util.List;
 public class ClaimController {
 
     private ClaimService claimService;
+    private ClaimServiceV2 claimServiceV2;
 
     @GetMapping("find-all")
     public ResponseEntity<List<ClaimResponseDTO>> findAll() {
@@ -68,18 +68,16 @@ public class ClaimController {
     }
 
     @PostMapping("submit")
-    public ResponseEntity<String> submit(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                         @RequestPart(required = false) List<MultipartFile> documents) throws IOException, HIASException {
+    public ResponseEntity<String> submit(@RequestBody ClaimSubmitRequestDTO claimSubmitRequestDTO) {
 
-        claimService.submit(claimSubmitRequestDTO, documents);
+        claimServiceV2.submit(claimSubmitRequestDTO);
         return new ResponseEntity<>(CommonConstant.SUBMIT_SUCCESSFULLY, HttpStatus.OK);
     }
 
     @PostMapping("save-draft")
-    public ResponseEntity<String> saveDraft(@RequestPart ClaimSubmitRequestDTO claimSubmitRequestDTO,
-                                            @RequestPart(required = false) List<MultipartFile> documents) throws IOException, HIASException {
+    public ResponseEntity<String> saveDraft(@RequestBody ClaimSubmitRequestDTO claimSubmitRequestDTO) {
 
-        claimService.saveDraft(claimSubmitRequestDTO, documents);
+        claimServiceV2.saveDraft(claimSubmitRequestDTO);
         return new ResponseEntity<>(CommonConstant.SAVED_SUCCESSFULLY, HttpStatus.OK);
     }
 
@@ -123,5 +121,11 @@ public class ClaimController {
     public ResponseEntity<String> rejectClaim(@RequestBody ClaimRejectRequestDTO claimRejectRequestDTO) {
         claimService.rejectClaim(claimRejectRequestDTO);
         return new ResponseEntity<>(CommonConstant.REJECT_SUCCESSFULLY, HttpStatus.OK);
+    }
+
+    @PostMapping("return-claim")
+    public ResponseEntity<String> returnClaim(@RequestBody ClaimPaymentRequestDTO claimPaymentRequestDTO) {
+        claimService.settleClaim(claimPaymentRequestDTO);
+        return new ResponseEntity<>(CommonConstant.RETURNED_SUCCESSFULLY, HttpStatus.OK);
     }
 }

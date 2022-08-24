@@ -33,4 +33,5 @@ public class ClaimSubmitRequestDTO implements Serializable {
     private Long memberNo;
     private Long benefitNo;
     private List<Long> licenseNos = new ArrayList<>();
+    private List<ClaimDocumentRequestDTO> claimDocumentRequestDTOS;
 }
