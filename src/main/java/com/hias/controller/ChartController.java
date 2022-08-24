@@ -26,7 +26,7 @@ public class ChartController {
     private ChartService chartService;
 
     @GetMapping("find-all")
-    public ResponseEntity<List<StatisticDTO>> findAll(@RequestParam(required = false) Long clientNo) {
+    public ResponseEntity<List<StatisticDTO>> findAll() {
         List<StatisticDTO> statisticDTOS = chartService.findAll();
         return new ResponseEntity<>(statisticDTOS, HttpStatus.OK);
     }
@@ -117,6 +117,17 @@ public class ChartController {
                                                               @RequestParam(required = false)
                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         ChartResponseDTO chartResponseDTO = chartService.findClaimBySpecialStatus(startDate, endDate);
+        return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
+    }
+
+    /*
+
+     */
+    @GetMapping("payment")
+    public ResponseEntity<ChartResponseDTO> findPayment(@RequestParam(required = false) Long year,
+                                                        @RequestParam(required = false) String timeFilterBy,
+                                                        @RequestParam(required = false) Long clientNo) {
+        ChartResponseDTO chartResponseDTO = chartService.findPayment(year, timeFilterBy, clientNo);
         return new ResponseEntity<>(chartResponseDTO, HttpStatus.OK);
     }
 }

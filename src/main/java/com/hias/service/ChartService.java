@@ -25,4 +25,6 @@ public interface ChartService {
     ChartResponseDTO findClaimBySpecialStatus(LocalDate startDate, LocalDate endDate);
 
     List<StatisticDTO> findAll();
+
+    ChartResponseDTO findPayment(Long year, String timeFilterBy, Long clientNo);
 }

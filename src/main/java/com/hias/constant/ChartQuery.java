@@ -114,4 +114,12 @@ public class ChartQuery {
             "SELECT 'business_sector', COUNT(c.business_sector_no) \n" +
             "FROM HIAS.client_business_sector c\n" +
             "WHERE c.client_no = %s";
+
+    public static final String PAYMENT_CHART_QUERY = "SELECT to_char(c.payment_date,'%s') key, SUM(payment_amount) value\n" +
+            "FROM HIAS.claim c\n" +
+            "WHERE c.status_code = 'SET' AND c.member_no IN(\n" +
+            "    SELECT m.member_no\n" +
+            "    FROM HIAS.member m\n" +
+            "    WHERE 1 = 1 %s\n" +
+            ") %s";
 }

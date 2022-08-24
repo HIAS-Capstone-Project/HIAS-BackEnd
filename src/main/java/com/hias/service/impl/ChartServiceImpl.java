@@ -168,9 +168,8 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName(chartName).chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
 
-        return chartResponseDTO;
+        return ChartResponseDTO.builder().roles(roles).chartName(chartName).chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
@@ -183,16 +182,14 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
-        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName("Policy usage").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
-        return chartResponseDTO;
+        return ChartResponseDTO.builder().roles(roles).chartName("Policy usage").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
     public ChartResponseDTO findBusinessSectorChart() {
         List<StatisticDTO> statisticDTOS = template.query(ChartQuery.BUSINESS_SECTOR, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
-        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName("Business sectors").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
-        return chartResponseDTO;
+        return ChartResponseDTO.builder().roles(roles).chartName("Business sectors").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
@@ -206,8 +203,7 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
-        ChartResponseDTO chartResponseDTO = ChartResponseDTO.builder().roles(roles).chartName("Claim with status: Approve, Legal Reject, Violation").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
-        return chartResponseDTO;
+        return ChartResponseDTO.builder().roles(roles).chartName("Claim with status: Approve, Legal Reject, Violation").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
@@ -228,6 +224,73 @@ public class ChartServiceImpl implements ChartService {
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         Collections.sort(statisticDTOS);
         return statisticDTOS;
+    }
+
+    @Override
+    public ChartResponseDTO findPayment(Long year, String timeFilterBy, Long clientNo) {
+        String query = ChartQuery.PAYMENT_CHART_QUERY;
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = userDetail.getRoles().get(0);
+        log.info("[findPayment] role: {}", role);
+        String chartName, roleCondition, selectedField, lastCondition;
+        if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
+            roleCondition = String.format("AND m.client_no = %s", userDetail.getPrimaryKey());
+            chartName = String.format("Payment statistics for client: %s", clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
+        } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)) {
+            if (clientNo == null) {
+                roleCondition = String.format("AND m.client_no IN(\n" +
+                        "        SELECT ec.client_no\n" +
+                        "        FROM HIAS.employee_client ec\n" +
+                        "        WHERE ec.employee_no = %s\n" +
+                        "    )", userDetail.getPrimaryKey());
+                chartName = String.format("Payment statistics in charge by employee: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
+            } else {
+                roleCondition = String.format("AND m.client_no IN(\n" +
+                        "        SELECT ec.client_no\n" +
+                        "        FROM HIAS.employee_client ec\n" +
+                        "        WHERE ec.employee_no = %s AND ec.client_no = %s\n" +
+                        "    )", userDetail.getPrimaryKey(), clientNo);
+                chartName = String.format("Payment statistics in charge by employee: %s with client: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName(),
+                        clientService.getDetail(clientNo).getClientName());
+            }
+        } else {
+            if (clientNo != null) {
+                roleCondition = String.format("AND m.client_no = %s", clientNo);
+                chartName = String.format("Payment statistics for to client: %s", clientService.getDetail(clientNo).getClientName());
+            } else {
+                roleCondition = "";
+                chartName = "Payment statistics";
+            }
+        }
+        if(year == null) {
+            log.info("Filter by year");
+            selectedField = "yyyy";
+            lastCondition = "GROUP BY to_char(c.payment_date,'yyyy')";
+        } else {
+            selectedField = "MM";
+            lastCondition = String.format("AND DATE_PART('year', c.payment_date) = %s\n" +
+                    "GROUP BY to_char(c.payment_date,'MM')", year);
+        }
+        query = String.format(query, selectedField, roleCondition, lastCondition);
+        List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
+        if(year != null && "quarter".equalsIgnoreCase(timeFilterBy)){
+            log.info("Filter by quarter in year {}", year);
+            List<StatisticDTO> newStatisticDTOList = new ArrayList<>();
+            long tempValue;
+            for (int i = 1; i<=4; i++) {
+                tempValue = 0;
+                for (StatisticDTO statisticDTO: statisticDTOS) {
+                    if(Integer.parseInt(statisticDTO.getKey()) > 3*(i - 1) && Integer.parseInt(statisticDTO.getKey()) <= 3*i){
+                        tempValue += statisticDTO.getValue();
+                    }
+                }
+                newStatisticDTOList.add(StatisticDTO.builder().key(String.format("Qúy %s", i)).value(tempValue).build());
+            }
+            return ChartResponseDTO.builder().chartName(chartName).chartType(ChartConstant.BAR_CHART).roles(roles).statistics(newStatisticDTOList).build();
+        }
+        return ChartResponseDTO.builder().chartName(chartName).chartType(ChartConstant.BAR_CHART).roles(roles).statistics(statisticDTOS).build();
+
     }
 
 }
