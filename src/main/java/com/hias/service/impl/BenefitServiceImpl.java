@@ -2,6 +2,7 @@ package com.hias.service.impl;
 
 import com.hias.constant.ErrorMessageCode;
 import com.hias.constant.FieldNameConstant;
+import com.hias.constant.RoleEnum;
 import com.hias.entity.*;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.BenefitRequestDTOMapper;
@@ -13,6 +14,7 @@ import com.hias.model.response.BenefitResponseDTO;
 import com.hias.model.response.LicenseResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.*;
+import com.hias.security.dto.UserDetail;
 import com.hias.service.BenefitService;
 import com.hias.utils.MessageUtils;
 import com.hias.utils.validator.BenefitValidator;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,7 +125,7 @@ public class BenefitServiceImpl implements BenefitService {
         log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
                 pageSize);
 
-        Page<Benefit> benefitPage = benefitRepository.findAllBySearchValue(searchValue, pageable);
+        Page<Benefit> benefitPage = this.buildBenefitPageByRole(searchValue, pageable);
 
         if (!benefitPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -156,6 +159,30 @@ public class BenefitServiceImpl implements BenefitService {
         return new PagingResponseModel<>(new PageImpl<>(benefitResponseDTOS,
                 pageable,
                 benefitPage.getTotalElements()));
+    }
+
+    private Page<Benefit> buildBenefitPageByRole(String searchValue, Pageable pageable) {
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoleEnum roleEnum = null;
+        Long primaryKey = null;
+        if (userDetail != null) {
+            roleEnum = RoleEnum.findByString(userDetail.getRoles().get(0));
+            primaryKey = userDetail.getPrimaryKey();
+        }
+        Page<Benefit> benefitPage = Page.empty();
+        if (roleEnum == null || Arrays.asList(RoleEnum.ROLE_CLIENT, RoleEnum.ROLE_SERVICE_PROVIDER,
+                        RoleEnum.ROLE_HEALTH_MODERATOR, RoleEnum.ROLE_MEDICAL_APPRAISER,
+                        RoleEnum.ROLE_BUSINESS_APPRAISER, RoleEnum.ROLE_ACCOUNTANT)
+                .contains(roleEnum)) {
+            benefitPage = benefitRepository.findAllBySearchValue(searchValue, pageable);
+        }
+        if (RoleEnum.ROLE_CLIENT.equals(roleEnum)) {
+            benefitPage = benefitRepository.findAllBySearchValueForClient(primaryKey, searchValue, pageable);
+        }
+        if (RoleEnum.ROLE_MEMBER.equals(roleEnum)) {
+            benefitPage = benefitRepository.findAllBySearchValueForMember(primaryKey, searchValue, pageable);
+        }
+        return benefitPage;
     }
 
     @Override

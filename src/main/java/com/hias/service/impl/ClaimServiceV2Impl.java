@@ -47,11 +47,11 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
             this.mergeClaimRequest(claimSubmitRequestDTO, claim);
         } else {
             claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
-            claim.setStatusCode(StatusCode.SUBMITTED);
-            claim.setSubmittedDate(LocalDateTime.now());
             claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ?
                     RecordSource.M : RecordSource.SVP);
         }
+        claim.setStatusCode(StatusCode.SUBMITTED);
+        claim.setSubmittedDate(LocalDateTime.now());
         Long claimNoSaved = claimRepository.save(claim).getClaimNo();
 
         processForClaimDocuments(claimSubmitRequestDTO, claimNoSaved);
