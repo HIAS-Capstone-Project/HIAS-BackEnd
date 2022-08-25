@@ -146,11 +146,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMemberByMemberNo(Long memberNo) throws Exception {
-        Optional<Member> member = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
-        if (member.isPresent()) {
-            Member member1 = member.get();
-            member1.setDeleted(Boolean.TRUE);
-            memberRepository.save(member1);
+        Optional<Member> memberOptional = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            member.setDeleted(Boolean.TRUE);
+            memberRepository.save(member);
             log.info("[delete] Delete member with memberNo: {}", memberNo);
         } else {
             throw new Exception("Member not found");
@@ -218,8 +218,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponseDTO findMemberByMemberNo(Long memberNo) {
-        Optional<Member> member = memberRepository.findById(memberNo);
+    public MemberResponseDTO findByMemberNo(Long memberNo) {
+        Optional<Member> member = memberRepository.findByMemberNoAndIsDeletedIsFalse(memberNo);
         return member.map(memberResponseDTOMapper::toDto).orElse(null);
     }
 

@@ -43,14 +43,15 @@ public class ClaimController {
     @GetMapping("search")
     public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> search(
             @RequestParam(required = false) Long clientNo,
-            @RequestParam(required = false) StatusCode statusCode,
+            @RequestParam(required = false) String statusCode,
             @RequestParam(required = false) String searchValue,
             @PageableDefault(page = 0, size = 10)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
                             direction = Sort.Direction.DESC)
             }) Pageable pageable) {
-        return new ResponseEntity<>(claimService.search(searchValue, clientNo, statusCode, pageable), HttpStatus.OK);
+
+        return new ResponseEntity<>(claimService.search(searchValue, clientNo, StatusCode.findByString(statusCode), pageable), HttpStatus.OK);
     }
 
     @PostMapping("create")

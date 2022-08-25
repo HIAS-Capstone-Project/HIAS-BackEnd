@@ -66,7 +66,7 @@ public class MemberController {
 
     @GetMapping("find-detail")
     public ResponseEntity<MemberResponseDTO> findByMemberNo(@RequestParam Long memberNo) {
-        return new ResponseEntity<>(memberService.findMemberByMemberNo(memberNo), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findByMemberNo(memberNo), HttpStatus.OK);
     }
 
     @PostMapping("save")

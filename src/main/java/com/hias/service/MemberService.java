@@ -26,7 +26,7 @@ public interface MemberService {
 
     MemberResponseDTO updateMember(MemberRequestDTO memberRequestDTO) throws HIASException;
 
-    MemberResponseDTO findMemberByMemberNo(Long memberNo);
+    MemberResponseDTO findByMemberNo(Long memberNo);
 
     List<MemberResponseDTO> findAll();
 }
