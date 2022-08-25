@@ -170,7 +170,7 @@ public class BenefitServiceImpl implements BenefitService {
             primaryKey = userDetail.getPrimaryKey();
         }
         Page<Benefit> benefitPage = Page.empty();
-        if (roleEnum == null || Arrays.asList(RoleEnum.ROLE_CLIENT, RoleEnum.ROLE_SERVICE_PROVIDER,
+        if (roleEnum == null || Arrays.asList(RoleEnum.ROLE_SYSTEM_ADMIN, RoleEnum.ROLE_CLIENT, RoleEnum.ROLE_SERVICE_PROVIDER,
                         RoleEnum.ROLE_HEALTH_MODERATOR, RoleEnum.ROLE_MEDICAL_APPRAISER,
                         RoleEnum.ROLE_BUSINESS_APPRAISER, RoleEnum.ROLE_ACCOUNTANT)
                 .contains(roleEnum)) {

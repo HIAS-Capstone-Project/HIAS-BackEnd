@@ -26,4 +26,6 @@ public class ClientResponseDTO implements Serializable {
     private LocalDateTime endDate;
 
     private List<Long> BusinessSectorNos = new ArrayList<>();
+
+    private List<EmployeeResponseDTO> employeeResponseDTOS = new ArrayList<>();
 }

@@ -8,6 +8,7 @@ import com.hias.entity.*;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.ClientRequestDTOMapper;
 import com.hias.mapper.response.ClientResponeDTOMapper;
+import com.hias.mapper.response.EmployeeResponseDTOMapper;
 import com.hias.model.request.ClientRequestDTO;
 import com.hias.model.response.ClientResponseDTO;
 import com.hias.model.response.PagingResponseModel;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +40,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final HealthCardFormatRepository healthCardFormatRepository;
     private final ClientResponeDTOMapper clientResponeDTOMapper;
+    private final EmployeeResponseDTOMapper employeeResponseDTOMapper;
     private final ClientRequestDTOMapper clientRequestDTOMapper;
     private final ClientValidator clientValidator;
     private final EmployeeClientRepository employeeClientRepository;
@@ -91,6 +94,13 @@ public class ClientServiceImpl implements ClientService {
         log.info("[search] Found {} elements match with value : {}.", clients.size());
 
         List<ClientResponseDTO> clientResponseDTOS = clientResponeDTOMapper.toDtoList(clients);
+
+        clientResponseDTOS.forEach(c ->
+                c.setEmployeeResponseDTOS(employeeResponseDTOMapper.toDtoList
+                        (employeeClientRepository.findByClientNoAndIsDeletedIsFalse(c.getClientNo())
+                                .stream()
+                                .map(EmployeeClient::getEmployee)
+                                .collect(Collectors.toList()))));
 
         clientResponseDTOS.forEach(p -> p.setBusinessSectorNos(clientBusinessSectorRepository.findAllByClientNoAndIsDeletedIsFalse(p.getClientNo()).
                 stream().map(ClientBusinessSector::getBusinessSectorNo).collect(Collectors.toList())));
@@ -185,12 +195,50 @@ public class ClientServiceImpl implements ClientService {
                     updatedClientBusinessSector.add(o);
                 }
             });
+
+            this.processForEmployeeClient(clientRequestDTO, updatedClient);
+
             clientResponseDTO = clientResponeDTOMapper.toDto(clientRepository.save(updatedClient));
             log.info("Updated Client");
             clientBusinessSectorRepository.saveAll(updatedClientBusinessSector);
             log.info("Updated relevant business sectors in Client Business Sector");
         }
         return clientResponseDTO;
+    }
+
+    private void processForEmployeeClient(ClientRequestDTO clientRequestDTO, Client client) {
+        Long clientNo = clientRequestDTO.getClientNo();
+        List<EmployeeClient> employeeClients = employeeClientRepository.findByClientNo(clientNo);
+        Map<Long, EmployeeClient> employeeClientMap = new HashMap<>();
+        if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(employeeClients)) {
+            employeeClientMap = employeeClients.stream()
+                    .collect(Collectors.toMap(EmployeeClient::getEmployeeNo, Function.identity()));
+        }
+        List<EmployeeClient> savedEmployeeClients = new ArrayList<>();
+        List<Long> employeeNos = clientRequestDTO.getEmployeeNos();
+        EmployeeClient employeeClient;
+        for (Long employeeNo : employeeNos) {
+            employeeClient = employeeClientMap.get(employeeNo);
+            if (employeeClient == null) {
+                savedEmployeeClients.add(EmployeeClient
+                        .builder()
+                        .client(client)
+                        .employee(Employee.builder().employeeNo(employeeNo).build())
+                        .build());
+            } else {
+                if (employeeClient.isDeleted()) {
+                    employeeClient.setDeleted(Boolean.FALSE);
+                    savedEmployeeClients.add(employeeClient);
+                }
+            }
+        }
+
+        //remove old employees
+        savedEmployeeClients.addAll(employeeClients.stream().filter(e -> !employeeNos.contains(e.getEmployeeNo()) && !e.isDeleted())
+                .peek(b -> b.setDeleted(Boolean.TRUE))
+                .collect(Collectors.toList()));
+
+        employeeClientRepository.saveAll(savedEmployeeClients);
     }
 
     @Override

@@ -12,4 +12,6 @@ public interface EmployeeClientRepository extends JpaRepository<EmployeeClient, 
     List<EmployeeClient> findByEmployeeNoAndIsDeletedIsFalse(Long employeeNo);
 
     List<EmployeeClient> findByClientNoAndIsDeletedIsFalse(Long clientNo);
+
+    List<EmployeeClient> findByClientNo(Long clientNo);
 }
