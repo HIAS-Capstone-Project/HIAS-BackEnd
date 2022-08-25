@@ -1,5 +1,6 @@
 package com.hias.entity;
 
+import com.hias.constant.StatusCode;
 import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
 
@@ -9,22 +10,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "CLAIM_REQUEST_HISTORY", schema = "HIAS")
+@Table(name = "CLAIM_REMARK_HISTORY", schema = "HIAS")
 @Getter
 @Setter
-public class ClaimRequestHistory extends SoftDeleteEntity {
+public class ClaimRemarkHistory extends SoftDeleteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CLAIM_REQUEST_HISTORY_NO")
+    @Column(name = "CLAIM_REMARK_HISTORY_NO")
     private Long claimRequestHistoryNo;
 
-    @Column(name = "EMPLOYEE_NO", insertable = false, updatable = false)
+    @Column(name = "EMPLOYEE_NO")
     private Long employeeNo;
-
-    @ManyToOne
-    @JoinColumn(name = "EMPLOYEE_NO", nullable = false)
-    private Employee employee;
 
     @Column(name = "CLAIM_NO", insertable = false, updatable = false)
     private Long claimNo;
@@ -35,4 +32,11 @@ public class ClaimRequestHistory extends SoftDeleteEntity {
 
     @Column(name = "REMARK")
     private String remark;
+
+    @Column(name = "FROM_STATUS_CODE")
+    private StatusCode fromStatusCode;
+
+    @Column(name = "TO_STATUS_CODE")
+    private StatusCode toStatusCode;
+
 }
