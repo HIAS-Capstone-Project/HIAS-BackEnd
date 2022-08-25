@@ -19,7 +19,7 @@ public interface BenefitItemRepository extends JpaRepository<BenefitItem, Long> 
 
     Optional<BenefitItem> findByBenefitItemNoAndIsDeletedIsFalse(Long benefitItemNo);
 
-    List<BenefitItem> findByBenefitItemCodeAndBenefitNoAndIsDeletedIsFalse(String benefitItemCode, Long benefitNo);
+    List<BenefitItem> findByBenefitItemCodeIgnoreCaseAndBenefitNoAndIsDeletedIsFalse(String benefitItemCode, Long benefitNo);
 
     @Query("select b from BenefitItem b " +
             "where b.isDeleted = false " +

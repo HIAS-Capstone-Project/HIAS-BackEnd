@@ -17,7 +17,7 @@ public class MemberValidator {
     private final MemberRepository memberRepository;
 
     public boolean isStaffIDExistanceInSameClient(Long clientNo, String staffID) {
-        List<Member> members = memberRepository.findByClientNoAndStaffIDAndIsDeletedIsFalse(clientNo, staffID);
+        List<Member> members = memberRepository.findByClientNoAndStaffIDIgnoreCaseAndIsDeletedIsFalse(clientNo, staffID);
         if (CollectionUtils.isNotEmpty(members)) {
             log.error("[isStaffIDExistanceInSameClient] StaffID : {} has already exist for clientNo :{}.", staffID, clientNo);
             return true;

@@ -17,7 +17,7 @@ public class EmployeeValidator {
     private final EmployeeRepository employeeRepository;
 
     public boolean isEmployeeIDExistance(String employeeID) {
-        List<Employee> employees = employeeRepository.findByEmployeeIDAndIsDeletedIsFalse(employeeID);
+        List<Employee> employees = employeeRepository.findByEmployeeIDIgnoreCaseAndIsDeletedIsFalse(employeeID);
         if (CollectionUtils.isNotEmpty(employees)) {
             log.error("[isEmployeeIDExistance] employee id : {} has already exist.", employeeID);
             return true;

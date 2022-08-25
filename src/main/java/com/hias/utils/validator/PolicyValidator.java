@@ -17,7 +17,7 @@ public class PolicyValidator {
     private final PolicyRepository policyRepository;
 
     public boolean isPolicyCodeExistance(String policyCode, Long clientNo) {
-        List<Policy> policies = policyRepository.findByPolicyCodeAndClientNoAndIsDeletedIsFalse(policyCode, clientNo);
+        List<Policy> policies = policyRepository.findByPolicyCodeIgnoreCaseAndClientNoAndIsDeletedIsFalse(policyCode, clientNo);
         return CollectionUtils.isNotEmpty(policies);
     }
 

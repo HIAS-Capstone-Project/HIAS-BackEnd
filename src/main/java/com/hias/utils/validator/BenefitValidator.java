@@ -17,7 +17,7 @@ public class BenefitValidator {
     private final BenefitRepository benefitRepository;
 
     public boolean isBenefitCodeExistance(String benefitCode) {
-        List<Benefit> benefits = benefitRepository.findByBenefitCodeAndIsDeletedIsFalse(benefitCode);
+        List<Benefit> benefits = benefitRepository.findByBenefitCodeIgnoreCaseAndIsDeletedIsFalse(benefitCode);
         if (CollectionUtils.isNotEmpty(benefits)) {
             log.error("[isBenefitCodeExistance] benefit code : {} has already exist.", benefitCode);
             return true;

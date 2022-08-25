@@ -17,7 +17,7 @@ public interface BenefitRepository extends JpaRepository<Benefit, Long> {
 
     List<Benefit> findAllByIsDeletedIsFalse();
 
-    List<Benefit> findByBenefitCodeAndIsDeletedIsFalse(String benefitCode);
+    List<Benefit> findByBenefitCodeIgnoreCaseAndIsDeletedIsFalse(String benefitCode);
 
     @Query("select b from Benefit b " +
             "where b.isDeleted = false " +

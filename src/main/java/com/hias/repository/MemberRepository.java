@@ -22,7 +22,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findMemberByPolicyNoAndIsDeletedIsFalse(Long clientNo);
 
-    List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);
+    List<Member> findByClientNoAndStaffIDIgnoreCaseAndIsDeletedIsFalse(Long clientNo, String staffID);
 
     @Query("select m from Member m where m.healthCardNo = :healthCardNo " +
             "and m.isDeleted = false " +

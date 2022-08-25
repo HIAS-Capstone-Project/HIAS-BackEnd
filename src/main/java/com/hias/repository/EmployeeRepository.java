@@ -16,7 +16,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("SELECT e FROM Employee e WHERE e.isDeleted = false AND (e.employeeName LIKE %?1% OR e.department.departmentName LIKE %?1%)")
     Page<Employee> findEmployee(String keyOne, Pageable pageable);
 
-    List<Employee> findByEmployeeIDAndIsDeletedIsFalse(String employeeID);
+    List<Employee> findByEmployeeIDIgnoreCaseAndIsDeletedIsFalse(String employeeID);
 
     Optional<Employee> findByEmployeeNoAndIsDeletedIsFalse(Long employeeNo);
 

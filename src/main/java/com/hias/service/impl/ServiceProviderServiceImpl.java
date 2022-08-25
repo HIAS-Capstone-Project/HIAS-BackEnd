@@ -76,7 +76,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         if (serviceProviderRequestDTO.getServiceProviderNo() != null) {
             log.info("[update] Update service provider with serviceProviderNo: {}", serviceProviderRequestDTO.getServiceProviderNo());
         } else {
-            if (serviceProviderRepository.findAll().stream().anyMatch(o -> o.getServiceProviderID().equals(saveServiceProvider.getServiceProviderID()))) {
+            if (serviceProviderRepository.findAll().stream().anyMatch(o -> o.getServiceProviderID()
+                    .equalsIgnoreCase(saveServiceProvider.getServiceProviderID()))) {
                 throw HIASException.buildHIASException("serviceProviderID",
                         messageUtils.getMessage(ErrorMessageCode.SERVICE_PROVIDER_ID_EXISTENCE)
                         , HttpStatus.NOT_ACCEPTABLE);
