@@ -1,5 +1,6 @@
 package com.hias.repository;
 
+import com.hias.constant.StatusCode;
 import com.hias.entity.Claim;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +24,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
             "or lower(c.claimID) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
-            "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%'))")
-    Page<Claim> findAllBySearchValue(String searchValue, Pageable pageable);
+            "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and (:clientNo is null or c.member.clientNo = :clientNo) " +
+            "and (:statusCode is null or c.statusCode = :statusCode)")
+    Page<Claim> findAllBySearchValue(String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
 
     @Query("select c from Claim c " +
             "where c.isDeleted = false " +
@@ -33,8 +36,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
             "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
-            "and  c.memberNo = :memberNo")
-    Page<Claim> findAllBySearchValueForMember(Long memberNo, String searchValue, Pageable pageable);
+            "and (:clientNo is null or c.member.clientNo = :clientNo) " +
+            "and (:statusCode is null or c.statusCode = :statusCode) " +
+            "and c.memberNo = :memberNo")
+    Page<Claim> findAllBySearchValueForMember(Long memberNo, String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
 
     @Query("select c from Claim c " +
             "where c.isDeleted = false " +
@@ -43,8 +48,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
             "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
-            "and  c.serviceProviderNo = :serviceProviderNo")
-    Page<Claim> findAllBySearchValueForServiceProvider(Long serviceProviderNo, String searchValue, Pageable pageable);
+            "and (:clientNo is null or c.member.clientNo = :clientNo) " +
+            "and (:statusCode is null or c.statusCode = :statusCode) " +
+            "and c.serviceProviderNo = :serviceProviderNo")
+    Page<Claim> findAllBySearchValueForServiceProvider(Long serviceProviderNo, String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
 
     @Query("select c from Claim c " +
             "where c.isDeleted = false " +
@@ -53,9 +60,11 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
             "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
             "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and (:clientNo is null or c.member.clientNo = :clientNo) " +
+            "and (:statusCode is null or c.statusCode = :statusCode) " +
             "and  (c.businessAppraisalBy = :employeeNo " +
             "or c.medicalAppraisalBy = :employeeNo " +
             "or c.approvedBy = :employeeNo " +
             "or c.paidBy = :employeeNo)")
-    Page<Claim> findAllBySearchValueForEmployee(Long employeeNo, String searchValue, Pageable pageable);
+    Page<Claim> findAllBySearchValueForEmployee(Long employeeNo, String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
 }

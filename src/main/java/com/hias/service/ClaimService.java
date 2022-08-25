@@ -1,5 +1,6 @@
 package com.hias.service;
 
+import com.hias.constant.StatusCode;
 import com.hias.exception.HIASException;
 import com.hias.model.request.*;
 import com.hias.model.response.ClaimResponseDTO;
@@ -16,7 +17,7 @@ public interface ClaimService {
 
     ClaimResponseDTO viewDetail(Long claimNo);
 
-    PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable);
+    PagingResponseModel<ClaimResponseDTO> search(String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
 
     ClaimResponseDTO create(ClaimRequestDTO claimRequestDTO);
 

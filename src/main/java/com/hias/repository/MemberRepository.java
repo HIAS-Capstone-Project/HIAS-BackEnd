@@ -25,6 +25,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByClientNoAndStaffIDAndIsDeletedIsFalse(Long clientNo, String staffID);
 
     @Query("select m from Member m where m.healthCardNo = :healthCardNo " +
+            "and m.isDeleted = false " +
             "and m.startDate <= (:visitDate) " +
             "and (m.endDate is null or m.endDate >= :visitDate) " +
             "order by m.modifiedOn desc")

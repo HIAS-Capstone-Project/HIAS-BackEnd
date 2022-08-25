@@ -2,6 +2,7 @@ package com.hias.controller;
 
 import com.hias.constant.CommonConstant;
 import com.hias.constant.FieldNameConstant;
+import com.hias.constant.StatusCode;
 import com.hias.exception.HIASException;
 import com.hias.model.request.*;
 import com.hias.model.response.ClaimResponseDTO;
@@ -40,13 +41,16 @@ public class ClaimController {
     }
 
     @GetMapping("search")
-    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> search(@RequestParam(required = false) String searchValue,
-                                                                        @PageableDefault(page = 0, size = 10)
-                                                                        @SortDefault.SortDefaults({
-                                                                                @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
-                                                                                        direction = Sort.Direction.DESC)
-                                                                        }) Pageable pageable) {
-        return new ResponseEntity<>(claimService.search(searchValue, pageable), HttpStatus.OK);
+    public ResponseEntity<PagingResponseModel<ClaimResponseDTO>> search(
+            @RequestParam(required = false) Long clientNo,
+            @RequestParam(required = false) StatusCode statusCode,
+            @RequestParam(required = false) String searchValue,
+            @PageableDefault(page = 0, size = 10)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = FieldNameConstant.MODIFIED_ON,
+                            direction = Sort.Direction.DESC)
+            }) Pageable pageable) {
+        return new ResponseEntity<>(claimService.search(searchValue, clientNo, statusCode, pageable), HttpStatus.OK);
     }
 
     @PostMapping("create")

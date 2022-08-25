@@ -142,7 +142,7 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     @Override
-    public PagingResponseModel<ClaimResponseDTO> search(String searchValue, Pageable pageable) {
+    public PagingResponseModel<ClaimResponseDTO> search(String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable) {
 
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
@@ -150,7 +150,7 @@ public class ClaimServiceImpl implements ClaimService {
         log.info("[search] Start search with value : {}, pageNumber : {}, pageSize : {}", searchValue, pageNumber,
                 pageSize);
 
-        Page<Claim> claimPage = this.buildClaimPageByRole(searchValue, pageable);
+        Page<Claim> claimPage = this.buildClaimPageByRole(searchValue, clientNo, statusCode, pageable);
 
         if (!claimPage.hasContent()) {
             log.info("[search] Could not found any element match with value : {}", searchValue);
@@ -177,7 +177,7 @@ public class ClaimServiceImpl implements ClaimService {
                 claimPage.getTotalElements()));
     }
 
-    private Page<Claim> buildClaimPageByRole(String searchValue, Pageable pageable) {
+    private Page<Claim> buildClaimPageByRole(String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable) {
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RoleEnum roleEnum = null;
         Long primaryKey = null;
@@ -187,20 +187,20 @@ public class ClaimServiceImpl implements ClaimService {
         }
         Page<Claim> claimPage = null;
         if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
-            claimPage = claimRepository.findAllBySearchValue(searchValue, pageable);
+            claimPage = claimRepository.findAllBySearchValue(searchValue, clientNo, statusCode, pageable);
         }
         if (RoleEnum.ROLE_MEMBER.equals(roleEnum)) {
-            claimPage = claimRepository.findAllBySearchValueForMember(primaryKey, searchValue, pageable);
+            claimPage = claimRepository.findAllBySearchValueForMember(primaryKey, searchValue, clientNo, statusCode, pageable);
         }
         if (Arrays.asList(RoleEnum.ROLE_BUSINESS_APPRAISER,
                         RoleEnum.ROLE_MEDICAL_APPRAISER,
                         RoleEnum.ROLE_ACCOUNTANT,
                         RoleEnum.ROLE_HEALTH_MODERATOR)
                 .contains(roleEnum)) {
-            claimPage = claimRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, pageable);
+            claimPage = claimRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, clientNo, statusCode, pageable);
         }
         if (RoleEnum.ROLE_SERVICE_PROVIDER.equals(roleEnum)) {
-            claimPage = claimRepository.findAllBySearchValueForServiceProvider(primaryKey, searchValue, pageable);
+            claimPage = claimRepository.findAllBySearchValueForServiceProvider(primaryKey, searchValue, clientNo, statusCode, pageable);
         }
         return claimPage;
     }

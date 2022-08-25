@@ -7,8 +7,10 @@ import com.hias.constant.FieldNameConstant;
 import com.hias.constant.RoleEnum;
 import com.hias.entity.HealthCardFormat;
 import com.hias.entity.Member;
+import com.hias.entity.PolicyCoverage;
 import com.hias.exception.HIASException;
 import com.hias.mapper.request.MemberRequestDTOMapper;
+import com.hias.mapper.response.BenefitResponseDTOMapper;
 import com.hias.mapper.response.MemberResponseDTOMapper;
 import com.hias.model.request.MemberRequestDTO;
 import com.hias.model.response.MemberResponseDTO;
@@ -16,6 +18,7 @@ import com.hias.model.response.PagingResponse;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.HealthCardFormatRepository;
 import com.hias.repository.MemberRepository;
+import com.hias.repository.PolicyCoverageRepository;
 import com.hias.security.dto.UserDetail;
 import com.hias.service.MemberService;
 import com.hias.utilities.DirectionUtils;
@@ -33,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,9 +44,11 @@ import java.util.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final PolicyCoverageRepository policyCoverageRepository;
     private final HealthCardFormatRepository healthCardFormatRepository;
     private final MemberResponseDTOMapper memberResponseDTOMapper;
     private final MemberRequestDTOMapper memberRequestDTOMapper;
+    private final BenefitResponseDTOMapper benefitResponseDTOMapper;
     private final MessageUtils messageUtils;
     private final MemberValidator memberValidator;
 
@@ -126,8 +132,14 @@ public class MemberServiceImpl implements MemberService {
                             DateUtils.formatDate(visitDate, DateConstant.DD_MM_YYYY)),
                     HttpStatus.NOT_ACCEPTABLE);
         }
-        MemberResponseDTO memberResponseDTO = memberResponseDTOMapper.toDto(members.get(0));
-
+        Member member = members.get(0);
+        MemberResponseDTO memberResponseDTO = memberResponseDTOMapper.toDto(member);
+        List<PolicyCoverage> policyCoverages = policyCoverageRepository.findAllByPolicyNoAndIsDeletedIsFalse(member.getPolicyNo());
+        if (CollectionUtils.isNotEmpty(policyCoverages)) {
+            memberResponseDTO.setBenefitResponseDTOS(benefitResponseDTOMapper.toDtoList(policyCoverages.stream()
+                    .map(PolicyCoverage::getBenefit)
+                    .collect(Collectors.toList())));
+        }
         return memberResponseDTO;
     }
 

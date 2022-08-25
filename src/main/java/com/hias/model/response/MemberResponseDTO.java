@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,4 +45,6 @@ public class MemberResponseDTO implements Serializable {
     private GenderEnum genderEnum;
 
     private Long districtNo;
+
+    private List<BenefitResponseDTO> benefitResponseDTOS = new ArrayList<>();
 }
