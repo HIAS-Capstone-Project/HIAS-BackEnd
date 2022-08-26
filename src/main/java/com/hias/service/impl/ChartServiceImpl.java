@@ -282,7 +282,7 @@ public class ChartServiceImpl implements ChartService {
         String chartName, roleCondition, selectedField, lastCondition;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             roleCondition = String.format("AND m.client_no = %s", userDetail.getPrimaryKey());
-            chartName = String.format("Payment statistics for client: %s", clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
+            chartName = String.format("Tổng bồi hoàn cho công ty: %s", clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
         } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)) {
             if (clientNo == null) {
                 roleCondition = String.format("AND m.client_no IN(\n" +
@@ -290,23 +290,23 @@ public class ChartServiceImpl implements ChartService {
                         "        FROM HIAS.employee_client ec\n" +
                         "        WHERE ec.employee_no = %s\n" +
                         "    )", userDetail.getPrimaryKey());
-                chartName = String.format("Payment statistics in charge by employee: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
+                chartName = String.format("Tổng bồi hoàn cho người tham tham gia bảo hiểm phụ trach bỏi nhân viên: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
             } else {
                 roleCondition = String.format("AND m.client_no IN(\n" +
                         "        SELECT ec.client_no\n" +
                         "        FROM HIAS.employee_client ec\n" +
                         "        WHERE ec.employee_no = %s AND ec.client_no = %s\n" +
                         "    )", userDetail.getPrimaryKey(), clientNo);
-                chartName = String.format("Payment statistics in charge by employee: %s with client: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName(),
+                chartName = String.format("Tổng bồi hoàn cho người tham tham gia bảo hiểm phụ trach bỏi nhân viên: %s  công ty: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName(),
                         clientService.getDetail(clientNo).getClientName());
             }
         } else {
             if (clientNo != null) {
                 roleCondition = String.format("AND m.client_no = %s", clientNo);
-                chartName = String.format("Payment statistics for client: %s", clientService.getDetail(clientNo).getClientName());
+                chartName = String.format("Tổng bồi hoàn cho công ty: %s", clientService.getDetail(clientNo).getClientName());
             } else {
                 roleCondition = "";
-                chartName = "Payment statistics";
+                chartName = "Số liệu tiền bồi hoàn bảo hiểm";
             }
         }
         if (year == null) {
