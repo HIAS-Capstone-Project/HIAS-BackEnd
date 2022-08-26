@@ -122,7 +122,7 @@ public class Claim extends BaseEntity {
     private Benefit benefit;
 
     @OneToMany(mappedBy = "claim", fetch = FetchType.LAZY)
-    private List<ClaimRequestHistory> claimRequestHistories = new ArrayList<>();
+    private List<ClaimRemarkHistory> claimRemarkHistories = new ArrayList<>();
 
     @OneToMany(mappedBy = "claim", fetch = FetchType.LAZY)
     private List<ClaimPayment> claimPaymentList = new ArrayList<>();

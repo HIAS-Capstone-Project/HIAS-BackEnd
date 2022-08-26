@@ -103,7 +103,10 @@ public class PolicySerivceImpl implements PolicyService {
             policyPage = policyRepository.findAllBySearchValue(searchValue, pageable);
         }
         if (RoleEnum.ROLE_CLIENT.equals(roleEnum)) {
-            policyPage = policyRepository.findAllBySearchValueForClientNo(primaryKey, searchValue, pageable);
+            policyPage = policyRepository.findAllBySearchValueForClient(primaryKey, searchValue, pageable);
+        }
+        if (RoleEnum.ROLE_MEMBER.equals(roleEnum)) {
+            policyPage = policyRepository.findAllBySearchValueForMember(primaryKey, searchValue, pageable);
         }
         return policyPage;
     }
