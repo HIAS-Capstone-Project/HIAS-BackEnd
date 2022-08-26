@@ -228,14 +228,14 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
-        return ChartResponseDTO.builder().roles(roles).chartName("Policy usage").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Thống kê những chính sách được sử dụng nhiều").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
     public ChartResponseDTO findBusinessSectorChart() {
         List<StatisticDTO> statisticDTOS = template.query(ChartQuery.BUSINESS_SECTOR, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
-        return ChartResponseDTO.builder().roles(roles).chartName("Business sectors").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Thống kê lĩnh vực kinh doanh").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
@@ -249,7 +249,7 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
-        return ChartResponseDTO.builder().roles(roles).chartName("Claim with status: Approve, Legal Reject, Violation").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Claim với trạng thái: Hoàn tất, Thiếu giấy tờ, Vi phạm").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
