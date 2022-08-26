@@ -5,15 +5,15 @@ public class ChartQuery {
     public static final String MEMBER_AGE_CHART_QUERY = "SELECT t.key, COUNT(t.value) AS value from(\n" +
             "WITH ages AS (SELECT DATE_PART('year', NOW()::date) - DATE_PART('year', m.dob::date) AS age, m.client_no\n" +
             "FROM HIAS.member m)\n" +
-            "SELECT 'Under 30' AS key, age AS value, client_no\n" +
+            "SELECT 'Dưới 30' AS key, age AS value, client_no\n" +
             "FROM ages\n" +
             "WHERE age < 30 \n" +
             "UNION ALL\n" +
-            "SELECT 'Between 30 And 50' AS key, age AS value, client_no\n" +
+            "SELECT 'Giữa 30 và 50' AS key, age AS value, client_no\n" +
             "FROM ages\n" +
             "WHERE age >= 30 AND age <= 50\n" +
             "UNION ALL\n" +
-            "SELECT 'Greater Than 50' AS key, age AS value, client_no\n" +
+            "SELECT 'Trên 50' AS key, age AS value, client_no\n" +
             "FROM ages\n" +
             "WHERE age > 50) t\n" +
             "WHERE 1 = 1 %s\n" +
@@ -49,13 +49,13 @@ public class ChartQuery {
             "FROM HIAS.BUSINESS_SECTOR bs LEFT OUTER JOIN HIAS.CLIENT_BUSINESS_SECTOR cbs ON bs.business_sector_no = cbs.business_sector_no\n" +
             "GROUP BY key";
 
-    public static final String APR_VIO_REJ_LEG = "SELECT (CASE WHEN c.status_reason_code LIKE 'RE001' THEN 'Lack of lisence' ELSE 'Violation' END) AS key, \n" +
+    public static final String APR_VIO_REJ_LEG = "SELECT (CASE WHEN c.status_reason_code LIKE 'RE001' THEN 'Thiếu giấy tờ' ELSE 'Vi phạm' END) AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
             "WHERE c.status_code = 'REJ' %s \n" +
             "GROUP BY c.status_reason_code\n" +
             "UNION\n" +
-            "SELECT 'Settle' AS key, \n" +
+            "SELECT 'Hoàn thành' AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
             "WHERE c.status_code = 'SET' %s\n" +

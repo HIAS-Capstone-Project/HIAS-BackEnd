@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -51,7 +52,7 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        return ChartResponseDTO.builder().roles(roles).chartName("Member age chart").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Biểu đồ độ tuổi người tham gia bảo hiểm").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        return ChartResponseDTO.builder().roles(roles).chartName("Member location chart").chartType(ChartConstant.BAR_CHART).statistics(statisticDTOS).build();
+        return ChartResponseDTO.builder().roles(roles).chartName("Biểu đồ nơi cư trú của người tham gia bảo hiểm").chartType(ChartConstant.BAR_CHART).statistics(statisticDTOS).build();
     }
 
     @Override
@@ -90,10 +91,10 @@ public class ChartServiceImpl implements ChartService {
             }
         }
         List<StatisticDTO> statistics = new ArrayList<>();
-        statistics.add(new StatisticDTO("Male", memberList.stream().filter(o -> "M".equalsIgnoreCase(o.getGenderEnum().getCode())).count()));
-        statistics.add(new StatisticDTO("Female", memberList.stream().filter(o -> "F".equalsIgnoreCase(o.getGenderEnum().getCode())).count()));
+        statistics.add(new StatisticDTO("Nam", memberList.stream().filter(o -> "M".equalsIgnoreCase(o.getGenderEnum().getCode())).count()));
+        statistics.add(new StatisticDTO("Nữ", memberList.stream().filter(o -> "F".equalsIgnoreCase(o.getGenderEnum().getCode())).count()));
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
-        return ChartResponseDTO.builder().chartName("Member gender chart").chartType(ChartConstant.BAR_CHART).statistics(statistics).roles(roles).build();
+        return ChartResponseDTO.builder().chartName("Biểu đồ giới tính của người tham gia bảo hiểm").chartType(ChartConstant.BAR_CHART).statistics(statistics).roles(roles).build();
     }
 
     @Override
@@ -110,20 +111,20 @@ public class ChartServiceImpl implements ChartService {
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             tempQue = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
             statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
-            singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName(clientService.getDetail(userDetail.getPrimaryKey()).getClientName()).statistics(statisticDTOS).build();
+            singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName("Đồ thị lượng số lượng người tham gia bảo hiểm theo từng năm của công ty" + clientService.getDetail(userDetail.getPrimaryKey()).getClientName()).statistics(statisticDTOS).build();
             list.add(singleLineChartResponseDTO);
         } else {
             if (clientNos != null) {
                 for (Long clientNo : clientNos) {
                     tempQue = String.format(query, String.format("AND m.client_no = %s", clientNo));
                     statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
-                    singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName(clientService.getDetail(clientNo).getClientName()).statistics(statisticDTOS).build();
+                    singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName("Đồ thị lượng số lượng người tham gia bảo hiểm theo từng năm của công ty" + clientService.getDetail(clientNo).getClientName()).statistics(statisticDTOS).build();
                     list.add(singleLineChartResponseDTO);
                 }
             } else {
                 tempQue = String.format(query, "");
                 statisticDTOS = template.query(tempQue, new StatisticsRowMapper());
-                singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName("All members").statistics(statisticDTOS).build();
+                singleLineChartResponseDTO = SingleLineChartResponseDTO.builder().chartName("Đồ thị lượng số lượng người tham gia bảo hiểm theo từng năm").statistics(statisticDTOS).build();
                 list.add(singleLineChartResponseDTO);
             }
         }
@@ -167,6 +168,51 @@ public class ChartServiceImpl implements ChartService {
             }
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        statisticDTOS = statisticDTOS.stream().map(o -> {
+            switch (o.getKey()){
+                case "DRA":
+                    o.setKey("Bản nháp");
+                    return o;
+                case "CXL":
+                    o.setKey("Tự hủy");
+                    return o;
+                case "SUB":
+                    o.setKey("Đã nộp");
+                    return o;
+                case "BV":
+                    o.setKey("Đã qua thẩm định nghiệp vụ");
+                    return o;
+                case "BVY":
+                    o.setKey("Đang thẩm định nghiệp vụ");
+                    return o;
+                case "MV":
+                    o.setKey("Đã thẩm định y tế");
+                    return o;
+                case "MVY":
+                    o.setKey("Đang thẩm định y tế");
+                    return o;
+                case "WFA":
+                    o.setKey("Đang chờ chấp thuận");
+                    return o;
+                case "APR":
+                    o.setKey("Đã chấp thuận");
+                    return o;
+                case "PAY":
+                    o.setKey("Đang xử lý thanh toán");
+                    return o;
+                case "SET":
+                    o.setKey("Hoàn thành");
+                    return o;
+                case "RET":
+                    o.setKey("Bị trả lại");
+                    return o;
+                case "REJ":
+                    o.setKey("Từ chối");
+                    return o;
+                default:
+                    return o;
+            }
+        }).collect(Collectors.toList());
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
 
         return ChartResponseDTO.builder().roles(roles).chartName(chartName).chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
@@ -228,7 +274,8 @@ public class ChartServiceImpl implements ChartService {
 
     @Override
     public ChartResponseDTO findPayment(Long year, String timeFilterBy, Long clientNo) {
-        String query = ChartQuery.PAYMENT_CHART_QUERY;
+        String query = ChartQuery.
+                PAYMENT_CHART_QUERY;
         UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String role = userDetail.getRoles().get(0);
         log.info("[findPayment] role: {}", role);
