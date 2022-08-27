@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Repository
@@ -19,6 +20,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByEmployeeIDIgnoreCaseAndIsDeletedIsFalse(String employeeID);
 
     Optional<Employee> findByEmployeeNoAndIsDeletedIsFalse(Long employeeNo);
+
+    @Query("select e from Employee e " +
+            "where e.isDeleted = false " +
+            "and e.employeeNo in :employeeNos")
+    List<Employee> findByEmployeeNoIn(Set<Long> employeeNos);
 
     @Query("select e from Employee e " +
             "where e.isDeleted = false " +

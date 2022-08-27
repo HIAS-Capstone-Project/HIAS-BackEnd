@@ -8,6 +8,7 @@ import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.*;
 import com.hias.model.request.*;
 import com.hias.model.response.ClaimDocumentResponseDTO;
+import com.hias.model.response.ClaimRemarkHistoryResponseDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.model.response.PagingResponseModel;
 import com.hias.repository.*;
@@ -46,12 +47,14 @@ public class ClaimServiceImpl implements ClaimService {
     private final ClaimRepository claimRepository;
     private final EmployeeRepository employeeRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
+    private final ClaimRemarkHistoryRepository claimRemarkHistoryRepository;
     private final BenefitLiscenseRepository benefitLiscenseRepository;
     private final ServiceProviderRepository serviceProviderRepository;
     private final ClaimRequestDTOMapper claimRequestDTOMapper;
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
     private final ClaimResponseDTOMapper claimResponseDTOMapper;
     private final ClaimDocumentResponseDTOMapper claimDocumentResponseDTOMapper;
+    private final ClaimRemarkHistoryResponseDTOMapper claimRemarkHistoryResponseDTOMapper;
     private final LicenseResponseDTOMapper licenseResponseDTOMapper;
     private final MemberResponseDTOMapper memberResponseDTOMapper;
     private final ClientResponeDTOMapper clientResponeDTOMapper;
@@ -137,8 +140,34 @@ public class ClaimServiceImpl implements ClaimService {
                         .toDto(employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(paidBy).get()));
             }
 
+            setClaimRemarkHistory(claimNo, claimResponseDTO);
+
         }
         return claimResponseDTO;
+    }
+
+    private void setClaimRemarkHistory(Long claimNo, ClaimResponseDTO claimResponseDTO) {
+        List<ClaimRemarkHistoryResponseDTO> claimRemarkHistoryResponseDTOS = new ArrayList<>();
+        List<ClaimRemarkHistory> claimRemarkHistories = claimRemarkHistoryRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        Set<Long> employeeNos = claimRemarkHistories
+                .stream()
+                .map(ClaimRemarkHistory::getEmployeeNo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<Employee> employees = employeeRepository.findByEmployeeNoIn(employeeNos);
+        Long employeeNo;
+        Map<Long, Employee> employeeMap = employees.stream()
+                .collect(Collectors.toMap(Employee::getEmployeeNo, Function.identity()));
+        for (ClaimRemarkHistory claimRemarkHistory : claimRemarkHistories) {
+            ClaimRemarkHistoryResponseDTO claimRemarkHistoryResponseDTO = claimRemarkHistoryResponseDTOMapper.toDto(claimRemarkHistory);
+            employeeNo = claimRemarkHistory.getEmployeeNo();
+            if (employeeNo != null) {
+                claimRemarkHistoryResponseDTO.setEmployeeResponseDTO(employeeResponseDTOMapper.toDto(employeeMap.get(employeeNo)));
+            }
+            claimRemarkHistoryResponseDTOS.add(claimRemarkHistoryResponseDTO);
+        }
+        claimResponseDTO.setClaimRemarkHistoryResponseDTOS(claimRemarkHistoryResponseDTOS);
     }
 
     @Override

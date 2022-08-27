@@ -53,4 +53,5 @@ public class ClaimResponseDTO implements Serializable {
     private EmployeeResponseDTO accountant;
 
     private List<ClaimDocumentResponseDTO> claimDocumentResponseDTOS;
+    private List<ClaimRemarkHistoryResponseDTO> claimRemarkHistoryResponseDTOS;
 }
