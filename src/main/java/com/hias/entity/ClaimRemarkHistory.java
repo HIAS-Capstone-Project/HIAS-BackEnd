@@ -3,6 +3,8 @@ package com.hias.entity;
 import com.hias.constant.ActionType;
 import com.hias.constant.StatusCode;
 import com.hias.entity.base.SoftDeleteEntity;
+import com.hias.jpa_converter.ActionTypeConverter;
+import com.hias.jpa_converter.StatusCodeConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,11 +37,14 @@ public class ClaimRemarkHistory extends SoftDeleteEntity {
     private String remark;
 
     @Column(name = "FROM_STATUS_CODE")
+    @Convert(converter = StatusCodeConverter.class)
     private StatusCode fromStatusCode;
 
     @Column(name = "TO_STATUS_CODE")
+    @Convert(converter = StatusCodeConverter.class)
     private StatusCode toStatusCode;
 
     @Column(name = "ACTION_TYPE")
+    @Convert(converter = ActionTypeConverter.class)
     private ActionType actionType;
 }
