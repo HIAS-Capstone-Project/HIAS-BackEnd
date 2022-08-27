@@ -500,11 +500,46 @@ public class ClaimServiceImpl implements ClaimService {
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
         if (claimOptional.isPresent()) {
             Claim claim = claimOptional.get();
-            claim.setStatusCode(nextStatusMap.get(claim.getStatusCode()));
+            StatusCode fromStatusCode, toStatusCode;
+            fromStatusCode = claim.getStatusCode();
+            toStatusCode = nextStatusMap.get(claim.getStatusCode());
+            claim.setStatusCode(toStatusCode);
+
+            saveRemarkHistoryWhenStartProgress(claim, fromStatusCode, toStatusCode);
+
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
     }
+
+    private void saveRemarkHistoryWhenStartProgress(Claim claim, StatusCode fromStatusCode, StatusCode toStatusCode) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setFromStatusCode(fromStatusCode);
+        claimRemarkHistory.setToStatusCode(toStatusCode);
+        setActionTypeAndRemarkHistoryWhenStartProgress(claimRemarkHistory, toStatusCode);
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
+    }
+
+    void setActionTypeAndRemarkHistoryWhenStartProgress(ClaimRemarkHistory claimRemarkHistory, StatusCode statusCode) {
+        if (StatusCode.BUSINESS_VERIFYING.equals(statusCode)) {
+            claimRemarkHistory.setActionType(ActionType.START_BUSINESS_VERIFY);
+            claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_004));
+        }
+        if (StatusCode.MEDICAL_VERIFYING.equals(statusCode)) {
+            claimRemarkHistory.setActionType(ActionType.START_MEDICAL_VERIFY);
+            claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_005));
+        }
+        if (StatusCode.WAITING_FOR_APPROVAL.equals(statusCode)) {
+            claimRemarkHistory.setActionType(ActionType.START_APPROVAL_PROCESS);
+            claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_006));
+        }
+        if (StatusCode.PAYMENT_PROCESSING.equals(statusCode)) {
+            claimRemarkHistory.setActionType(ActionType.START_PAYING);
+            claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_007));
+        }
+    }
+
 
     @Override
     @Transactional

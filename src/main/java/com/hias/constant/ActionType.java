@@ -16,7 +16,10 @@ public enum ActionType {
     CANCEL("C", "Cancel"),
     RE_SUBMIT("RS", "Re submit"),
     REJECT("R", "Reject"),
-    START_PROGRESS("SP", "Start progress"),
+    START_BUSINESS_VERIFY("SBV", "Start business verify"),
+    START_MEDICAL_VERIFY("SMV", "Start business verify"),
+    START_APPROVAL_PROCESS("SAP", "Start approval process"),
+    START_PAYING("SP", "Start paying"),
     PAY("P", "Pay"),
     RETURN("RT", "Return");
 
