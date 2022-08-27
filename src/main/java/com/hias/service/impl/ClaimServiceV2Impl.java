@@ -72,7 +72,7 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
 
         processForClaimDocuments(claimSubmitRequestDTO, claimNoSaved);
 
-        processRemarkHistoryForSubmittedClaim(claim, fromStatusCode, toStatusCode, actionType);
+        processRemarkHistoryForSubmittedClaim(claimSaved, fromStatusCode, toStatusCode, actionType);
 
         if (claim.getBusinessAppraisalBy() == null) {
             List<Long> employeeNos = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
@@ -115,11 +115,12 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
                     RecordSource.M : RecordSource.SVP);
             fromStatusCode = toStatusCode = StatusCode.DRAFT;
         }
-        Long claimNoSaved = claimRepository.save(claim).getClaimNo();
+        Claim claimSaved = claimRepository.save(claim);
+        Long claimNoSaved = claimSaved.getClaimNo();
 
         processForClaimDocuments(claimSubmitRequestDTO, claimNoSaved);
 
-        processRemarkHistoryForDraftClaim(claim, fromStatusCode, toStatusCode);
+        processRemarkHistoryForDraftClaim(claimSaved, fromStatusCode, toStatusCode);
 
         claimResponseDTO = claimResponseDTOMapper.toDto(claim);
         return claimResponseDTO;
