@@ -23,7 +23,7 @@ public enum StatusCode {
     APPROVED("APR", "Approved"),
     PAYMENT_PROCESSING("PAY", "Payment Processing"),
     SETTLED("SET", "Settled"),
-    RETURN("RET", "Return"),
+    RETURNED("RET", "Returned"),
     REJECTED("REJ", "Rejected");
 
     private String code;

@@ -17,9 +17,12 @@ public enum ActionType {
     RE_SUBMIT("RS", "Re submit"),
     REJECT("R", "Reject"),
     START_BUSINESS_VERIFY("SBV", "Start business verify"),
-    START_MEDICAL_VERIFY("SMV", "Start business verify"),
+    START_MEDICAL_VERIFY("SMV", "Start medical verify"),
     START_APPROVAL_PROCESS("SAP", "Start approval process"),
     START_PAYING("SP", "Start paying"),
+    BUSINESS_VERIFY("BV", "Business verify"),
+    MEDICAL_VERIFY("MV", "Medical verify"),
+    APPROVE("A", "Approve"),
     PAY("P", "Pay"),
     RETURN("RT", "Return");
 

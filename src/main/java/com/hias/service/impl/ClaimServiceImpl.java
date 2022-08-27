@@ -460,7 +460,7 @@ public class ClaimServiceImpl implements ClaimService {
             Claim claim = claimOptional.get();
             claim.setStatusCode(StatusCode.BUSINESS_VERIFIED);
             claim.setBusinessAppraisalDate(LocalDateTime.now());
-
+            saveRemarkHistoryWhenBusinessVerified(claim);
             if (claim.getMedicalAppraisalBy() == null) {
                 List<Long> employeeNos = employeeRepository.findMedicalAppraiserHasClaimAtLeast();
                 if (CollectionUtils.isNotEmpty(employeeNos)) {
@@ -472,6 +472,17 @@ public class ClaimServiceImpl implements ClaimService {
         return claimResponseDTO;
     }
 
+    private void saveRemarkHistoryWhenBusinessVerified(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setEmployeeNo(claim.getBusinessAppraisalBy());
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.BUSINESS_VERIFIED);
+        claimRemarkHistory.setActionType(ActionType.BUSINESS_VERIFY);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_008));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
+    }
+
     @Override
     @Transactional
     public ClaimResponseDTO medicalVerified(Long claimNo) {
@@ -481,7 +492,7 @@ public class ClaimServiceImpl implements ClaimService {
             Claim claim = claimOptional.get();
             claim.setStatusCode(StatusCode.MEDICAL_VERIFIED);
             claim.setMedicalAppraisalDate(LocalDateTime.now());
-
+            saveRemarkHistoryWhenMedicalVerified(claim);
             if (claim.getApprovedBy() == null) {
                 List<Long> employeeNos = employeeRepository.findApproverHasClaimAtLeast();
                 if (CollectionUtils.isNotEmpty(employeeNos)) {
@@ -491,6 +502,17 @@ public class ClaimServiceImpl implements ClaimService {
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    private void saveRemarkHistoryWhenMedicalVerified(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setEmployeeNo(claim.getMedicalAppraisalBy());
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.MEDICAL_VERIFIED);
+        claimRemarkHistory.setActionType(ActionType.MEDICAL_VERIFY);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_009));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
     @Override
@@ -517,26 +539,30 @@ public class ClaimServiceImpl implements ClaimService {
         claimRemarkHistory.setClaim(claim);
         claimRemarkHistory.setFromStatusCode(fromStatusCode);
         claimRemarkHistory.setToStatusCode(toStatusCode);
-        setActionTypeAndRemarkHistoryWhenStartProgress(claimRemarkHistory, toStatusCode);
+        setActionTypeAndRemarkHistoryWhenStartProgress(claim, claimRemarkHistory, toStatusCode);
         claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
-    void setActionTypeAndRemarkHistoryWhenStartProgress(ClaimRemarkHistory claimRemarkHistory, StatusCode statusCode) {
+    void setActionTypeAndRemarkHistoryWhenStartProgress(Claim claim, ClaimRemarkHistory claimRemarkHistory, StatusCode statusCode) {
         if (StatusCode.BUSINESS_VERIFYING.equals(statusCode)) {
             claimRemarkHistory.setActionType(ActionType.START_BUSINESS_VERIFY);
             claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_004));
+            claimRemarkHistory.setEmployeeNo(claim.getBusinessAppraisalBy());
         }
         if (StatusCode.MEDICAL_VERIFYING.equals(statusCode)) {
             claimRemarkHistory.setActionType(ActionType.START_MEDICAL_VERIFY);
             claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_005));
+            claimRemarkHistory.setEmployeeNo(claim.getMedicalAppraisalBy());
         }
         if (StatusCode.WAITING_FOR_APPROVAL.equals(statusCode)) {
             claimRemarkHistory.setActionType(ActionType.START_APPROVAL_PROCESS);
             claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_006));
+            claimRemarkHistory.setEmployeeNo(claim.getApprovedBy());
         }
         if (StatusCode.PAYMENT_PROCESSING.equals(statusCode)) {
             claimRemarkHistory.setActionType(ActionType.START_PAYING);
             claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_007));
+            claimRemarkHistory.setEmployeeNo(claim.getPaidBy());
         }
     }
 
@@ -550,7 +576,7 @@ public class ClaimServiceImpl implements ClaimService {
             Claim claim = claimOptional.get();
             claim.setStatusCode(StatusCode.APPROVED);
             claim.setApprovedDate(LocalDateTime.now());
-
+            saveRemarkHistoryWhenApprove(claim);
             if (claim.getPaidBy() == null) {
                 List<Long> employeeNos = employeeRepository.findAccountantHasClaimAtLeast();
                 if (CollectionUtils.isNotEmpty(employeeNos)) {
@@ -560,6 +586,17 @@ public class ClaimServiceImpl implements ClaimService {
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    private void saveRemarkHistoryWhenApprove(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setEmployeeNo(claim.getApprovedBy());
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.APPROVED);
+        claimRemarkHistory.setActionType(ActionType.APPROVE);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_010));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
     @Override
@@ -573,9 +610,21 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setStatusCode(StatusCode.SETTLED);
             claim.setPaymentDate(LocalDateTime.now());
             claim.setRemark(claimPaymentRequestDTO.getRemark());
+            saveRemarkHistoryWhenSettle(claim);
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    private void saveRemarkHistoryWhenSettle(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setEmployeeNo(claim.getPaidBy());
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.SETTLED);
+        claimRemarkHistory.setActionType(ActionType.PAY);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_011));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
     @Override
@@ -591,9 +640,36 @@ public class ClaimServiceImpl implements ClaimService {
             claim.setRejectedDate(LocalDateTime.now());
             claim.setRemark(claimRejectRequestDTO.getRejectReason());
             claim.setRejectReason(claimRejectRequestDTO.getRejectReason());
+            saveRemarkHistoryWhenReject(claim);
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    private void saveRemarkHistoryWhenReject(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.REJECTED);
+        claimRemarkHistory.setActionType(ActionType.REJECT);
+        claimRemarkHistory.setRemark(claim.getRemark());
+        setRemarkHistoryWhenRejectOrReturn(claim, claimRemarkHistory, claim.getStatusCode());
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
+    }
+
+    void setRemarkHistoryWhenRejectOrReturn(Claim claim, ClaimRemarkHistory claimRemarkHistory, StatusCode statusCode) {
+        if (StatusCode.BUSINESS_VERIFYING.equals(statusCode)) {
+            claimRemarkHistory.setEmployeeNo(claim.getBusinessAppraisalBy());
+        }
+        if (StatusCode.MEDICAL_VERIFYING.equals(statusCode)) {
+            claimRemarkHistory.setEmployeeNo(claim.getMedicalAppraisalBy());
+        }
+        if (StatusCode.WAITING_FOR_APPROVAL.equals(statusCode)) {
+            claimRemarkHistory.setEmployeeNo(claim.getApprovedBy());
+        }
+        if (StatusCode.PAYMENT_PROCESSING.equals(statusCode)) {
+            claimRemarkHistory.setEmployeeNo(claim.getPaidBy());
+        }
     }
 
     @Override
@@ -604,14 +680,26 @@ public class ClaimServiceImpl implements ClaimService {
         ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
         if (claimOptional.isPresent()) {
             Claim claim = claimOptional.get();
-            claim.setStatusCode(StatusCode.RETURN);
+            claim.setStatusCode(StatusCode.RETURNED);
             claim.setStatusReasonCode(claimReturnRequestDTO.getReturnReasonCode());
             claim.setReturnDate(LocalDateTime.now());
             claim.setRemark(claimReturnRequestDTO.getReturnReason());
             claim.setReturnReason(claimReturnRequestDTO.getReturnReason());
+            saveRemarkHistoryWhenReturn(claim);
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    private void saveRemarkHistoryWhenReturn(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.RETURNED);
+        claimRemarkHistory.setActionType(ActionType.RETURN);
+        claimRemarkHistory.setRemark(claim.getReturnReason());
+        setRemarkHistoryWhenRejectOrReturn(claim, claimRemarkHistory, claim.getStatusCode());
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
 }
