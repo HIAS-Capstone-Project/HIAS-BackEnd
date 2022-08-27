@@ -139,9 +139,6 @@ public class ClaimServiceImpl implements ClaimService {
                 claimResponseDTO.setAccountant(employeeResponseDTOMapper
                         .toDto(employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(paidBy).get()));
             }
-
-            setClaimRemarkHistory(claimNo, claimResponseDTO);
-
         }
         return claimResponseDTO;
     }
