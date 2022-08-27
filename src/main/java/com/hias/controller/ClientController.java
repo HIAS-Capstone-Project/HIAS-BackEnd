@@ -31,6 +31,11 @@ public class ClientController {
         return new ResponseEntity<>(clientService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("find-all-has-filter-role")
+    public ResponseEntity<List<ClientResponseDTO>> findAllHasFilterRole() {
+        return new ResponseEntity<>(clientService.findAllHasFilterRole(), HttpStatus.OK);
+    }
+
     @GetMapping("client-detail")
     public ResponseEntity<ClientResponseDTO> getDetail(@RequestParam Long clientNo) {
         return new ResponseEntity<>(clientService.getDetail(clientNo), HttpStatus.OK);

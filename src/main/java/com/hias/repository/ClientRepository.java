@@ -18,6 +18,11 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     List<Client> findByIsDeletedIsFalse();
 
+    @Query("select c from Client c join EmployeeClient ec on c.clientNo = ec.clientNo " +
+            "where c.isDeleted = false and ec.isDeleted = false " +
+            "and ec.employeeNo = :employeeNo")
+    List<Client> findByEmployeeNo(Long employeeNo);
+
     Optional<Client> findByClientNoAndIsDeletedIsFalse(Long clientNo);
 
     @Query("select c from Client c " +

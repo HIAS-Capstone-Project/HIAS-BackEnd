@@ -12,6 +12,8 @@ public interface ClientService {
 
     List<ClientResponseDTO> getAll();
 
+    List<ClientResponseDTO> findAllHasFilterRole();
+
     ClientResponseDTO getDetail(Long clientNo);
 
     PagingResponseModel<ClientResponseDTO> search(String searchValue, Pageable pageable);

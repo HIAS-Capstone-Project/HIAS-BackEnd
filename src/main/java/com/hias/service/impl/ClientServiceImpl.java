@@ -64,6 +64,35 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public List<ClientResponseDTO> findAllHasFilterRole() {
+        List<ClientResponseDTO> clientResponseDTOList = new ArrayList<>();
+
+        List<Client> clients = this.buildClientListByRole();
+
+        if (!CollectionUtils.isEmpty(clients)) {
+            clientResponseDTOList = clientResponeDTOMapper.toDtoList(clients);
+        }
+        return clientResponseDTOList;
+    }
+
+    private List<Client> buildClientListByRole() {
+        UserDetail userDetail = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        RoleEnum roleEnum = null;
+        Long primaryKey = null;
+        if (userDetail != null) {
+            roleEnum = RoleEnum.findByString(userDetail.getRoles().get(0));
+            primaryKey = userDetail.getPrimaryKey();
+        }
+        List<Client> clients;
+        if (RoleEnum.ROLE_BUSINESS_EMPLOYEE.equals(roleEnum)) {
+            clients = clientRepository.findByEmployeeNo(primaryKey);
+        } else {
+            clients = clientRepository.findByIsDeletedIsFalse();
+        }
+        return clients;
+    }
+
+    @Override
     public ClientResponseDTO getDetail(Long clientNo) {
         log.info("[getDetail] start get detail client");
         ClientResponseDTO clientResponseDTO = new ClientResponseDTO();
