@@ -19,6 +19,7 @@ public class CommonConstant {
     public static final String DASH = "-";
     public static final String DOT = ".";
     public static final String REGEX_FILE_EXTENSION = "\\.(txt|xls|xlsx|docs|pdf|png|jpg|JPG)";
+    public static final String CL = "CL";
 
 
 }

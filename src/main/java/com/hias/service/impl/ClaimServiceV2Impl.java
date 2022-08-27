@@ -1,9 +1,6 @@
 package com.hias.service.impl;
 
-import com.hias.constant.ActionType;
-import com.hias.constant.MessageCode;
-import com.hias.constant.RecordSource;
-import com.hias.constant.StatusCode;
+import com.hias.constant.*;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
 import com.hias.entity.ClaimRemarkHistory;
@@ -92,7 +89,7 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
         claimRemarkHistory.setFromStatusCode(fromStatusCode);
         claimRemarkHistory.setToStatusCode(toStatusCode);
         claimRemarkHistory.setActionType(actionType);
-        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_002, claim.getClaimID()));
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_002, CommonConstant.CL + claim.getClaimNo()));
         claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
@@ -132,7 +129,7 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
         claimRemarkHistory.setFromStatusCode(fromStatusCode);
         claimRemarkHistory.setToStatusCode(toStatusCode);
         claimRemarkHistory.setActionType(ActionType.SAVE_DRAFT);
-        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_001, claim.getClaimID()));
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_001, CommonConstant.CL + claim.getClaimNo()));
         claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
