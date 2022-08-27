@@ -5,6 +5,7 @@ import com.hias.constant.StatusCode;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +22,6 @@ public class ClaimRemarkHistoryResponseDTO implements Serializable {
     private StatusCode fromStatusCode;
     private StatusCode toStatusCode;
     private ActionType actionType;
+    private LocalDateTime createdOn;
+    private LocalDateTime modifiedOn;
 }
