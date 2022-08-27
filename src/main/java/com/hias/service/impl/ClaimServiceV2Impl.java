@@ -1,9 +1,12 @@
 package com.hias.service.impl;
 
+import com.hias.constant.ActionType;
+import com.hias.constant.MessageCode;
 import com.hias.constant.RecordSource;
 import com.hias.constant.StatusCode;
 import com.hias.entity.Claim;
 import com.hias.entity.ClaimDocument;
+import com.hias.entity.ClaimRemarkHistory;
 import com.hias.entity.License;
 import com.hias.mapper.request.ClaimSubmitRequestDTOMapper;
 import com.hias.mapper.response.ClaimResponseDTOMapper;
@@ -11,9 +14,11 @@ import com.hias.model.request.ClaimDocumentRequestDTO;
 import com.hias.model.request.ClaimSubmitRequestDTO;
 import com.hias.model.response.ClaimResponseDTO;
 import com.hias.repository.ClaimDocumentRepository;
+import com.hias.repository.ClaimRemarkHistoryRepository;
 import com.hias.repository.ClaimRepository;
 import com.hias.repository.EmployeeRepository;
 import com.hias.service.ClaimServiceV2;
+import com.hias.utils.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,10 +36,12 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
 
     private final ClaimRepository claimRepository;
     private final ClaimDocumentRepository claimDocumentRepository;
+    private final ClaimRemarkHistoryRepository claimRemarkHistoryRepository;
     private final EmployeeRepository employeeRepository;
 
     private final ClaimSubmitRequestDTOMapper claimSubmitRequestDTOMapper;
     private final ClaimResponseDTOMapper claimResponseDTOMapper;
+    private final MessageUtils messageUtils;
 
     @Override
     @Transactional
@@ -42,19 +49,29 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
         ClaimResponseDTO claimResponseDTO;
         Claim claim;
+        StatusCode fromStatusCode, toStatusCode;
+        ActionType actionType = ActionType.SUBMIT;
         if (claimNo != null) {
             claim = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo).get();
+            fromStatusCode = claim.getStatusCode();
+            toStatusCode = StatusCode.SUBMITTED;
+            if (!StatusCode.DRAFT.equals(claim.getStatusCode())) {
+                actionType = ActionType.RE_SUBMIT;
+            }
             this.mergeClaimRequest(claimSubmitRequestDTO, claim);
         } else {
             claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
             claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ?
                     RecordSource.M : RecordSource.SVP);
+            fromStatusCode = toStatusCode = StatusCode.SUBMITTED;
         }
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setSubmittedDate(LocalDateTime.now());
         Long claimNoSaved = claimRepository.save(claim).getClaimNo();
 
         processForClaimDocuments(claimSubmitRequestDTO, claimNoSaved);
+
+        processRemarkHistoryForSubmittedClaim(claim, fromStatusCode, toStatusCode, actionType);
 
         if (claim.getBusinessAppraisalBy() == null) {
             List<Long> employeeNos = employeeRepository.findBusinessAppraiserHasClaimAtLeast();
@@ -68,27 +85,53 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
         return claimResponseDTO;
     }
 
+    private void processRemarkHistoryForSubmittedClaim(Claim claim, StatusCode fromStatusCode, StatusCode toStatusCode, ActionType actionType) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setFromStatusCode(fromStatusCode);
+        claimRemarkHistory.setToStatusCode(toStatusCode);
+        claimRemarkHistory.setActionType(actionType);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_002, claim.getClaimID()));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
+    }
+
     @Override
     @Transactional
     public ClaimResponseDTO saveDraft(ClaimSubmitRequestDTO claimSubmitRequestDTO) {
         Long claimNo = claimSubmitRequestDTO.getClaimNo();
         ClaimResponseDTO claimResponseDTO;
         Claim claim;
+        StatusCode fromStatusCode;
+        StatusCode toStatusCode;
         if (claimNo != null) {
             claim = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo).get();
+            fromStatusCode = toStatusCode = claim.getStatusCode();
             this.mergeClaimRequest(claimSubmitRequestDTO, claim);
         } else {
             claim = claimSubmitRequestDTOMapper.toEntity(claimSubmitRequestDTO);
             claim.setStatusCode(StatusCode.DRAFT);
             claim.setRecordSource((claimSubmitRequestDTO.getServiceProviderNo() == null) ?
                     RecordSource.M : RecordSource.SVP);
+            fromStatusCode = toStatusCode = StatusCode.DRAFT;
         }
         Long claimNoSaved = claimRepository.save(claim).getClaimNo();
 
         processForClaimDocuments(claimSubmitRequestDTO, claimNoSaved);
 
+        processRemarkHistoryForDraftClaim(claim, fromStatusCode, toStatusCode);
+
         claimResponseDTO = claimResponseDTOMapper.toDto(claim);
         return claimResponseDTO;
+    }
+
+    private void processRemarkHistoryForDraftClaim(Claim claim, StatusCode fromStatusCode, StatusCode toStatusCode) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setFromStatusCode(fromStatusCode);
+        claimRemarkHistory.setToStatusCode(toStatusCode);
+        claimRemarkHistory.setActionType(ActionType.SAVE_DRAFT);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_001, claim.getClaimID()));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
     private void processForClaimDocuments(ClaimSubmitRequestDTO claimSubmitRequestDTO, Long claimNoSaved) {

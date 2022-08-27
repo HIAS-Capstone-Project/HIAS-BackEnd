@@ -45,4 +45,8 @@ public class MessageUtils {
     public String getMessage(ErrorMessageCode errorMessageCode, Object... params) {
         return messageSource.getMessage(errorMessageCode.getCode(), params, localeVN);
     }
+
+    public String getMessage(String key, Object... params) {
+        return messageSource.getMessage(key, params, localeVN);
+    }
 }
