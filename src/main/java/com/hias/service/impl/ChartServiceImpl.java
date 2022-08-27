@@ -169,7 +169,7 @@ public class ChartServiceImpl implements ChartService {
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
         statisticDTOS = statisticDTOS.stream().map(o -> {
-            switch (o.getKey()){
+            switch (o.getKey()) {
                 case "DRA":
                     o.setKey("Bản nháp");
                     return o;

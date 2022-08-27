@@ -67,4 +67,17 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
             "or c.approvedBy = :employeeNo " +
             "or c.paidBy = :employeeNo)")
     Page<Claim> findAllBySearchValueForEmployee(Long employeeNo, String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
+
+    @Query("select c from Claim c join EmployeeClient ec on ec.clientNo = c.member.clientNo " +
+            "where c.isDeleted = false " +
+            "and ec.isDeleted = false " +
+            "and (:searchValue is null " +
+            "or lower(c.claimID) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.medicalAddress) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.description) like concat('%',lower(trim(:searchValue)),'%') " +
+            "or lower(c.remark) like concat('%',lower(trim(:searchValue)),'%')) " +
+            "and (:clientNo is null or c.member.clientNo = :clientNo) " +
+            "and (:statusCode is null or c.statusCode = :statusCode) " +
+            "and ec.employeeNo = :employeeNo")
+    Page<Claim> findAllBySearchValueForBusinessEmployee(Long employeeNo, String searchValue, Long clientNo, StatusCode statusCode, Pageable pageable);
 }

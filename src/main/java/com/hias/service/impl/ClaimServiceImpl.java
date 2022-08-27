@@ -199,6 +199,9 @@ public class ClaimServiceImpl implements ClaimService {
                 .contains(roleEnum)) {
             claimPage = claimRepository.findAllBySearchValueForEmployee(primaryKey, searchValue, clientNo, statusCode, pageable);
         }
+        if (RoleEnum.ROLE_BUSINESS_EMPLOYEE.equals(roleEnum)) {
+            claimPage = claimRepository.findAllBySearchValueForBusinessEmployee(primaryKey, searchValue, clientNo, statusCode, pageable);
+        }
         if (RoleEnum.ROLE_SERVICE_PROVIDER.equals(roleEnum)) {
             claimPage = claimRepository.findAllBySearchValueForServiceProvider(primaryKey, searchValue, clientNo, statusCode, pageable);
         }

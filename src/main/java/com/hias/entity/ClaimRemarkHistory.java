@@ -1,5 +1,6 @@
 package com.hias.entity;
 
+import com.hias.constant.ActionType;
 import com.hias.constant.StatusCode;
 import com.hias.entity.base.SoftDeleteEntity;
 import lombok.*;
@@ -39,4 +40,6 @@ public class ClaimRemarkHistory extends SoftDeleteEntity {
     @Column(name = "TO_STATUS_CODE")
     private StatusCode toStatusCode;
 
+    @Column(name = "ACTION_TYPE")
+    private ActionType actionType;
 }

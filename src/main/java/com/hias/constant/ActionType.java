@@ -11,21 +11,21 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 public enum ActionType {
 
-    SAVE_DRAFT,
-    SUBMIT,
-    RE_SUBMIT,
-    REJECT,
-    START_PROGRESS,
-    PAY,
-    RETURN;
+    SAVE_DRAFT("SD", "Save Draft"),
+    SUBMIT("S", "Submit"),
+    RE_SUBMIT("RS", "Re submit"),
+    REJECT("R", "Reject"),
+    START_PROGRESS("SP", "Start progress"),
+    PAY("P", "Pay"),
+    RETURN("RT", "Return");
 
     private String code;
     private String value;
 
     public static ActionType findByString(String code) {
-        for (ActionType statusReasonCode : ActionType.values()) {
-            if (statusReasonCode.getCode().equalsIgnoreCase(StringUtils.trim(code))) {
-                return statusReasonCode;
+        for (ActionType actionType : ActionType.values()) {
+            if (actionType.getCode().equalsIgnoreCase(StringUtils.trim(code))) {
+                return actionType;
             }
         }
         return null;
