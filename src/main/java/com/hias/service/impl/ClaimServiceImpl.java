@@ -435,9 +435,20 @@ public class ClaimServiceImpl implements ClaimService {
             }
             claim.setStatusCode(StatusCode.CANCELED);
             claim.setCanceledDate(LocalDateTime.now());
+            saveClaimRemarkHistoryForCanceledClaim(claim);
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claim));
         }
         return claimResponseDTO;
+    }
+
+    private void saveClaimRemarkHistoryForCanceledClaim(Claim claim) {
+        ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+        claimRemarkHistory.setClaim(claim);
+        claimRemarkHistory.setFromStatusCode(claim.getStatusCode());
+        claimRemarkHistory.setToStatusCode(StatusCode.CANCELED);
+        claimRemarkHistory.setActionType(ActionType.CANCEL);
+        claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_003, CommonConstant.CL + claim.getClaimNo()));
+        claimRemarkHistoryRepository.save(claimRemarkHistory);
     }
 
     @Override

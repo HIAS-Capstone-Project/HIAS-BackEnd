@@ -13,6 +13,7 @@ public enum ActionType {
 
     SAVE_DRAFT("SD", "Save Draft"),
     SUBMIT("S", "Submit"),
+    CANCEL("C", "Cancel"),
     RE_SUBMIT("RS", "Re submit"),
     REJECT("R", "Reject"),
     START_PROGRESS("SP", "Start progress"),
