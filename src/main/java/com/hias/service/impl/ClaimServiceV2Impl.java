@@ -67,7 +67,8 @@ public class ClaimServiceV2Impl implements ClaimServiceV2 {
         }
         claim.setStatusCode(StatusCode.SUBMITTED);
         claim.setSubmittedDate(LocalDateTime.now());
-        Long claimNoSaved = claimRepository.save(claim).getClaimNo();
+        Claim claimSaved = claimRepository.save(claim);
+        Long claimNoSaved = claimSaved.getClaimNo();
 
         processForClaimDocuments(claimSubmitRequestDTO, claimNoSaved);
 
