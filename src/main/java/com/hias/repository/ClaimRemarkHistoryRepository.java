@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ClaimRemarkHistoryRepository extends JpaRepository<ClaimRemarkHistory, Long> {
 
-    List<ClaimRemarkHistory> findByClaimNoAndIsDeletedIsFalse(Long claimNo);
+    List<ClaimRemarkHistory> findByClaimNoAndIsDeletedIsFalseOrderByModifiedOnDesc(Long claimNo);
 
 }

@@ -30,7 +30,7 @@ public class ClaimRemarkHistoryServiceImpl implements ClaimRemarkHistoryService 
     @Override
     public List<ClaimRemarkHistoryResponseDTO> findByClaimNo(Long claimNo) {
         List<ClaimRemarkHistoryResponseDTO> claimRemarkHistoryResponseDTOS = new ArrayList<>();
-        List<ClaimRemarkHistory> claimRemarkHistories = claimRemarkHistoryRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        List<ClaimRemarkHistory> claimRemarkHistories = claimRemarkHistoryRepository.findByClaimNoAndIsDeletedIsFalseOrderByModifiedOnDesc(claimNo);
         Set<Long> employeeNos = claimRemarkHistories
                 .stream()
                 .map(ClaimRemarkHistory::getEmployeeNo)

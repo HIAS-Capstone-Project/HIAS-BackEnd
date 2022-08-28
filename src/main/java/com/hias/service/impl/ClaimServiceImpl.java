@@ -145,7 +145,7 @@ public class ClaimServiceImpl implements ClaimService {
 
     private void setClaimRemarkHistory(Long claimNo, ClaimResponseDTO claimResponseDTO) {
         List<ClaimRemarkHistoryResponseDTO> claimRemarkHistoryResponseDTOS = new ArrayList<>();
-        List<ClaimRemarkHistory> claimRemarkHistories = claimRemarkHistoryRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
+        List<ClaimRemarkHistory> claimRemarkHistories = claimRemarkHistoryRepository.findByClaimNoAndIsDeletedIsFalseOrderByModifiedOnDesc(claimNo);
         Set<Long> employeeNos = claimRemarkHistories
                 .stream()
                 .map(ClaimRemarkHistory::getEmployeeNo)
