@@ -263,10 +263,14 @@ public class ClaimServiceImpl implements ClaimService {
     }
 
     private void saveRemarkHistoryWhenUpdate(ClaimUpdateRequestDTO claimUpdateRequestDTO, Claim claimUpdated) {
-        if (claimUpdateRequestDTO.getApprovedBy() != claimUpdated.getApprovedBy() ||
+        if ((claimUpdateRequestDTO.getApprovedBy() != claimUpdated.getApprovedBy() ||
                 claimUpdateRequestDTO.getBusinessAppraisalBy() != claimUpdated.getBusinessAppraisalBy() ||
                 claimUpdateRequestDTO.getMedicalAppraisalBy() != claimUpdated.getMedicalAppraisalBy() ||
-                claimUpdateRequestDTO.getPaidBy() != claimUpdated.getPaidBy()) {
+                claimUpdateRequestDTO.getPaidBy() != claimUpdated.getPaidBy()) &&
+                claimUpdateRequestDTO.getBusinessAppraisalBy() != 0 &&
+                claimUpdateRequestDTO.getMedicalAppraisalBy() != 0 &&
+                claimUpdateRequestDTO.getApprovedBy() != 0 &&
+                claimUpdateRequestDTO.getPaidBy() != 0) {
 
             ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
             claimRemarkHistory.setClaim(claimUpdated);
@@ -274,28 +278,46 @@ public class ClaimServiceImpl implements ClaimService {
             claimRemarkHistory.setToStatusCode(claimUpdated.getStatusCode());
             claimRemarkHistory.setActionType(ActionType.ASSIGN_CLAIM_PROCESSOR);
 
+            Employee oldAssignee;
+            Employee newAssignee;
             if (Arrays.asList(StatusCode.SUBMITTED, StatusCode.BUSINESS_VERIFYING)
                     .contains(claimUpdated.getStatusCode())) {
-                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_012));
-                claimRemarkHistory.setEmployeeNo(claimUpdated.getBusinessAppraisalBy());
+                oldAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdated.getBusinessAppraisalBy()).get();
+                newAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdateRequestDTO.getBusinessAppraisalBy()).get();
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_012,
+                        String.format("%s - %s", oldAssignee.getEmployeeID(), oldAssignee.getEmployeeName()),
+                        String.format("%s - %s", newAssignee.getEmployeeID(), newAssignee.getEmployeeName())));
+                claimRemarkHistory.setEmployeeNo(claimUpdateRequestDTO.getBusinessAppraisalBy());
             }
 
             if (Arrays.asList(StatusCode.BUSINESS_VERIFIED, StatusCode.MEDICAL_VERIFYING)
                     .contains(claimUpdated.getStatusCode())) {
-                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_013));
-                claimRemarkHistory.setEmployeeNo(claimUpdated.getMedicalAppraisalBy());
+                oldAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdated.getMedicalAppraisalBy()).get();
+                newAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdateRequestDTO.getMedicalAppraisalBy()).get();
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_013,
+                        String.format("%s - %s", oldAssignee.getEmployeeID(), oldAssignee.getEmployeeName()),
+                        String.format("%s - %s", newAssignee.getEmployeeID(), newAssignee.getEmployeeName())));
+                claimRemarkHistory.setEmployeeNo(claimUpdateRequestDTO.getMedicalAppraisalBy());
             }
 
             if (Arrays.asList(StatusCode.MEDICAL_VERIFIED, StatusCode.WAITING_FOR_APPROVAL)
                     .contains(claimUpdated.getStatusCode())) {
-                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_014));
-                claimRemarkHistory.setEmployeeNo(claimUpdated.getApprovedBy());
+                oldAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdated.getApprovedBy()).get();
+                newAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdateRequestDTO.getApprovedBy()).get();
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_014,
+                        String.format("%s - %s", oldAssignee.getEmployeeID(), oldAssignee.getEmployeeName()),
+                        String.format("%s - %s", newAssignee.getEmployeeID(), newAssignee.getEmployeeName())));
+                claimRemarkHistory.setEmployeeNo(claimUpdateRequestDTO.getApprovedBy());
             }
 
             if (Arrays.asList(StatusCode.APPROVED, StatusCode.PAYMENT_PROCESSING)
                     .contains(claimUpdated.getStatusCode())) {
-                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_015));
-                claimRemarkHistory.setEmployeeNo(claimUpdated.getPaidBy());
+                oldAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdated.getPaidBy()).get();
+                newAssignee = employeeRepository.findByEmployeeNoAndIsDeletedIsFalse(claimUpdateRequestDTO.getPaidBy()).get();
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_015,
+                        String.format("%s - %s", oldAssignee.getEmployeeID(), oldAssignee.getEmployeeName()),
+                        String.format("%s - %s", newAssignee.getEmployeeID(), newAssignee.getEmployeeName())));
+                claimRemarkHistory.setEmployeeNo(claimUpdateRequestDTO.getPaidBy());
             }
 
             claimRemarkHistoryRepository.save(claimRemarkHistory);
