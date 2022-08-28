@@ -294,7 +294,7 @@ public class ClaimServiceImpl implements ClaimService {
 
             if (Arrays.asList(StatusCode.APPROVED, StatusCode.PAYMENT_PROCESSING)
                     .contains(claimUpdated.getStatusCode())) {
-                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_014));
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_015));
                 claimRemarkHistory.setEmployeeNo(claimUpdated.getPaidBy());
             }
 
