@@ -17,6 +17,7 @@ public class ClaimRemarkHistoryResponseDTO implements Serializable {
     private Long claimRequestHistoryNo;
     private Long employeeNo;
     private EmployeeResponseDTO employeeResponseDTO;
+    private MemberResponseDTO memberResponseDTO;
     private Long claimNo;
     private String remark;
     private StatusCode fromStatusCode;

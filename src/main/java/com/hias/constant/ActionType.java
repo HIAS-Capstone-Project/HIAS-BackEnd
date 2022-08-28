@@ -24,7 +24,8 @@ public enum ActionType {
     MEDICAL_VERIFY("MV", "Medical verify"),
     APPROVE("A", "Approve"),
     PAY("P", "Pay"),
-    RETURN("RT", "Return");
+    RETURN("RT", "Return"),
+    ASSIGN_CLAIM_PROCESSOR("ACP", "Assign claim processor");
 
     private String code;
     private String value;

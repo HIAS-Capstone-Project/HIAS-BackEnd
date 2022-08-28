@@ -15,4 +15,8 @@ public class MessageCode {
     public static final String CL_REMARK_009 = "CL_REMARK_009";
     public static final String CL_REMARK_010 = "CL_REMARK_010";
     public static final String CL_REMARK_011 = "CL_REMARK_011";
+    public static final String CL_REMARK_012 = "CL_REMARK_012";
+    public static final String CL_REMARK_013 = "CL_REMARK_013";
+    public static final String CL_REMARK_014 = "CL_REMARK_014";
+    public static final String CL_REMARK_015 = "CL_REMARK_015";
 }

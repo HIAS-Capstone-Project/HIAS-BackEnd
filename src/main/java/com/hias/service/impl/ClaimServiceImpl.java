@@ -250,6 +250,9 @@ public class ClaimServiceImpl implements ClaimService {
         Optional<Claim> claimOptional = claimRepository.findByClaimNoAndIsDeletedIsFalse(claimNo);
         if (claimOptional.isPresent()) {
             Claim claimUpdated = claimOptional.get();
+
+            saveRemarkHistoryWhenUpdate(claimUpdateRequestDTO, claimUpdated);
+
             claimUpdated.setBusinessAppraisalBy(claimUpdateRequestDTO.getBusinessAppraisalBy());
             claimUpdated.setMedicalAppraisalBy(claimUpdateRequestDTO.getMedicalAppraisalBy());
             claimUpdated.setApprovedBy(claimUpdateRequestDTO.getApprovedBy());
@@ -257,6 +260,46 @@ public class ClaimServiceImpl implements ClaimService {
             claimResponseDTO = claimResponseDTOMapper.toDto(claimRepository.save(claimUpdated));
         }
         return claimResponseDTO;
+    }
+
+    private void saveRemarkHistoryWhenUpdate(ClaimUpdateRequestDTO claimUpdateRequestDTO, Claim claimUpdated) {
+        if (claimUpdateRequestDTO.getApprovedBy() != claimUpdated.getApprovedBy() ||
+                claimUpdateRequestDTO.getBusinessAppraisalBy() != claimUpdated.getBusinessAppraisalBy() ||
+                claimUpdateRequestDTO.getMedicalAppraisalBy() != claimUpdated.getMedicalAppraisalBy() ||
+                claimUpdateRequestDTO.getPaidBy() != claimUpdated.getPaidBy()) {
+
+            ClaimRemarkHistory claimRemarkHistory = new ClaimRemarkHistory();
+            claimRemarkHistory.setClaim(claimUpdated);
+            claimRemarkHistory.setFromStatusCode(claimUpdated.getStatusCode());
+            claimRemarkHistory.setToStatusCode(claimUpdated.getStatusCode());
+            claimRemarkHistory.setActionType(ActionType.ASSIGN_CLAIM_PROCESSOR);
+
+            if (Arrays.asList(StatusCode.SUBMITTED, StatusCode.BUSINESS_VERIFYING)
+                    .contains(claimUpdated.getStatusCode())) {
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_012));
+                claimRemarkHistory.setEmployeeNo(claimUpdated.getBusinessAppraisalBy());
+            }
+
+            if (Arrays.asList(StatusCode.BUSINESS_VERIFIED, StatusCode.MEDICAL_VERIFYING)
+                    .contains(claimUpdated.getStatusCode())) {
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_013));
+                claimRemarkHistory.setEmployeeNo(claimUpdated.getMedicalAppraisalBy());
+            }
+
+            if (Arrays.asList(StatusCode.MEDICAL_VERIFIED, StatusCode.WAITING_FOR_APPROVAL)
+                    .contains(claimUpdated.getStatusCode())) {
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_014));
+                claimRemarkHistory.setEmployeeNo(claimUpdated.getApprovedBy());
+            }
+
+            if (Arrays.asList(StatusCode.APPROVED, StatusCode.PAYMENT_PROCESSING)
+                    .contains(claimUpdated.getStatusCode())) {
+                claimRemarkHistory.setRemark(messageUtils.getMessage(MessageCode.CL_REMARK_014));
+                claimRemarkHistory.setEmployeeNo(claimUpdated.getPaidBy());
+            }
+
+            claimRemarkHistoryRepository.save(claimRemarkHistory);
+        }
     }
 
     @Override
