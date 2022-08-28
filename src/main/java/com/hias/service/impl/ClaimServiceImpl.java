@@ -213,7 +213,11 @@ public class ClaimServiceImpl implements ClaimService {
         }
         Page<Claim> claimPage = null;
         if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
-            claimPage = claimRepository.findAllBySearchValue(searchValue, clientNo, statusCode, pageable);
+            StatusCode filterStatusCode = statusCode;
+            if (StatusCode.DRAFT.equals(statusCode)) {
+                filterStatusCode = null;
+            }
+            claimPage = claimRepository.findAllBySearchValue(searchValue, clientNo, filterStatusCode, pageable);
         }
         if (RoleEnum.ROLE_MEMBER.equals(roleEnum)) {
             claimPage = claimRepository.findAllBySearchValueForMember(primaryKey, searchValue, clientNo, statusCode, pageable);
