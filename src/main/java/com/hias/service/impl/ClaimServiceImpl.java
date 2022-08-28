@@ -218,6 +218,9 @@ public class ClaimServiceImpl implements ClaimService {
         if (RoleEnum.ROLE_MEMBER.equals(roleEnum)) {
             claimPage = claimRepository.findAllBySearchValueForMember(primaryKey, searchValue, clientNo, statusCode, pageable);
         }
+        if (RoleEnum.ROLE_CLIENT.equals(roleEnum)) {
+            claimPage = claimRepository.findAllBySearchValue(searchValue, primaryKey, statusCode, pageable);
+        }
         if (Arrays.asList(RoleEnum.ROLE_BUSINESS_APPRAISER,
                         RoleEnum.ROLE_MEDICAL_APPRAISER,
                         RoleEnum.ROLE_ACCOUNTANT,
