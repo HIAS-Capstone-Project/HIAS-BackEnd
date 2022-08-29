@@ -140,7 +140,7 @@ public class ChartServiceImpl implements ChartService {
         String chartName;
         if ("ROLE_CLIENT".equalsIgnoreCase(role)) {
             query = String.format(query, String.format("AND m.client_no = %s", userDetail.getPrimaryKey()));
-            chartName = String.format("Claim status statistics for client: %s", clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
+            chartName = String.format("Thống kê trạng thái của yêu cầu bồi hoàn cho doanh nghiệp: %s", clientService.getDetail(userDetail.getPrimaryKey()).getClientName());
         } else if ("ROLE_BUSINESS_EMPLOYEE".equalsIgnoreCase(role)) {
             if (clientNo == null) {
                 query = String.format(query, String.format("AND m.client_no IN(\n" +
@@ -148,23 +148,23 @@ public class ChartServiceImpl implements ChartService {
                         "        FROM HIAS.employee_client ec\n" +
                         "        WHERE ec.employee_no = %s\n" +
                         "    )", userDetail.getPrimaryKey()));
-                chartName = String.format("Claims status statistics in charge by employee: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
+                chartName = String.format("Thống kê trạng thái của yêu cầu bồi hoàn phụ trách bời nhân viên: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName());
             } else {
                 query = String.format(query, String.format("AND m.client_no IN(\n" +
                         "        SELECT ec.client_no\n" +
                         "        FROM HIAS.employee_client ec\n" +
                         "        WHERE ec.employee_no = %s AND ec.client_no = %s\n" +
                         "    )", userDetail.getPrimaryKey(), clientNo));
-                chartName = String.format("Claims status statistics in charge by employee: %s with client: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName(),
+                chartName = String.format("Thống kê trạng thái của yêu cầu bồi hoàn phụ trách bời nhân viên: %s với doanh nghiệp: %s", employeeService.findEmployeeByEmployeeNo(userDetail.getPrimaryKey()).getEmployeeName(),
                         clientService.getDetail(clientNo).getClientName());
             }
         } else {
             if (clientNo != null) {
                 query = String.format(query, String.format("AND m.client_no = %s", clientNo));
-                chartName = String.format("Claim status statistics for to client: %s", clientService.getDetail(clientNo).getClientName());
+                chartName = String.format("Thống kê trạng thái của yêu cầu bồi hoàn cho doanh nghiệp: %s", clientService.getDetail(clientNo).getClientName());
             } else {
                 query = String.format(query, "");
-                chartName = "Claim status statistics";
+                chartName = "Thống kê trạng thái của yêu cầu bồi hoàn";
             }
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());

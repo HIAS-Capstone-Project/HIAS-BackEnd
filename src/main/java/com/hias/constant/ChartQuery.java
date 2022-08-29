@@ -4,7 +4,7 @@ public class ChartQuery {
 
     public static final String MEMBER_AGE_CHART_QUERY = "SELECT t.key, COUNT(t.value) AS value from(\n" +
             "WITH ages AS (SELECT DATE_PART('year', NOW()::date) - DATE_PART('year', m.dob::date) AS age, m.client_no\n" +
-            "FROM HIAS.member m)\n" +
+            "FROM HIAS.member m WHERE m.is_deleted = false)\n" +
             "SELECT 'Dưới 30' AS key, age AS value, client_no\n" +
             "FROM ages\n" +
             "WHERE age < 30 \n" +
@@ -22,12 +22,12 @@ public class ChartQuery {
     public static final String MEMBER_LOCATION_CHART_QUERY = "SELECT province_name key, COUNT(member_name) value " +
             "FROM HIAS.DISTRICT d INNER JOIN HIAS.PROVINCE p ON d.province_no = p.province_no " +
             "INNER JOIN HIAS.MEMBER m ON d.district_no = m.district_no " +
-            "WHERE 1 = 1 %s " +
+            "WHERE m.is_deleted = false %s " +
             "GROUP BY province_name";
 
     public static final String MEMBER_ONBOARD_CHART_QUERY = "SELECT EXTRACT(YEAR FROM start_date) AS key, COUNT(member_no) value\n" +
             "FROM HIAS.member m \n" +
-            "WHERE 1 = 1 %s \n" +
+            "WHERE m.is_deleted = false %s \n" +
             "GROUP BY EXTRACT(YEAR FROM start_date) " +
             "ORDER BY key";
 
@@ -42,7 +42,7 @@ public class ChartQuery {
 
     public static final String POLICY_BY_USAGE = "SELECT p.policy_name key, COUNT(m.member_no) value \n" +
             "FROM HIAS.policy p INNER JOIN HIAS.member m ON p.policy_no = m.policy_no\n" +
-            "WHERE 1 = 1 %s\n" +
+            "WHERE p.is_deleted = false %s\n" +
             "GROUP BY p.policy_name";
 
     public static final String BUSINESS_SECTOR = "SELECT bs.business_sector_name AS key, SUM(CASE WHEN cbs.client_no IS NULL THEN 0 ELSE 1 END) AS value\n" +
@@ -52,37 +52,37 @@ public class ChartQuery {
     public static final String APR_VIO_REJ_LEG = "SELECT (CASE WHEN c.status_reason_code LIKE 'RE001' THEN 'Thiếu giấy tờ' ELSE 'Vi phạm' END) AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
-            "WHERE c.status_code = 'REJ' %s \n" +
+            "WHERE c.status_code = 'REJ' AND c.is_deleted = false %s \n" +
             "GROUP BY c.status_reason_code\n" +
             "UNION\n" +
             "SELECT 'Hoàn thành' AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
-            "WHERE c.status_code = 'SET' %s\n" +
+            "WHERE c.status_code = 'SET' AND c.is_deleted = false %s\n" +
             "GROUP BY c.status_code";
 
-    public static final String FIND_ALL_STATISTICS = "SELECT 'member' AS key, COUNT(*) AS value FROM HIAS.member\n" +
+    public static final String FIND_ALL_STATISTICS = "SELECT 'member' AS key, COUNT(*) AS value FROM HIAS.member m WHERE m.is_deleted = false\n" +
             "UNION\n" +
-            "SELECT 'claim', COUNT(*) FROM HIAS.claim\n" +
+            "SELECT 'claim', COUNT(*) FROM HIAS.claim c WHERE c.is_deleted = false\n" +
             "UNION\n" +
-            "SELECT 'policy', COUNT(*) FROM HIAS.policy\n" +
+            "SELECT 'policy', COUNT(*) FROM HIAS.policy p WHERE p.is_deleted = false\n" +
             "UNION\n" +
-            "SELECT 'business_sector', COUNT(*) FROM HIAS.business_sector";
+            "SELECT 'business_sector', COUNT(*) FROM HIAS.business_sector bs WHERE bs.is_deleted = false";
 
     public static final String FIND_ALL_STATISTICS_ROLE_EMP = "SELECT 'policy' AS key, COUNT(DISTINCT(m.policy_no)) AS value FROM HIAS.member m\n" +
-            "WHERE m.client_no IN(\n" +
+            "WHERE m.is_deleted = false AND m.client_no IN(\n" +
             "           SELECT ec.client_no\n" +
             "           FROM HIAS.employee_client ec\n" +
             "           WHERE ec.employee_no = %s)\n" +
             "UNION\n" +
             "SELECT 'member', COUNT(m.member_no) FROM HIAS.member m\n" +
-            "WHERE m.client_no IN(\n" +
+            "WHERE m.is_deleted = false AND m.client_no IN(\n" +
             "           SELECT ec.client_no\n" +
             "           FROM HIAS.employee_client ec\n" +
             "           WHERE ec.employee_no = %s)\n" +
             "UNION         \n" +
             "SELECT 'claim', COUNT(c.claim_no) FROM HIAS.claim c\n" +
-            "WHERE c.member_no IN (\n" +
+            "WHERE c.is_deleted = false AND c.member_no IN (\n" +
             "    SELECT m.member_no FROM HIAS.member m\n" +
             "           WHERE m.client_no IN(\n" +
             "           SELECT ec.client_no\n" +
@@ -98,15 +98,15 @@ public class ChartQuery {
 
     public static final String FIND_ALL_STATISTICS_ROLE_CLIENT = "SELECT 'member' AS key, COUNT(*) AS value \n" +
             "FROM HIAS.member m\n" +
-            "WHERE m.client_no = %s\n" +
+            "WHERE m.is_deleted = false AND m.client_no = %s\n" +
             "UNION\n" +
             "SELECT 'policy', COUNT(DISTINCT(m.policy_no)) \n" +
             "FROM HIAS.member m\n" +
-            "WHERE m.client_no = %s\n" +
+            "WHERE m.is_deleted = false AND m.client_no = %s\n" +
             "UNION\n" +
             "SELECT 'claim', COUNT(c.claim_no) \n" +
             "FROM HIAS.claim c\n" +
-            "WHERE c.member_no IN (\n" +
+            "WHERE c.is_deleted = false AND c.member_no IN (\n" +
             "    SELECT m.member_no \n" +
             "    FROM HIAS.member m\n" +
             "    WHERE m.client_no = %s )\n" +
