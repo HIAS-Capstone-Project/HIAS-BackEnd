@@ -35,8 +35,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("select e.employeeNo from Employee e " +
             "left join Claim c on e.employeeNo = c.businessAppraisalBy and c.businessAppraisalDate is null " +
-            "and (c.statusCode is null or c.statusCode = :#{T(com.hias.constant.StatusCode).BUSINESS_VERIFYING} " +
-            "or c.statusCode = :#{T(com.hias.constant.StatusCode).SUBMITTED}) " +
+            "and (c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).BUSINESS_VERIFIED})" +
             "and (c.isDeleted is null or c.isDeleted = false) and " +
             "e.isDeleted = false " +
             "where e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).BA} " +
@@ -48,8 +47,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "left join Claim c on e.employeeNo = c.medicalAppraisalBy " +
             "and (c.isDeleted is null or c.isDeleted = false) and e.isDeleted = false " +
             "and c.medicalAppraisalDate is null " +
-            "and (c.statusCode is null or c.statusCode = :#{T(com.hias.constant.StatusCode).MEDICAL_VERIFYING} " +
-            "or c.statusCode = :#{T(com.hias.constant.StatusCode).BUSINESS_VERIFIED}) " +
+            "and (c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).MEDICAL_VERIFIED}) " +
             "where e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).MA} " +
             "group by e.employeeNo " +
             "order by count(e.employeeNo) asc,e.modifiedOn desc")
@@ -59,8 +57,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "left join Claim c on e.employeeNo = c.approvedBy " +
             "and (c.isDeleted is null or c.isDeleted = false) and e.isDeleted = false " +
             "and c.approvedDate is null " +
-            "and (c.statusCode is null or c.statusCode = :#{T(com.hias.constant.StatusCode).WAITING_FOR_APPROVAL} " +
-            "or c.statusCode = :#{T(com.hias.constant.StatusCode).MEDICAL_VERIFIED}) " +
+            "and (c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).APPROVED}) " +
             "where e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).HM} " +
             "group by e.employeeNo " +
             "order by count(e.employeeNo) asc,e.modifiedOn desc")
@@ -70,8 +67,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "left join Claim c on e.employeeNo = c.paidBy and (c.isDeleted is null or c.isDeleted = false) " +
             "and e.isDeleted = false " +
             "and c.paymentDate is null " +
-            "and (c.statusCode is null or c.statusCode = :#{T(com.hias.constant.StatusCode).PAYMENT_PROCESSING} " +
-            "or c.statusCode = :#{T(com.hias.constant.StatusCode).APPROVED}) " +
+            "and (c.statusCode is null or c.statusCode <> :#{T(com.hias.constant.StatusCode).SETTLED}) " +
             "where e.employmentType.employmentTypeCode = :#{T(com.hias.constant.EmploymentTypeConstant).ACC} " +
             "group by e.employeeNo " +
             "order by count(e.employeeNo) asc,e.modifiedOn desc")
