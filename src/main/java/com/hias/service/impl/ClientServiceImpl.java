@@ -148,7 +148,8 @@ public class ClientServiceImpl implements ClientService {
             primaryKey = userDetail.getPrimaryKey();
         }
         Page<Client> clientPage = Page.empty();
-        if (roleEnum == null || RoleEnum.ROLE_SYSTEM_ADMIN.equals(roleEnum)) {
+        if (roleEnum == null || Arrays.asList(RoleEnum.ROLE_SYSTEM_ADMIN, RoleEnum.ROLE_ACCOUNTANT)
+                .contains(roleEnum)) {
             clientPage = clientRepository.findAllBySearchValue(searchValue, pageable);
         }
         if (Arrays.asList(RoleEnum.ROLE_BUSINESS_EMPLOYEE).contains(roleEnum)) {
