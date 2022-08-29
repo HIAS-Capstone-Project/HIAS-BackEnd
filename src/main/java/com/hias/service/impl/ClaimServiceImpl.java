@@ -677,6 +677,7 @@ public class ClaimServiceImpl implements ClaimService {
         if (claimOptional.isPresent()) {
             Claim claim = claimOptional.get();
             claim.setStatusCode(StatusCode.SETTLED);
+            claim.setPaymentAmount(claimPaymentRequestDTO.getPaymentAmount());
             claim.setPaymentDate(LocalDateTime.now());
             claim.setRemark(claimPaymentRequestDTO.getRemark());
             saveRemarkHistoryWhenSettle(claim);
