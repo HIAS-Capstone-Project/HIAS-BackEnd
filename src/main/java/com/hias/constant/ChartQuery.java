@@ -55,7 +55,7 @@ public class ChartQuery {
             "WHERE c.status_code = 'REJ' AND c.is_deleted = false %s \n" +
             "GROUP BY c.status_reason_code\n" +
             "UNION\n" +
-            "SELECT 'Hoàn thành' AS key, \n" +
+            "SELECT 'Đã thanh toán' AS key, \n" +
             "    COUNT(c.claim_no) AS value\n" +
             "FROM HIAS.CLAIM c\n" +
             "WHERE c.status_code = 'SET' AND c.is_deleted = false %s\n" +
