@@ -41,11 +41,12 @@ public class ChartServiceImpl implements ChartService {
             statisticDTOS.sort(new Comparator<StatisticDTO>() {
                 @Override
                 public int compare(StatisticDTO o1, StatisticDTO o2) {
-                    return (int) (o1.getValue() - o2.getValue());
+                    return (int) (o2.getValue() - o1.getValue());
                 }
             });
             Long otherValue = 0l;
-            for(int i = 5; i < statisticDTOS.size(); i++){
+            int originalSize = statisticDTOS.size();
+            for(int i = 5; i < originalSize; i++){
                 otherValue += statisticDTOS.get(5).getValue();
                 statisticDTOS.remove(5);
             }
