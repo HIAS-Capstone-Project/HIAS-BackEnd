@@ -195,40 +195,40 @@ public class ChartServiceImpl implements ChartService {
         statisticDTOS = statisticDTOS.stream().map(o -> {
             switch (o.getKey()) {
                 case "DRA":
-                    o.setKey("Bản nháp");
+                    o.setKey("Nháp");
                     return o;
                 case "CXL":
-                    o.setKey("Tự hủy");
+                    o.setKey("Hủy bỏ");
                     return o;
                 case "SUB":
                     o.setKey("Đã nộp");
                     return o;
                 case "BV":
-                    o.setKey("Đã qua thẩm định nghiệp vụ");
+                    o.setKey("Đã kiểm chứng nghiệp vụ");
                     return o;
                 case "BVY":
-                    o.setKey("Đang thẩm định nghiệp vụ");
+                    o.setKey("Đang kiểm chứng nghiệp vụ");
                     return o;
                 case "MV":
-                    o.setKey("Đã thẩm định y tế");
+                    o.setKey("Đã kiểm chứng y tế");
                     return o;
                 case "MVY":
-                    o.setKey("Đang thẩm định y tế");
+                    o.setKey("Đang kiểm chứng y tế");
                     return o;
                 case "WFA":
-                    o.setKey("Đang chờ chấp thuận");
+                    o.setKey("Đang chờ phê duyệt");
                     return o;
                 case "APR":
-                    o.setKey("Đã chấp thuận");
+                    o.setKey("Đã phê duyệt");
                     return o;
                 case "PAY":
-                    o.setKey("Đang xử lý thanh toán");
+                    o.setKey("Đang chờ thanh toán");
                     return o;
                 case "SET":
-                    o.setKey("Hoàn thành");
+                    o.setKey("Đã thanh toán");
                     return o;
                 case "RET":
-                    o.setKey("Bị trả lại");
+                    o.setKey("Trả lại");
                     return o;
                 case "REJ":
                     o.setKey("Từ chối");
