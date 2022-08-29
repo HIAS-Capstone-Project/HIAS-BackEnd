@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,26 @@ public class ChartServiceImpl implements ChartService {
     private final NamedParameterJdbcTemplate template;
     private final ClientService clientService;
     private final EmployeeService employeeService;
+
+    private List<StatisticDTO> findLimitedData(List<StatisticDTO> statisticDTOS){
+        if(statisticDTOS.size() >= 6 ){
+            statisticDTOS.sort(new Comparator<StatisticDTO>() {
+                @Override
+                public int compare(StatisticDTO o1, StatisticDTO o2) {
+                    return (int) (o1.getValue() - o2.getValue());
+                }
+            });
+            Long otherValue = 0l;
+            for(int i = 5; i < statisticDTOS.size(); i++){
+                otherValue += statisticDTOS.get(5).getValue();
+                statisticDTOS.remove(5);
+            }
+            statisticDTOS.add(StatisticDTO.builder().key("Others").value(otherValue).build());
+            return statisticDTOS;
+        } else {
+            return statisticDTOS;
+        }
+    }
 
     @Override
     public ChartResponseDTO findMemberAgeChart(Long clientNo) {
@@ -71,6 +92,7 @@ public class ChartServiceImpl implements ChartService {
             }
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        statisticDTOS = findLimitedData(statisticDTOS);
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName(), RoleEnum.ROLE_CLIENT.getName()};
         return ChartResponseDTO.builder().roles(roles).chartName("Biểu đồ nơi cư trú của người tham gia bảo hiểm").chartType(ChartConstant.BAR_CHART).statistics(statisticDTOS).build();
     }
@@ -168,6 +190,7 @@ public class ChartServiceImpl implements ChartService {
             }
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        statisticDTOS = findLimitedData(statisticDTOS);
         statisticDTOS = statisticDTOS.stream().map(o -> {
             switch (o.getKey()) {
                 case "DRA":
@@ -227,6 +250,7 @@ public class ChartServiceImpl implements ChartService {
             query = String.format(query, String.format("AND m.start_date BETWEEN '%s' :: timestamp AND '%s' :: timestamp", startDate, endDate));
         }
         List<StatisticDTO> statisticDTOS = template.query(query, new StatisticsRowMapper());
+        statisticDTOS = findLimitedData(statisticDTOS);
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
         return ChartResponseDTO.builder().roles(roles).chartName("Thống kê những chính sách được sử dụng nhiều").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
@@ -234,6 +258,7 @@ public class ChartServiceImpl implements ChartService {
     @Override
     public ChartResponseDTO findBusinessSectorChart() {
         List<StatisticDTO> statisticDTOS = template.query(ChartQuery.BUSINESS_SECTOR, new StatisticsRowMapper());
+        statisticDTOS = findLimitedData(statisticDTOS);
         String[] roles = {RoleEnum.ROLE_SYSTEM_ADMIN.getName(), RoleEnum.ROLE_ACCOUNTANT.getName(), RoleEnum.ROLE_BUSINESS_EMPLOYEE.getName()};
         return ChartResponseDTO.builder().roles(roles).chartName("Thống kê lĩnh vực kinh doanh").chartType(ChartConstant.PIE_CHART).statistics(statisticDTOS).build();
     }
