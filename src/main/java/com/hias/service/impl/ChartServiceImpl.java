@@ -36,8 +36,8 @@ public class ChartServiceImpl implements ChartService {
     private final ClientService clientService;
     private final EmployeeService employeeService;
 
-    private List<StatisticDTO> findLimitedData(List<StatisticDTO> statisticDTOS){
-        if(statisticDTOS.size() >= 6 ){
+    private List<StatisticDTO> findLimitedData(List<StatisticDTO> statisticDTOS) {
+        if (statisticDTOS.size() >= 6) {
             statisticDTOS.sort(new Comparator<StatisticDTO>() {
                 @Override
                 public int compare(StatisticDTO o1, StatisticDTO o2) {
@@ -46,7 +46,7 @@ public class ChartServiceImpl implements ChartService {
             });
             Long otherValue = 0l;
             int originalSize = statisticDTOS.size();
-            for(int i = 5; i < originalSize; i++){
+            for (int i = 5; i < originalSize; i++) {
                 otherValue += statisticDTOS.get(5).getValue();
                 statisticDTOS.remove(5);
             }
